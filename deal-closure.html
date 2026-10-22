@@ -1,0 +1,1901 @@
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/pdfkit@0.19.1/js/pdfkit.standalone.min.js"></script>
+
+
+<div id="dk-app" class="deal-killers-app">
+
+  <form id="dk-form">
+
+    <h1>Decision Closure</h1>
+
+
+    <!-- =====================================================
+         DECISION
+    ====================================================== -->
+
+    <div class="form-section active-section" id="decision-closure-context-section">
+      <button id="test-pdf-button" type="button">
+        Test PDF Generation
+      </button>
+
+      <h2>Stage 1 Close the decision - Decision Context</h2>
+
+      <div class="form-fields">
+
+        <div class="form-field">
+          <label>
+            <span class="field-label">Decision / transaction name</span>
+            <input type="text" id="dc-dealReference" name="dealReference" maxlength="200"
+              placeholder="Oak Ridge Apts – Dallas TX – $21.5M" required>
+          </label>
+        </div>
+
+        <div class="form-field">
+          <label>
+            <span class="field-label">Property / identifier</span>
+            <input type="text" id="dc-propertyIdentifier" name="propertyIdentifier" maxlength="200"
+              placeholder="Property name, address, or internal ID">
+          </label>
+        </div>
+
+        <div class="form-field radio-group-field">
+          <span class="field-label">Capital event</span>
+
+          <div class="radio-group">
+            <label>
+              <input type="radio" name="capitalEvent" value="acquisition" required>
+              Acquisition
+            </label>
+
+            <label>
+              <input type="radio" name="capitalEvent" value="refinance">
+              Refinance
+            </label>
+
+            <label>
+              <input type="radio" name="capitalEvent" value="recapitalization">
+              Recapitalization
+            </label>
+
+            <label>
+              <input type="radio" name="capitalEvent" value="major-capital">
+              Major capital
+            </label>
+
+            <label>
+              <input type="radio" name="capitalEvent" value="disposition">
+              Disposition
+            </label>
+
+            <label>
+              <input type="radio" name="capitalEvent" value="other">
+              Other
+            </label>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label>
+            <span class="field-label">Decision date</span>
+            <input type="date" id="dc-date" name="date" required>
+          </label>
+        </div>
+
+        <div class="form-field">
+          <label>
+            <span class="field-label">Expected funding / commitment date</span>
+            <input type="date" id="dc-fundingDate" name="fundingDate">
+          </label>
+        </div>
+
+        <div class="form-field">
+          <label>
+            <span class="field-label">Decision owner</span>
+            <p class="field-description">
+              The person responsible for preparing this decision record.
+            </p>
+            <input type="text" id="dc-decisionOwner" name="decisionOwner" maxlength="200" placeholder="Name and role"
+              required>
+          </label>
+
+        </div>
+
+        <div class="form-field">
+          <label>
+            <span class="field-label">Approval authority</span>
+            <p class="field-description">
+              Who has authority to approve this capital decision?
+            </p>
+            <input type="text" id="dc-approvalAuthority" name="approvalAuthority" maxlength="200"
+              placeholder="Person, committee, or role" required>
+          </label>
+
+        </div>
+
+      </div>
+
+      <div class="section-navigation">
+
+        <button type="button" class="section-next app-button">
+          Next
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         2 Proposed action
+    ====================================================== -->
+
+    <div class="form-section" id="decision-closure-action-section">
+
+      <h2>Stage 1 Close the decision - Proposed Action</h2>
+
+      <div class="form-fields">
+
+        <div class="form-field radio-group-field">
+          <span class="field-label">What decision are you closing?</span>
+
+          <div class="radio-group">
+
+            <label>
+              <input type="radio" name="proposedAction" id="dc-action-advance" value="advance" required>
+              ADVANCE
+            </label>
+            <label>
+              <input type="radio" name="proposedAction" id="dc-action-modify" value="modify">
+              MODIFY
+            </label>
+
+            <label>
+              <input type="radio" name="proposedAction" id="dc-action-defer" value="defer">
+              DEFER
+            </label>
+
+            <label>
+              <input type="radio" name="proposedAction" id="dc-action-decline" value="decline">
+              DECLINE
+            </label>
+
+          </div>
+        </div>
+
+        <!-- MODIFY conditional fields -->
+        <div>
+          <div class="form-field" id="dc-modify-fields">
+            <label>
+              <span class="field-label">What material change are you making?</span>
+              <textarea id="dc-materialChange" name="materialChange"
+                placeholder="Describe the material change."></textarea>
+            </label>
+          </div>
+          <div class="form-field" id="dc-modify-fields">
+
+            <label>
+              <span class="field-label">
+                Under what condition does the modified decision proceed?
+              </span>
+              <textarea id="dc-modifyCondition" name="modifyCondition"
+                placeholder="Specify the condition required to proceed."></textarea>
+            </label>
+          </div>
+
+        </div>
+
+        <!-- DEFER conditional field -->
+        <div class="form-field" id="dc-defer-fields">
+
+          <label>
+            <span class="field-label">
+              What must happen before this transaction can be reconsidered?
+            </span>
+            <textarea id="dc-reconsiderationRequirements" name="reconsiderationRequirements"
+              placeholder="Describe what must happen before reconsideration."></textarea>
+          </label>
+
+        </div>
+
+      </div>
+
+      <div class="section-navigation">
+
+        <button type="button" class="section-prev app-button">
+          Back
+        </button>
+
+        <button type="button" class="section-next app-button">
+          Next
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         EVIDENCE AND RISKS
+    ====================================================== -->
+
+    <div class="form-section" id="decision-closure-evidence-section">
+
+      <h2>Stage 1 Close the decision - Evidence and Risks</h2>
+
+      <div class="form-fields">
+
+        <!-- Material evidence -->
+        <div class="form-field">
+          <label for="dc-materialEvidence">
+            <span class="field-label">
+              What material evidence supports this decision?
+            </span>
+            <p class="field-description">
+              Name the evidence and the facts it establishes. Use document dates
+              or references where useful.
+            </p>
+            <textarea id="dc-materialEvidence" name="materialEvidence"
+              placeholder="Identify the evidence supporting this decision." required></textarea>
+          </label>
+
+
+        </div>
+
+        <!-- Known risks -->
+        <div class="form-field">
+          <span class="field-label" id="dc-risk-question">
+            What known risks is ownership accepting?
+          </span>
+
+          <div id="dc-risk-entries">
+
+            <div class="risk-entry form-field">
+              <label>
+                <span class="field-label">Risk 1</span>
+                <textarea name="acceptedRisks[]" placeholder="Describe a known risk, or enter None identified."
+                  required></textarea>
+              </label>
+            </div>
+
+          </div>
+
+          <button type="button" class="app-button" id="dc-add-risk">
+            Add another risk
+          </button>
+        </div>
+
+      </div>
+
+      <div class="section-navigation">
+
+        <button type="button" class="section-prev app-button">
+          Back
+        </button>
+
+        <button type="button" class="section-next app-button">
+          Next
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         Conditions
+    ====================================================== -->
+
+    <div class="form-section" id="decision-closure-conditions-section">
+
+      <h2> Stage 2 - Conditions and consequence : Conditions that travel with the decision</h2>
+
+      <div class="form-fields">
+
+        <div class="form-field">
+          <span class="field-label">
+            What must be completed or evidenced for this decision?
+          </span>
+          <p class="field-help">
+            Add each condition separately. Record the outcome required,
+            its owner, due date, and the evidence that will demonstrate resolution.
+          </p>
+        </div>
+
+        <div class="form-field" id="dc-no-conditions-declaration">
+          <em class="field-description">
+            Confirm only if no conditions need to be recorded for this decision.
+            This declaration will be saved as part of the decision record.
+          </em>
+          <label>
+            <input type="checkbox" id="dc-no-unresolved-conditions" name="noUnresolvedConditions" value="yes">
+            <div class="choice-wrapper">
+              <p>
+                No unresolved conditions identified
+
+              </p>
+            </div>
+
+
+          </label>
+
+        </div>
+
+        <!-- Conditions -->
+        <div class="form-field">
+          <span class="field-label">What must be completed or evidenced for this decision?</span>
+          <p class="field-help">
+            Add each condition separately. If a waiver is contemplated, define its
+            permitted scope in the condition now.
+          </p>
+
+          <div id="dc-condition-register"></div>
+
+          <button type="button" class="app-button" id="dc-add-condition">
+            Add condition
+          </button>
+
+          <template id="dc-condition-template">
+            <div class="condition-card form-field" data-condition-card>
+
+              <div class="condition-card-header">
+                <h4>
+                  Condition <span data-display="number"></span><br>
+                  <span class="field-description" data-display="condition-id"></span>
+                </h4>
+
+                <button type="button" class="basic-app-button" data-action="remove">
+                  Remove condition
+                </button>
+              </div>
+
+              <div class="form-field">
+                <label>
+                  <span class="field-label">Condition</span>
+                  <textarea data-field="condition" required
+                    placeholder="Describe the outcome that must occur."></textarea>
+                </label>
+              </div>
+
+              <div class="form-field radio-group-field">
+                <span class="field-label">When must it be met?</span>
+                <p class="field-description">
+                  Pre-commitment: Must clear before this decision's commitment point.
+                </p>
+                <p class="field-description">
+                  Pre-Funding: Must clear or be permissibly waived before funds move.
+                </p>
+                <p class="field-description">
+                  Monitoring: Continues after release. This test does not provide ongoing monitoring.
+                </p>
+                <p class="field-description">
+                  Accepted Exception: An unresolved item knowingly accepted by a named authority within
+                  this decision.
+                </p>
+
+
+                <div class="radio-group d-block">
+                  <label>
+                    <input type="radio" data-field="timing" value="pre-commitment" required>
+                    Pre-commitment
+                  </label>
+
+
+                  <label>
+                    <input type="radio" data-field="timing" value="pre-funding" required>
+                    Pre-funding
+                  </label>
+
+                  <label>
+                    <input type="radio" data-field="timing" value="monitoring" required>
+                    Monitoring
+                  </label>
+
+
+                  <label>
+                    <input type="radio" data-field="timing" value="accepted-exception" required>
+                    Accepted exception
+                  </label>
+
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label>
+                  <span class="field-label">Who is responsible?</span>
+                  <input type="text" data-field="owner" required placeholder="Person or party responsible">
+                </label>
+              </div>
+
+              <div class="form-field">
+                <label>
+                  <span class="field-label">Due date</span>
+                  <input type="date" data-field="dueDate" required>
+                </label>
+              </div>
+
+              <div class="form-field">
+                <label>
+                  <span class="field-label">Evidence required</span>
+                  <textarea data-field="evidence" required
+                    placeholder="What document, confirmation, or action demonstrates resolution?"></textarea>
+                </label>
+              </div>
+
+              <div class="form-field">
+                <label>
+                  <span class="field-label">Permitted waiver scope (if applicable)</span>
+                  <textarea data-field="waiverScope"
+                    placeholder="If a future waiver is allowed, define its permitted scope. Leave blank if no waiver is permitted."></textarea>
+                </label>
+              </div>
+
+              <div class="form-field radio-group-field">
+                <span class="field-label">Status</span>
+                <div class="radio-group">
+                  <label>
+                    <input type="radio" data-field="status" value="open" checked required>
+                    Open
+                  </label>
+                  <label>
+                    <input type="radio" data-field="status" value="satisfied" required>
+                    Satisfied
+                  </label>
+                  <label>
+                    <input type="radio" data-field="status" value="waived" required>
+                    Waived
+                  </label>
+                  <label>
+                    <input type="radio" data-field="status" value="failed" required>
+                    Failed
+                  </label>
+                  <label>
+                    <input type="radio" data-field="status" value="changed" required>
+                    Changed
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-field" data-resolution-fields hidden>
+                <label>
+                  <span class="field-label">Resolution note</span>
+                  <textarea data-field="resolutionNote"
+                    placeholder="Explain the status, change, or resolution."></textarea>
+                </label>
+              </div>
+
+              <div class="form-field" data-accepted-fields hidden>
+                <label>
+                  <span class="field-label">Accepted by</span>
+                  <input type="text" data-field="acceptedBy" placeholder="Name and role of accepting authority">
+                </label>
+
+                <label>
+                  <span class="field-label">Acceptance date and time</span>
+                  <input type="datetime-local" data-field="acceptedAt">
+                </label>
+              </div>
+
+              <div class="form-field" data-reclassification-fields hidden>
+                <label>
+                  <span class="field-label">Reclassification explanation</span>
+                  <textarea data-field="reclassificationNote"
+                    placeholder="Explain why the condition's classification is changing."></textarea>
+                </label>
+              </div>
+
+              <div class="form-field">
+                <span class="field-label">Last updated</span>
+                <p data-display="last-updated">Not yet updated</p>
+              </div>
+
+            </div>
+          </template>
+        </div>
+
+        <div class="section-navigation">
+
+          <button type="button" class="section-prev app-button">
+            Back
+          </button>
+
+          <button type="button" class="section-next app-button">
+            Next
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+         Consequence ownership accepts
+    ====================================================== -->
+
+      <div class="form-section" id="decision-closure-consequence-section">
+
+        <h2>Stage 2 Conditions and consequence - Consequence ownership accepts</h2>
+
+        <div class="form-fields">
+
+          <div class="form-field">
+
+            <label for="dc-consequenceStatement">
+              <span class="field-label" id="dc-consequence-question">
+                What consequence is ownership knowingly accepting by authorizing this decision?
+              </span>
+              <p class="field-description">
+                Consider capital at risk, required performance, timing, financing,
+                execution, reduced alternatives, exit, accepted exceptions, possible
+                additional capital and accountability.
+              </p>
+
+              <textarea id="dc-consequenceStatement" name="consequenceStatement" maxlength="2000"
+                placeholder="State the material consequence in your own words." required></textarea>
+            </label>
+
+
+
+          </div>
+
+        </div>
+
+        <div class="section-navigation">
+
+          <button type="button" class="section-prev app-button">
+            Back
+          </button>
+
+          <button type="button" class="section-next app-button">
+            Next
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- SCREEN 6: RECOVERY AND ASSUMPTIONS -->
+      <section class="form-section" id="decision-closure-recovery-section">
+
+        <h2>Recovery and Assumptions</h2>
+
+
+        <div class="form-field">
+          <label for="dc-recovery">
+            <span class="field-label">
+              Recovery: If the decision does not work as expected, how will exposure be contained or recovered?
+            </span>
+            <p class="field-description">
+              If recovery is not applicable, explain why. Do not leave this field blank.
+            </p>
+
+            <textarea id="dc-recovery" name="recoveryPlan" required
+              placeholder="Describe how exposure could be contained, reduced, exited, or recovered."></textarea>
+
+            <label class="checkbox-field">
+              <input type="checkbox" id="dc-recovery-not-applicable" name="recoveryNotApplicable" value="yes">
+              Recovery is not applicable
+            </label>
+          </label>
+
+          <div id="dc-recovery-reason-field" class="form-field" hidden>
+            <label for="dc-recovery-not-applicable-reason">
+              <span class="field-label">Why is recovery not applicable?</span>
+
+              <textarea id="dc-recovery-not-applicable-reason" name="recoveryNotApplicableReason"
+                placeholder="Briefly explain why recovery planning does not apply."></textarea>
+            </label>
+          </div>
+        </div>
+
+
+        <!-- ASSUMPTIONS -->
+        <div class="form-field" id="assumption-container">
+
+          <h3 style="margin-bottom: 0">Key Assumptions</h3>
+
+          <p class="field-description">
+            State the material facts or expectations on which this decision depends.
+            Record each assumption separately. These assumptions will carry forward
+            to Before You Wire for verification before funds move.
+          </p>
+
+          <div class="form-field" style="padding-bottom: 25px">
+            <p class="field-description" style="margin-bottom: 0">
+              Select only if there are no key assumptions to record.
+            </p>
+            <label class="checkbox-field">
+              <input type="checkbox" id="dc-no-assumptions" name="noAssumptionsIdentified" value="yes">
+              None identified
+            </label>
+
+
+          </div>
+
+          <div class="assumption-entry form-field">
+            <label>
+              <span class="field-label">
+                Assumption 1
+                <button type="button" class="basic-app-button remove-assumption" hidden>
+                  Remove assumption
+                </button>
+              </span>
+
+              <textarea name="keyAssumptions[]"
+                placeholder="Describe a material fact or expectation this decision depends on." required></textarea>
+            </label>
+          </div>
+
+
+          <button type="button" class="app-button" id="dc-add-assumption">
+            Add another assumption
+          </button>
+
+
+
+        </div>
+
+        <div class="section-navigation">
+          <button type="button" class="app-button secondary-button" data-go-to="decision-closure-consequence-section">
+            Back
+          </button>
+
+          <button type="button" class="app-button" data-go-to="decision-closure-accountability-section">
+            Next
+          </button>
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+             REVIEW AND CLOSE
+        ====================================================== -->
+
+      <div class="form-section" id="decision-closure-accountability-section">
+
+        <h2>Stage 3 Review and close - Decision Basis and Accountability</h2>
+
+        <div class="form-fields">
+
+          <!-- Read-only decision summary -->
+          <div class="form-field">
+            <span class="field-label">Selected action</span>
+            <p id="dc-final-action">Not selected</p>
+          </div>
+
+          <!-- Additional acknowledgement for Advance / Modify -->
+          <div class="form-field" id="dc-consequence-acceptance-field">
+
+            <span class="field-label">Consequence acknowledgement</span>
+
+            <p id="dc-consequence-acceptance-display">
+              <!-- Consequence statement populated by JavaScript -->
+            </p>
+
+            <label>
+              <input type="checkbox" id="dc-ack-consequence-accepted" name="ackConsequenceAccepted" value="yes">
+              I confirm that the approval authority identified above has
+              accepted the stated consequence as part of this decision.
+            </label>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">Stated consequence</span>
+            <p id="dc-final-consequence">
+              No consequence statement provided.
+            </p>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">Approval authority</span>
+            <p id="dc-final-approval-authority">Not specified</p>
+          </div>
+
+          <!-- Decision basis -->
+          <div class="form-field">
+            <label for="dc-decisionBasis">
+              <span class="field-label">
+                Why is this decision defensible now?
+              </span>
+              <textarea id="dc-decisionBasis" name="decisionBasis" maxlength="2000"
+                placeholder="Explain why this decision is defensible at this point in time." required></textarea>
+            </label>
+          </div>
+
+          <!-- Confirming person -->
+          <div class="form-field">
+            <label for="dc-confirmingPerson">
+              <span class="field-label">Confirming person — name / role</span>
+              <input type="text" id="dc-confirmingPerson" name="confirmingPerson" maxlength="200"
+                placeholder="Name and role of the person confirming this record" required>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <label for="dc-confirmationDate">
+              <span class="field-label">Confirmation date</span>
+              <input type="date" id="dc-confirmationDate" name="confirmationDate" required>
+            </label>
+          </div>
+
+          <!-- General acknowledgements -->
+          <div class="form-field">
+            <span class="field-label">Record acknowledgements</span>
+
+            <div class="dc-acknowledgements">
+
+              <label>
+                <input type="checkbox" id="dc-ack-decision-basis" name="ackDecisionBasis" value="yes" required>
+                I confirm this record reflects the decision basis.
+              </label>
+
+              <label>
+                <input type="checkbox" id="dc-ack-final-closure" name="ackFinalClosure" value="yes" required>
+                I confirm that this record closes this decision inside
+                Decision Closure. The selected posture, decision basis,
+                stated consequence, and approval authority become final
+                when this record is closed. Any later reconsideration
+                takes place outside this completed test.
+              </label>
+
+            </div>
+          </div>
+
+
+
+          <div class="form-field">
+            <p class="field-help">
+              These acknowledgements record the statements made by the user.
+              They do not independently authenticate the approval authority,
+              establish that authority's identity, or constitute a verified
+              approval or electronic signature.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="section-navigation">
+
+          <button type="button" class="section-prev app-button">
+            Back
+          </button>
+
+          <button type="button" class="section-next app-button">
+            Close Decision
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+         REVIEW
+    ====================================================== -->
+
+      <!-- =====================================================
+       REVIEW AND CLOSE
+  ====================================================== -->
+
+      <div class="form-section" id="review-section">
+
+        <h2>Review and Close the Record</h2>
+
+        <div class="form-fields">
+
+          <!-- 1. Decision details and action -->
+          <section class="review-group">
+            <h3>Decision Details and Action</h3>
+            <div id="record-decision-details">
+              <div class="review-field">
+                <strong>Decision / transaction name:</strong>
+                <span id="record-deal-reference"></span>
+                <button type="button" class="basic-app-button"
+                  data-go-to="decision-closure-context-section">Edit</button>
+              </div>
+
+              <div class="review-field">
+                <strong>Property / identifier:</strong>
+                <span id="record-property-identifier"></span>
+                <button type="button" class="basic-app-button"
+                  data-go-to="decision-closure-context-section">Edit</button>
+              </div>
+
+              <div class="review-field">
+                <strong>Capital event:</strong>
+                <span id="record-capital-event"></span>
+                <button type="button" class="basic-app-button"
+                  data-go-to="decision-closure-context-section">Edit</button>
+              </div>
+
+              <div class="review-field">
+                <strong>Decision date:</strong>
+                <span id="record-decision-date"></span>
+                <button type="button" class="basic-app-button"
+                  data-go-to="decision-closure-context-section">Edit</button>
+              </div>
+
+              <div class="review-field">
+                <strong>Expected funding / commitment date:</strong>
+                <span id="record-funding-date"></span>
+                <button type="button" class="basic-app-button"
+                  data-go-to="decision-closure-context-section">Edit</button>
+              </div>
+              <div class="review-field">
+                <strong>Decision owner:</strong>
+                <span id="record-decision-owner"></span>
+                <button type="button" class="basic-app-button"
+                  data-go-to="decision-closure-context-section">Edit</button>
+              </div>
+              <div class="review-field">
+                <strong>Approval authority:</strong>
+                <span id="record-approval-authority"></span>
+                <button type="button" class="basic-app-button"
+                  data-go-to="decision-closure-context-section">Edit</button>
+              </div>
+              <div class="review-field">
+                <strong>Proposed action:</strong>
+                <span id="record-proposed-action"></span>
+                <button type="button" class="basic-app-button"
+                  data-go-to="decision-closure-action-section">Edit</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. Evidence and Risks -->
+          <section class="review-group">
+
+            <div class="review-title-wrapper">
+              <h3>Material Evidence</h3>
+              <button type="button" class="edit-record-control" data-target="decision-closure-evidence-section">
+                Edit
+              </button>
+            </div>
+
+            <div class="review-field">
+              <strong>Material evidence:</strong>
+              <div id="record-material-evidence"></div>
+
+            </div>
+
+
+
+            <div class="review-title-wrapper">
+              <h3>Risks</h3>
+              <button type="button" class="edit-record-control" data-target="decision-closure-evidence-section">
+                Edit
+              </button>
+            </div>
+
+
+            <div id="record-accepted-risks"></div>
+
+
+          </section>
+
+          <!-- 4. Conditions -->
+          <section class="review-group">
+            <div class="review-title-wrapper">
+              <h3>Conditions</h3>
+              <button type="button" class="edit-record-control" data-target="decision-closure-conditions-section">
+                Edit
+              </button>
+            </div>
+
+            <div id="record-conditions">
+              <p id="record-no-conditions"></p>
+              <div id="record-condition-entries"></div>
+            </div>
+          </section>
+
+          <!-- 5. Prominent consequence -->
+          <section class="review-group dc-review-consequence">
+            <div class="review-title-wrapper">
+              <h3>Consequence Ownership</h3>
+              <button type="button" class="edit-record-control" data-target="decision-closure-consequence-section">
+                Edit
+              </button>
+            </div>
+            <div id="record-consequence-question"></div>
+            <p id="record-consequence"></p>
+          </section>
+
+
+          <!-- 6. Recovery -->
+          <section class="review-group">
+            <div class="review-title-wrapper">
+
+              <h3>Recovery</h3>
+              <button type="button" class="edit-record-control" data-target="decision-closure-recovery-section">
+                Edit
+              </button>
+
+            </div>
+
+            <div id="record-recovery"></div>
+
+
+          </section>
+
+          <!-- 7. Assumptions -->
+          <section class="review-group">
+            <div class="review-title-wrapper">
+              <h3>Assumptions</h3>
+              <button type="button" class="edit-record-control" data-target="decision-closure-recovery-section">
+                Edit
+              </button>
+            </div>
+
+            <div id="record-assumptions"></div>
+
+
+          </section>
+
+          <!-- 8. Decision basis -->
+          <section class="review-group">
+            <div class="review-title-wrapper">
+
+              <h3>Why This Decision Is Defensible Now</h3>
+              <button type="button" class="edit-record-control" data-target="decision-closure-accountability-section">
+                Edit
+              </button>
+
+            </div>
+
+            <div id="record-decision-basis"></div>
+
+
+          </section>
+
+          <!-- 9. Accountability and acknowledgements -->
+          <section class="review-group">
+            <h3>Accountability and Acknowledgements</h3>
+
+            <!-- Approval Authority -->
+            <div class="review-field">
+              <strong>Approval authority:</strong>
+              <span id="record-accountability-approval-authority"></span>
+              <button type="button" class="edit-record-control" data-target="decision-closure-context-section">
+                Edit
+              </button>
+            </div>
+
+            <!-- Confirming Person -->
+            <div class="review-field">
+              <strong>Confirming person:</strong>
+              <span id="record-confirming-person"></span>
+              <button type="button" class="edit-record-control" data-target="decision-closure-accountability-section">
+                Edit
+              </button>
+            </div>
+          </section>
+
+          <!-- Closure warning -->
+          <div class="form-field" id="dc-closure-warning">
+            <p>
+              Closing preserves this record. The decision, basis, consequence
+              and approval authority cannot be changed inside this case.
+              Review your answers before continuing.
+            </p>
+          </div>
+
+          <!-- Validation feedback -->
+          <div class="form-field" id="dc-closure-errors" role="alert">
+            <p>Complete the highlighted entries before closing this decision.</p>
+            <ul id="dc-closure-error-list"></ul>
+          </div>
+
+          <!-- Close and generate -->
+          <div class="form-field" id="dc-close-controls">
+            <button id="dc-close-and-generate-btn" type="button" class="app-button">
+              Close Decision and Generate Record
+            </button>
+          </div>
+
+          <!-- Display after successful closure -->
+          <div class="form-field" id="dc-closed-record-panel">
+
+            <h3>Decision Closed</h3>
+
+            <p><strong>Record ID:</strong> <span id="dc-closed-record-id"></span></p>
+            <p><strong>Closed at:</strong> <span id="dc-closed-record-timestamp"></span></p>
+
+            <button type="button" id="dc-download-record-btn" class="app-button">
+              Download Decision Closure Record
+            </button>
+
+            <button type="button" id="dc-view-pdf-btn" class="app-button">
+              View PDF
+            </button>
+
+            <button type="button" id="dc-conditions-register-btn" class="app-button">
+              Conditions Register
+            </button>
+
+            <button type="button" id="dc-begin-before-you-wire-btn" class="app-button">
+              Begin Before You Wire
+            </button>
+
+            <p id="dc-closed-record-message"></p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- SCREEN 1: OPEN DECISION & VERIFY CONDITIONS -->
+      <section class="form-section" id="byw-open-decision-section">
+
+        <h2>Before You Wire</h2>
+
+        <p>
+          Your capital decision has been closed. Before funds move, check that its
+          conditions, evidence and approvals still hold. You will record whether
+          release is Authorized, on Hold or Do Not Release. This step verifies the
+          closed decision; it cannot expand or rewrite it.
+        </p>
+
+        <!-- 1. OPEN THE CLOSED DECISION -->
+        <div class="form-subsection">
+          <h3>1. Open the Closed Decision</h3>
+
+          <p class="field-help">
+            Review the original decision below. These details come from the closed
+            Decision Closure record and cannot be edited here.
+          </p>
+
+          <div class="form-fields">
+
+            <div class="form-field">
+              <span class="field-label">Stage 1 Record ID</span>
+              <a id="byw-stage1-record-link" href="#">
+                <span id="byw-stage1-record-id">Loading record...</span>
+              </a>
+            </div>
+
+            <div class="form-field">
+              <span class="field-label">Transaction</span>
+              <p id="byw-transaction">—</p>
+            </div>
+
+            <div class="form-field">
+              <span class="field-label">Closed Decision</span>
+              <p id="byw-action">—</p>
+            </div>
+
+            <div class="form-field">
+              <span class="field-label">Decision Date</span>
+              <p id="byw-decision-date">—</p>
+            </div>
+
+            <div class="form-field">
+              <span class="field-label">Approval Authority</span>
+              <p id="byw-authority">—</p>
+            </div>
+
+            <div class="form-field">
+              <span class="field-label">Accepted Consequence</span>
+              <p id="byw-consequence">—</p>
+            </div>
+
+            <div class="form-field">
+              <span class="field-label">Key Assumptions at Closure</span>
+              <ol id="byw-assumptions">
+                <li>—</li>
+              </ol>
+            </div>
+
+            <div class="form-field">
+              <span class="field-label">Condition Counts</span>
+              <p id="byw-condition-counts">—</p>
+            </div>
+
+          </div>
+
+          <div class="form-fields">
+
+            <div class="form-field">
+              <label for="byw-verification-date">
+                <span class="field-label">Verification Date</span>
+                <input type="date" id="byw-verification-date" name="verificationDate" required>
+              </label>
+            </div>
+
+            <div class="form-field">
+              <label for="byw-expected-release-date">
+                <span class="field-label">Expected Release Date</span>
+                <input type="date" id="byw-expected-release-date" name="expectedReleaseDate" required>
+              </label>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 2. VERIFY CONDITIONS -->
+        <div class="form-subsection">
+          <h3>2. Verify Conditions</h3>
+
+          <p class="field-help">
+            Review every condition carried forward from the closed decision.
+            Confirm its current status and record the supporting evidence or
+            explanation. Updates must preserve the original condition and append
+            to its history.
+          </p>
+
+          <div id="byw-condition-review-error" class="form-error" role="alert">
+            Review every condition and resolve the highlighted issues before continuing.
+          </div>
+
+          <div id="byw-condition-register">
+            <!-- Condition cards are rendered here from the closed Stage 1 record. -->
+          </div>
+
+          <template id="byw-condition-template">
+            <div class="condition-card" data-condition-card>
+
+              <h4>
+                Condition
+                <span data-display="conditionId">—</span>
+              </h4>
+
+              <div class="form-fields">
+
+                <div class="form-field">
+                  <span class="field-label">Original Condition</span>
+                  <p data-display="conditionText">—</p>
+                </div>
+
+                <div class="form-field">
+                  <span class="field-label">Original Classification</span>
+                  <p data-display="timing">—</p>
+                </div>
+
+                <div class="form-field">
+                  <span class="field-label">Responsible Party</span>
+                  <p data-display="owner">—</p>
+                </div>
+
+                <div class="form-field">
+                  <span class="field-label">Original Due Date</span>
+                  <p data-display="dueDate">—</p>
+                </div>
+
+                <div class="form-field">
+                  <span class="field-label">Required Evidence</span>
+                  <p data-display="evidenceRequired">—</p>
+                </div>
+
+                <div class="form-field">
+                  <span class="field-label">Status at Stage 1 Closure</span>
+                  <p data-display="originalStatus">—</p>
+                </div>
+
+                <div class="form-field">
+                  <span class="field-label">Current Status</span>
+
+                  <div class="radio-options" data-status-options>
+                    <label>
+                      <input type="radio" data-input="status" value="open" required>
+                      Open
+                    </label>
+
+                    <label>
+                      <input type="radio" data-input="status" value="satisfied" required>
+                      Satisfied
+                    </label>
+
+                    <label>
+                      <input type="radio" data-input="status" value="waived" required>
+                      Waived
+                    </label>
+
+                    <label>
+                      <input type="radio" data-input="status" value="failed" required>
+                      Failed
+                    </label>
+
+                    <label>
+                      <input type="radio" data-input="status" value="changed" required>
+                      Changed
+                    </label>
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <label>
+                    <span class="field-label">Resolution Note</span>
+                    <textarea data-input="resolutionNote" required
+                      placeholder="Explain the current status and identify the supporting evidence, resolution, or reason the condition remains open."></textarea>
+                  </label>
+                </div>
+
+                <div class="form-field">
+                  <label>
+                    <span class="field-label">Evidence Reference</span>
+                    <input type="text" data-input="evidenceReference"
+                      placeholder="Document name, date, reference, or location">
+                  </label>
+                </div>
+
+                <!-- SHOWN WHEN STATUS IS WAIVED OR ORIGINAL CLASSIFICATION IS ACCEPTED EXCEPTION -->
+                <div class="form-field" data-waiver-fields>
+
+                  <h5>Waiver / Accepted Exception</h5>
+
+                  <p class="field-help">
+                    A waiver or accepted exception requires a named authority and
+                    date/time. The original closed decision must have permitted the
+                    waiver within its accepted consequence.
+                  </p>
+
+                  <div class="form-field">
+                    <label>
+                      <span class="field-label">Named Accepting Authority</span>
+                      <input type="text" data-input="acceptedBy" placeholder="Name and role">
+                    </label>
+                  </div>
+
+                  <div class="form-field">
+                    <label>
+                      <span class="field-label">Acceptance Date and Time</span>
+                      <input type="datetime-local" data-input="acceptedAt">
+                    </label>
+                  </div>
+
+                  <div class="form-field">
+                    <span class="field-label">
+                      Was this waiver allowed within the closed decision and its accepted consequence?
+                    </span>
+
+                    <div class="radio-options" data-waiver-allowed-group>
+                      <label>
+                        <input type="radio" data-input="waiverAllowed" value="yes">
+                        Yes
+                      </label>
+
+                      <label>
+                        <input type="radio" data-input="waiverAllowed" value="no">
+                        No
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="form-field">
+                    <label>
+                      <span class="field-label">Original Allowance Reference</span>
+                      <textarea data-input="allowanceReference"
+                        placeholder="Identify the provision or record entry that permitted this waiver or exception."></textarea>
+                    </label>
+                  </div>
+
+                </div>
+
+                <div class="form-field">
+                  <label>
+                    <input type="checkbox" data-input="reviewed" required>
+                    I reviewed this condition and its current evidence and status.
+                  </label>
+                </div>
+
+                <div class="form-field">
+                  <span class="field-label">Last Updated</span>
+                  <p data-display="lastUpdated">Not yet updated</p>
+                </div>
+
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <div class="section-navigation">
+          <button type="button" class="app-button secondary-button" id="byw-back-to-closure">
+            Back
+          </button>
+
+          <button type="button" class="app-button" id="byw-to-verification-section">
+            Continue to Documents & Approvals
+          </button>
+        </div>
+
+      </section>
+
+      <!-- SCREEN 2: DOCUMENTS, APPROVALS & CHANGED FACTS -->
+      <section class="form-section" id="byw-verification-section">
+
+        <h2>Documents, Approvals & Changed Facts</h2>
+
+        <p class="field-help">
+          Verify that the required documents, approvals, facts and assumptions
+          remain consistent with the closed decision. Do not use this screen to
+          amend the original decision.
+        </p>
+
+        <!-- ORIGINAL DECISION REFERENCE -->
+        <div class="form-subsection">
+          <h3>Closed Decision Reference</h3>
+
+          <div class="form-fields">
+
+            <div class="form-field">
+              <span class="field-label">Accepted Consequence at Closure</span>
+              <p id="byw-review-consequence">—</p>
+            </div>
+
+            <div class="form-field">
+              <span class="field-label">Key Assumptions at Closure</span>
+              <p id="byw-review-assumptions">—</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 3. DOCUMENTS AND APPROVALS -->
+        <div class="form-subsection">
+          <h3>3. Documents and Approvals</h3>
+
+          <div class="form-field">
+            <span class="field-label">Have the required documents been received?</span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="documentsReceived" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="documentsReceived" value="no" required>
+                No
+              </label>
+
+              <label>
+                <input type="radio" name="documentsReceived" value="na" required>
+                N/A
+              </label>
+            </div>
+
+            <label for="byw-documents-note">
+              <span class="field-label">Supporting Note</span>
+              <textarea id="byw-documents-note" name="documentsNote" required
+                placeholder="Identify the documents and their dates, or explain what is missing or why N/A applies."></textarea>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">
+              Have exceptions been resolved or expressly accepted?
+            </span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="exceptionsResolved" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="exceptionsResolved" value="no" required>
+                No
+              </label>
+
+              <label>
+                <input type="radio" name="exceptionsResolved" value="na" required>
+                N/A
+              </label>
+            </div>
+
+            <label for="byw-exceptions-note">
+              <span class="field-label">Supporting Note</span>
+              <textarea id="byw-exceptions-note" name="exceptionsNote" required
+                placeholder="State the resolution or accepted exception and identify the accepting authority; explain N/A."></textarea>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">Do final approvals remain valid?</span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="finalApprovalsValid" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="finalApprovalsValid" value="no" required>
+                No
+              </label>
+            </div>
+
+            <label for="byw-final-approvals-note">
+              <span class="field-label">Supporting Note</span>
+              <textarea id="byw-final-approvals-note" name="finalApprovalsNote" required
+                placeholder="Identify the approval and the evidence that it remains valid, or explain the problem."></textarea>
+            </label>
+          </div>
+
+        </div>
+
+        <!-- 4. FACTS AND LIMITS OF THE CLOSED DECISION -->
+        <div class="form-subsection">
+          <h3>4. Facts and Limits of the Closed Decision</h3>
+
+          <div class="form-field">
+            <span class="field-label">Are material facts unchanged since closure?</span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="materialFactsUnchanged" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="materialFactsUnchanged" value="no" required>
+                No
+              </label>
+            </div>
+
+            <label for="byw-material-facts-note">
+              <span class="field-label">Explanation</span>
+              <textarea id="byw-material-facts-note" name="materialFactsNote" required
+                placeholder="Explain whether material facts have changed since the decision was closed."></textarea>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">Has the consequence changed since closure?</span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="consequenceChanged" id="byw-consequence-changed" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="consequenceChanged" id="byw-consequence-unchanged" value="no" required>
+                No
+              </label>
+            </div>
+
+            <label for="byw-consequence-changed-note">
+              <span class="field-label">Explanation</span>
+              <textarea id="byw-consequence-changed-note" name="consequenceChangedNote" required
+                placeholder="Explain whether and how the consequence has changed."></textarea>
+            </label>
+          </div>
+
+          <div class="form-field" id="byw-outside-consequence-field">
+            <span class="field-label">
+              Does the change fall outside the consequence accepted at closure?
+            </span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="outsideAcceptedConsequence" value="yes">
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="outsideAcceptedConsequence" value="no">
+                No
+              </label>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">Do the key assumptions remain materially valid?</span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="assumptionsRemainValid" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="assumptionsRemainValid" value="no" required>
+                No
+              </label>
+            </div>
+
+            <label for="byw-assumptions-note">
+              <span class="field-label">Explanation</span>
+              <textarea id="byw-assumptions-note" name="assumptionsNote" required
+                placeholder="Explain whether the original key assumptions remain materially valid."></textarea>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <label for="byw-new-material-facts">
+              <span class="field-label">What new material facts have emerged?</span>
+              <textarea id="byw-new-material-facts" name="newMaterialFacts" required
+                placeholder="Describe new material facts, or explicitly enter None."></textarea>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">
+              Does the closed decision still support releasing capital under the facts that exist now?
+            </span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="decisionSupportsRelease" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="decisionSupportsRelease" value="no" required>
+                No
+              </label>
+            </div>
+
+            <p class="field-help">
+              Answer whether release fits the closed decision. An outstanding
+              requirement may still place release on Hold.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- RELEASE DISPOSITION -->
+        <div class="form-subsection">
+          <h3>Release Disposition</h3>
+
+          <p class="field-help">
+            Select the disposition supported by this verification. Selecting
+            Authorized does not override unresolved conditions, an impermissible
+            waiver, missing required evidence or invalid approvals.
+          </p>
+
+          <div class="form-field">
+            <span class="field-label">What is the release disposition?</span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="releaseDisposition" value="authorized" required>
+                Authorized
+              </label>
+
+              <label>
+                <input type="radio" name="releaseDisposition" value="on-hold" required>
+                On Hold
+              </label>
+
+              <label>
+                <input type="radio" name="releaseDisposition" value="do-not-release" required>
+                Do Not Release
+              </label>
+            </div>
+          </div>
+
+          <div id="byw-release-blockers" class="form-error" role="alert" aria-live="polite"></div>
+
+        </div>
+
+        <div class="section-navigation">
+          <button type="button" class="app-button secondary-button" id="byw-back-to-conditions">
+            Back to Conditions
+          </button>
+
+          <button type="button" class="app-button" id="byw-validate-release-btn">
+            Review Release Disposition
+          </button>
+        </div>
+
+      </section>
+      <!-- SCREEN 2: DOCUMENTS, APPROVALS & CHANGED FACTS -->
+      <section class="form-section" id="byw-verification-section">
+
+        <h2>Documents, Approvals & Changed Facts</h2>
+
+        <p class="field-help">
+          Verify that the required documents, approvals, facts and assumptions
+          remain consistent with the closed decision. Do not use this screen to
+          amend the original decision.
+        </p>
+
+        <!-- ORIGINAL DECISION REFERENCE -->
+        <div class="form-subsection">
+          <h3>Closed Decision Reference</h3>
+
+          <div class="form-fields">
+
+            <div class="form-field">
+              <span class="field-label">Accepted Consequence at Closure</span>
+              <p id="byw-review-consequence">—</p>
+            </div>
+
+            <div class="form-field">
+              <span class="field-label">Key Assumptions at Closure</span>
+              <p id="byw-review-assumptions">—</p>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 3. DOCUMENTS AND APPROVALS -->
+        <div class="form-subsection">
+          <h3>3. Documents and Approvals</h3>
+
+          <div class="form-field">
+            <span class="field-label">Have the required documents been received?</span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="documentsReceived" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="documentsReceived" value="no" required>
+                No
+              </label>
+
+              <label>
+                <input type="radio" name="documentsReceived" value="na" required>
+                N/A
+              </label>
+            </div>
+
+            <label for="byw-documents-note">
+              <span class="field-label">Supporting Note</span>
+              <textarea id="byw-documents-note" name="documentsNote" required
+                placeholder="Identify the documents and their dates, or explain what is missing or why N/A applies."></textarea>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">
+              Have exceptions been resolved or expressly accepted?
+            </span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="exceptionsResolved" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="exceptionsResolved" value="no" required>
+                No
+              </label>
+
+              <label>
+                <input type="radio" name="exceptionsResolved" value="na" required>
+                N/A
+              </label>
+            </div>
+
+            <label for="byw-exceptions-note">
+              <span class="field-label">Supporting Note</span>
+              <textarea id="byw-exceptions-note" name="exceptionsNote" required
+                placeholder="State the resolution or accepted exception and identify the accepting authority; explain N/A."></textarea>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">Do final approvals remain valid?</span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="finalApprovalsValid" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="finalApprovalsValid" value="no" required>
+                No
+              </label>
+            </div>
+
+            <label for="byw-final-approvals-note">
+              <span class="field-label">Supporting Note</span>
+              <textarea id="byw-final-approvals-note" name="finalApprovalsNote" required
+                placeholder="Identify the approval and the evidence that it remains valid, or explain the problem."></textarea>
+            </label>
+          </div>
+
+        </div>
+
+        <!-- 4. FACTS AND LIMITS OF THE CLOSED DECISION -->
+        <div class="form-subsection">
+          <h3>4. Facts and Limits of the Closed Decision</h3>
+
+          <div class="form-field">
+            <span class="field-label">Are material facts unchanged since closure?</span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="materialFactsUnchanged" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="materialFactsUnchanged" value="no" required>
+                No
+              </label>
+            </div>
+
+            <label for="byw-material-facts-note">
+              <span class="field-label">Explanation</span>
+              <textarea id="byw-material-facts-note" name="materialFactsNote" required
+                placeholder="Explain whether material facts have changed since the decision was closed."></textarea>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">Has the consequence changed since closure?</span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="consequenceChanged" id="byw-consequence-changed" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="consequenceChanged" id="byw-consequence-unchanged" value="no" required>
+                No
+              </label>
+            </div>
+
+            <label for="byw-consequence-changed-note">
+              <span class="field-label">Explanation</span>
+              <textarea id="byw-consequence-changed-note" name="consequenceChangedNote" required
+                placeholder="Explain whether and how the consequence has changed."></textarea>
+            </label>
+          </div>
+
+          <div class="form-field" id="byw-outside-consequence-field">
+            <span class="field-label">
+              Does the change fall outside the consequence accepted at closure?
+            </span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="outsideAcceptedConsequence" value="yes">
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="outsideAcceptedConsequence" value="no">
+                No
+              </label>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">Do the key assumptions remain materially valid?</span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="assumptionsRemainValid" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="assumptionsRemainValid" value="no" required>
+                No
+              </label>
+            </div>
+
+            <label for="byw-assumptions-note">
+              <span class="field-label">Explanation</span>
+              <textarea id="byw-assumptions-note" name="assumptionsNote" required
+                placeholder="Explain whether the original key assumptions remain materially valid."></textarea>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <label for="byw-new-material-facts">
+              <span class="field-label">What new material facts have emerged?</span>
+              <textarea id="byw-new-material-facts" name="newMaterialFacts" required
+                placeholder="Describe new material facts, or explicitly enter None."></textarea>
+            </label>
+          </div>
+
+          <div class="form-field">
+            <span class="field-label">
+              Does the closed decision still support releasing capital under the facts that exist now?
+            </span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="decisionSupportsRelease" value="yes" required>
+                Yes
+              </label>
+
+              <label>
+                <input type="radio" name="decisionSupportsRelease" value="no" required>
+                No
+              </label>
+            </div>
+
+            <p class="field-help">
+              Answer whether release fits the closed decision. An outstanding
+              requirement may still place release on Hold.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- RELEASE DISPOSITION -->
+        <div class="form-subsection">
+          <h3>Release Disposition</h3>
+
+          <p class="field-help">
+            Select the disposition supported by this verification. Selecting
+            Authorized does not override unresolved conditions, an impermissible
+            waiver, missing required evidence or invalid approvals.
+          </p>
+
+          <div class="form-field">
+            <span class="field-label">What is the release disposition?</span>
+
+            <div class="radio-options">
+              <label>
+                <input type="radio" name="releaseDisposition" value="authorized" required>
+                Authorized
+              </label>
+
+              <label>
+                <input type="radio" name="releaseDisposition" value="on-hold" required>
+                On Hold
+              </label>
+
+              <label>
+                <input type="radio" name="releaseDisposition" value="do-not-release" required>
+                Do Not Release
+              </label>
+            </div>
+          </div>
+
+          <div id="byw-release-blockers" class="form-error" role="alert" aria-live="polite"></div>
+
+        </div>
+
+        <div class="section-navigation">
+          <button type="button" class="app-button secondary-button" id="byw-back-to-conditions">
+            Back to Conditions
+          </button>
+
+          <button type="button" class="app-button" id="byw-validate-release-btn">
+            Review Release Disposition
+          </button>
+        </div>
+
+      </section>
+
+
+
+
+
+  </form>
+
+  <!-- 
+  <div class="form-section" id="success-section">
+
+    <div class="form-fields">
+
+      <h2>Decision Record Complete</h2>
+
+      <p>
+        Your Walk Away Decision Record has been generated.
+      </p>
+
+      <div class="section-navigation">
+
+        <a id="dk-view-pdf-btn" class="app-button" style="display:none;">
+          View PDF
+        </a>
+
+        <a id="dk-download-btn" class="app-button" style="display:none;">
+          Download PDF
+        </a>
+
+      </div>
+
+    </div>
+
+  </div> -->
+
+
+  <script src="pdf-script.js"></script>
+  <script src="script.js"></script>

@@ -1,0 +1,262 @@
+.deal-killers-app {
+  max-width: 920px;
+  margin: 0 auto;
+  font-family: inherit;
+}
+
+h1 {
+  text-align: center;
+}
+
+/* Form sections */
+
+/* .form-section {
+  display: none;
+  margin-bottom: 42px;
+}
+
+.form-section.active-section {
+  display: block;
+} */
+
+.form-section h2 {
+  color: #104E75;
+  font-size: 1.45rem;
+  margin-bottom: 16px;
+}
+
+.form-section .form-fields .form-field {
+  padding-bottom: 25px;
+}
+
+/* Form fields */
+
+.field-label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  color: #1e2937;
+}
+
+.deal-killers-app input:not([type="checkbox"]),
+.deal-killers-app textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  box-sizing: border-box;
+}
+
+.form-field .field-description {
+  margin-top: 0;
+  font-style: italic;
+}
+
+/* Radio groups */
+
+.form-field .radio-group {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+  &.d-block { 
+  display: block; 
+  }
+}
+
+.form-field .radio-group label {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.form-field .radio-group label input {
+  width: auto;
+  margin: 0 5px 0 0;
+}
+
+.form-field .radio-group label span {
+  text-transform: capitalize;
+}
+
+/* Check and decision sections */
+
+#check-section .form-field,
+#choose-section .form-field {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  box-sizing: border-box;
+  margin-bottom: 30px;
+}
+
+/* Buttons */
+.basic-app-button {
+    background: transparent;
+    border: 0;
+    text-decoration: underline;
+    &.remove-risk {
+      color: red;
+    }
+}
+
+.app-button {
+  background: #104E75;
+  color: white;
+  padding: 16px 48px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  margin-top: 20px!important;
+}
+
+.app-button:hover {
+  background: #12649c;
+}
+
+.app-button[disabled],
+.app-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.section-navigation {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Review */
+
+#review-section table {
+  border: solid 1px black;
+}
+
+#review-section table thead tr th {
+  border: solid 1px black;
+}
+
+#review-section table tbody tr td {
+  border: solid 1px black;
+  padding: 5px;
+}
+
+.edit-record-control {
+  background: transparent;
+  border: 0;
+  color: #104E75;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Success */
+
+#success-section {
+  text-align: center;
+}
+
+#success-section .section-navigation {
+  justify-content: center;
+  gap: 15px;
+}
+
+#dk-view-pdf-btn {
+  background: #fff;
+  color: #104E75;
+  border: 2px solid #104E75;
+}
+
+#dk-view-pdf-btn:hover {
+  background: #104E75;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+#dk-download-btn:hover {
+  background: #12649c;
+  border-color: #12649c;
+  transform: translateY(-1px);
+}
+
+.radio-group-field {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    box-sizing: border-box;
+    margin-bottom: 30px;
+    .radio-group {
+      display: block;
+    }
+}
+
+.condition-card-header {
+    display: flex;
+    align-items: anchor-center;
+    justify-content: space-between;
+  span {
+    font-weight: normal;
+  }
+  button {
+      color: red; 
+  }
+}
+
+
+#dc-no-conditions-declaration {
+  label {
+    display: flex;
+    gap: 10px; 
+    input {
+      width: 2%; 
+    }
+  }
+}
+
+.assumption-entry.form-field {
+  padding-bottom: 25px; 
+
+}
+
+.dc-acknowledgements {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.review-title-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.review-field {
+    display: flex;
+    padding: 5px 10px; 
+    border: solid 1px;
+    align-items: center;
+    justify-content: space-around;
+    /* border-bottom: 0;  */
+    &:last-child {
+      border-bottom: solid 1px; 
+
+    }
+    strong, span, #record-material-evidence {
+      width: 45%;  
+    }
+    button {
+      width: 10%; 
+    }
+} 
+
+#record-condition-entries {
+  .review-field {
+    display: block; 
+    text-align: left;
+  }
+}
