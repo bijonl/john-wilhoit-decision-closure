@@ -4,7 +4,7 @@
 
 <div id="dk-app" class="deal-killers-app">
 
-  <form id="dk-form">
+  <form id="dc-form">
 
     <h1>Decision Closure</h1>
 
@@ -14,7 +14,7 @@
     ====================================================== -->
 
     <div class="form-section active-section" id="decision-closure-context-section">
-      <button id="test-pdf-button" type="button">
+      <button id="test-pdf-button" type="submit">
         Test PDF Generation
       </button>
 
@@ -26,7 +26,7 @@
           <label>
             <span class="field-label">Decision / transaction name</span>
             <input type="text" id="dc-dealReference" name="dealReference" maxlength="200"
-              placeholder="Oak Ridge Apts – Dallas TX – $21.5M" required>
+              placeholder="Oak Ridge Apts – Dallas TX – $21.5M">
           </label>
         </div>
 
@@ -43,7 +43,7 @@
 
           <div class="radio-group">
             <label>
-              <input type="radio" name="capitalEvent" value="acquisition" required>
+              <input type="radio" name="capitalEvent" value="acquisition">
               Acquisition
             </label>
 
@@ -77,7 +77,7 @@
         <div class="form-field">
           <label>
             <span class="field-label">Decision date</span>
-            <input type="date" id="dc-date" name="date" required>
+            <input type="date" id="dc-date" name="date">
           </label>
         </div>
 
@@ -94,8 +94,7 @@
             <p class="field-description">
               The person responsible for preparing this decision record.
             </p>
-            <input type="text" id="dc-decisionOwner" name="decisionOwner" maxlength="200" placeholder="Name and role"
-              required>
+            <input type="text" id="dc-decisionOwner" name="decisionOwner" maxlength="200" placeholder="Name and role">
           </label>
 
         </div>
@@ -107,7 +106,7 @@
               Who has authority to approve this capital decision?
             </p>
             <input type="text" id="dc-approvalAuthority" name="approvalAuthority" maxlength="200"
-              placeholder="Person, committee, or role" required>
+              placeholder="Person, committee, or role">
           </label>
 
         </div>
@@ -141,7 +140,7 @@
           <div class="radio-group">
 
             <label>
-              <input type="radio" name="proposedAction" id="dc-action-advance" value="advance" required>
+              <input type="radio" name="proposedAction" id="dc-action-advance" value="advance">
               ADVANCE
             </label>
             <label>
@@ -178,7 +177,7 @@
                 Under what condition does the modified decision proceed?
               </span>
               <textarea id="dc-modifyCondition" name="modifyCondition"
-                placeholder="Specify the condition required to proceed."></textarea>
+                placeholder="Specify the condition  to proceed."></textarea>
             </label>
           </div>
 
@@ -235,7 +234,7 @@
               or references where useful.
             </p>
             <textarea id="dc-materialEvidence" name="materialEvidence"
-              placeholder="Identify the evidence supporting this decision." required></textarea>
+              placeholder="Identify the evidence supporting this decision."></textarea>
           </label>
 
 
@@ -252,8 +251,8 @@
             <div class="risk-entry form-field">
               <label>
                 <span class="field-label">Risk 1</span>
-                <textarea name="acceptedRisks[]" placeholder="Describe a known risk, or enter None identified."
-                  required></textarea>
+                <textarea name="acceptedRisks[]"
+                  placeholder="Describe a known risk, or enter None identified."></textarea>
               </label>
             </div>
 
@@ -296,7 +295,7 @@
             What must be completed or evidenced for this decision?
           </span>
           <p class="field-help">
-            Add each condition separately. Record the outcome required,
+            Add each condition separately. Record the outcome ,
             its owner, due date, and the evidence that will demonstrate resolution.
           </p>
         </div>
@@ -351,8 +350,7 @@
               <div class="form-field">
                 <label>
                   <span class="field-label">Condition</span>
-                  <textarea data-field="condition" required
-                    placeholder="Describe the outcome that must occur."></textarea>
+                  <textarea data-field="condition" placeholder="Describe the outcome that must occur."></textarea>
                 </label>
               </div>
 
@@ -375,24 +373,24 @@
 
                 <div class="radio-group d-block">
                   <label>
-                    <input type="radio" data-field="timing" value="pre-commitment" required>
+                    <input type="radio" data-field="timing" value="pre-commitment">
                     Pre-commitment
                   </label>
 
 
                   <label>
-                    <input type="radio" data-field="timing" value="pre-funding" required>
+                    <input type="radio" data-field="timing" value="pre-funding">
                     Pre-funding
                   </label>
 
                   <label>
-                    <input type="radio" data-field="timing" value="monitoring" required>
+                    <input type="radio" data-field="timing" value="monitoring">
                     Monitoring
                   </label>
 
 
                   <label>
-                    <input type="radio" data-field="timing" value="accepted-exception" required>
+                    <input type="radio" data-field="timing" value="accepted-exception">
                     Accepted exception
                   </label>
 
@@ -402,21 +400,21 @@
               <div class="form-field">
                 <label>
                   <span class="field-label">Who is responsible?</span>
-                  <input type="text" data-field="owner" required placeholder="Person or party responsible">
+                  <input type="text" data-field="owner" placeholder="Person or party responsible">
                 </label>
               </div>
 
               <div class="form-field">
                 <label>
                   <span class="field-label">Due date</span>
-                  <input type="date" data-field="dueDate" required>
+                  <input type="date" data-field="dueDate">
                 </label>
               </div>
 
               <div class="form-field">
                 <label>
-                  <span class="field-label">Evidence required</span>
-                  <textarea data-field="evidence" required
+                  <span class="field-label">Evidence </span>
+                  <textarea data-field="evidence"
                     placeholder="What document, confirmation, or action demonstrates resolution?"></textarea>
                 </label>
               </div>
@@ -433,23 +431,23 @@
                 <span class="field-label">Status</span>
                 <div class="radio-group">
                   <label>
-                    <input type="radio" data-field="status" value="open" checked required>
+                    <input type="radio" data-field="status" value="open" checked>
                     Open
                   </label>
                   <label>
-                    <input type="radio" data-field="status" value="satisfied" required>
+                    <input type="radio" data-field="status" value="satisfied">
                     Satisfied
                   </label>
                   <label>
-                    <input type="radio" data-field="status" value="waived" required>
+                    <input type="radio" data-field="status" value="waived">
                     Waived
                   </label>
                   <label>
-                    <input type="radio" data-field="status" value="failed" required>
+                    <input type="radio" data-field="status" value="failed">
                     Failed
                   </label>
                   <label>
-                    <input type="radio" data-field="status" value="changed" required>
+                    <input type="radio" data-field="status" value="changed">
                     Changed
                   </label>
                 </div>
@@ -524,13 +522,13 @@
                 What consequence is ownership knowingly accepting by authorizing this decision?
               </span>
               <p class="field-description">
-                Consider capital at risk, required performance, timing, financing,
+                Consider capital at risk, performance, timing, financing,
                 execution, reduced alternatives, exit, accepted exceptions, possible
                 additional capital and accountability.
               </p>
 
               <textarea id="dc-consequenceStatement" name="consequenceStatement" maxlength="2000"
-                placeholder="State the material consequence in your own words." required></textarea>
+                placeholder="State the material consequence in your own words."></textarea>
             </label>
 
 
@@ -568,7 +566,7 @@
               If recovery is not applicable, explain why. Do not leave this field blank.
             </p>
 
-            <textarea id="dc-recovery" name="recoveryPlan" required
+            <textarea id="dc-recovery" name="recoveryPlan"
               placeholder="Describe how exposure could be contained, reduced, exited, or recovered."></textarea>
 
             <label class="checkbox-field">
@@ -621,7 +619,7 @@
               </span>
 
               <textarea name="keyAssumptions[]"
-                placeholder="Describe a material fact or expectation this decision depends on." required></textarea>
+                placeholder="Describe a material fact or expectation this decision depends on."></textarea>
             </label>
           </div>
 
@@ -698,7 +696,7 @@
                 Why is this decision defensible now?
               </span>
               <textarea id="dc-decisionBasis" name="decisionBasis" maxlength="2000"
-                placeholder="Explain why this decision is defensible at this point in time." required></textarea>
+                placeholder="Explain why this decision is defensible at this point in time."></textarea>
             </label>
           </div>
 
@@ -707,14 +705,14 @@
             <label for="dc-confirmingPerson">
               <span class="field-label">Confirming person — name / role</span>
               <input type="text" id="dc-confirmingPerson" name="confirmingPerson" maxlength="200"
-                placeholder="Name and role of the person confirming this record" required>
+                placeholder="Name and role of the person confirming this record">
             </label>
           </div>
 
           <div class="form-field">
             <label for="dc-confirmationDate">
               <span class="field-label">Confirmation date</span>
-              <input type="date" id="dc-confirmationDate" name="confirmationDate" required>
+              <input type="date" id="dc-confirmationDate" name="confirmationDate">
             </label>
           </div>
 
@@ -725,12 +723,12 @@
             <div class="dc-acknowledgements">
 
               <label>
-                <input type="checkbox" id="dc-ack-decision-basis" name="ackDecisionBasis" value="yes" required>
+                <input type="checkbox" id="dc-ack-decision-basis" name="ackDecisionBasis" value="yes">
                 I confirm this record reflects the decision basis.
               </label>
 
               <label>
-                <input type="checkbox" id="dc-ack-final-closure" name="ackFinalClosure" value="yes" required>
+                <input type="checkbox" id="dc-ack-final-closure" name="ackFinalClosure" value="yes">
                 I confirm that this record closes this decision inside
                 Decision Closure. The selected posture, decision basis,
                 stated consequence, and approval authority become final
@@ -1098,14 +1096,14 @@
             <div class="form-field">
               <label for="byw-verification-date">
                 <span class="field-label">Verification Date</span>
-                <input type="date" id="byw-verification-date" name="verificationDate" required>
+                <input type="date" id="byw-verification-date" name="verificationDate">
               </label>
             </div>
 
             <div class="form-field">
               <label for="byw-expected-release-date">
                 <span class="field-label">Expected Release Date</span>
-                <input type="date" id="byw-expected-release-date" name="expectedReleaseDate" required>
+                <input type="date" id="byw-expected-release-date" name="expectedReleaseDate">
               </label>
             </div>
 
@@ -1162,8 +1160,8 @@
                 </div>
 
                 <div class="form-field">
-                  <span class="field-label">Required Evidence</span>
-                  <p data-display="evidenceRequired">—</p>
+                  <span class="field-label"> Evidence</span>
+                  <p data-display="evidence">—</p>
                 </div>
 
                 <div class="form-field">
@@ -1176,27 +1174,27 @@
 
                   <div class="radio-options" data-status-options>
                     <label>
-                      <input type="radio" data-input="status" value="open" required>
+                      <input type="radio" data-input="status" value="open">
                       Open
                     </label>
 
                     <label>
-                      <input type="radio" data-input="status" value="satisfied" required>
+                      <input type="radio" data-input="status" value="satisfied">
                       Satisfied
                     </label>
 
                     <label>
-                      <input type="radio" data-input="status" value="waived" required>
+                      <input type="radio" data-input="status" value="waived">
                       Waived
                     </label>
 
                     <label>
-                      <input type="radio" data-input="status" value="failed" required>
+                      <input type="radio" data-input="status" value="failed">
                       Failed
                     </label>
 
                     <label>
-                      <input type="radio" data-input="status" value="changed" required>
+                      <input type="radio" data-input="status" value="changed">
                       Changed
                     </label>
                   </div>
@@ -1205,7 +1203,7 @@
                 <div class="form-field">
                   <label>
                     <span class="field-label">Resolution Note</span>
-                    <textarea data-input="resolutionNote" required
+                    <textarea data-input="resolutionNote"
                       placeholder="Explain the current status and identify the supporting evidence, resolution, or reason the condition remains open."></textarea>
                   </label>
                 </div>
@@ -1273,7 +1271,7 @@
 
                 <div class="form-field">
                   <label>
-                    <input type="checkbox" data-input="reviewed" required>
+                    <input type="checkbox" data-input="reviewed">
                     I reviewed this condition and its current evidence and status.
                   </label>
                 </div>
@@ -1306,7 +1304,7 @@
         <h2>Documents, Approvals & Changed Facts</h2>
 
         <p class="field-help">
-          Verify that the required documents, approvals, facts and assumptions
+          Verify that the documents, approvals, facts and assumptions
           remain consistent with the closed decision. Do not use this screen to
           amend the original decision.
         </p>
@@ -1335,28 +1333,28 @@
           <h3>3. Documents and Approvals</h3>
 
           <div class="form-field">
-            <span class="field-label">Have the required documents been received?</span>
+            <span class="field-label">Have the documents been received?</span>
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="documentsReceived" value="yes" required>
+                <input type="radio" name="documentsReceived" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="documentsReceived" value="no" required>
+                <input type="radio" name="documentsReceived" value="no">
                 No
               </label>
 
               <label>
-                <input type="radio" name="documentsReceived" value="na" required>
+                <input type="radio" name="documentsReceived" value="na">
                 N/A
               </label>
             </div>
 
             <label for="byw-documents-note">
               <span class="field-label">Supporting Note</span>
-              <textarea id="byw-documents-note" name="documentsNote" required
+              <textarea id="byw-documents-note" name="documentsNote"
                 placeholder="Identify the documents and their dates, or explain what is missing or why N/A applies."></textarea>
             </label>
           </div>
@@ -1368,24 +1366,24 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="exceptionsResolved" value="yes" required>
+                <input type="radio" name="exceptionsResolved" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="exceptionsResolved" value="no" required>
+                <input type="radio" name="exceptionsResolved" value="no">
                 No
               </label>
 
               <label>
-                <input type="radio" name="exceptionsResolved" value="na" required>
+                <input type="radio" name="exceptionsResolved" value="na">
                 N/A
               </label>
             </div>
 
             <label for="byw-exceptions-note">
               <span class="field-label">Supporting Note</span>
-              <textarea id="byw-exceptions-note" name="exceptionsNote" required
+              <textarea id="byw-exceptions-note" name="exceptionsNote"
                 placeholder="State the resolution or accepted exception and identify the accepting authority; explain N/A."></textarea>
             </label>
           </div>
@@ -1395,19 +1393,19 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="finalApprovalsValid" value="yes" required>
+                <input type="radio" name="finalApprovalsValid" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="finalApprovalsValid" value="no" required>
+                <input type="radio" name="finalApprovalsValid" value="no">
                 No
               </label>
             </div>
 
             <label for="byw-final-approvals-note">
               <span class="field-label">Supporting Note</span>
-              <textarea id="byw-final-approvals-note" name="finalApprovalsNote" required
+              <textarea id="byw-final-approvals-note" name="finalApprovalsNote"
                 placeholder="Identify the approval and the evidence that it remains valid, or explain the problem."></textarea>
             </label>
           </div>
@@ -1423,19 +1421,19 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="materialFactsUnchanged" value="yes" required>
+                <input type="radio" name="materialFactsUnchanged" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="materialFactsUnchanged" value="no" required>
+                <input type="radio" name="materialFactsUnchanged" value="no">
                 No
               </label>
             </div>
 
             <label for="byw-material-facts-note">
               <span class="field-label">Explanation</span>
-              <textarea id="byw-material-facts-note" name="materialFactsNote" required
+              <textarea id="byw-material-facts-note" name="materialFactsNote"
                 placeholder="Explain whether material facts have changed since the decision was closed."></textarea>
             </label>
           </div>
@@ -1445,19 +1443,19 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="consequenceChanged" id="byw-consequence-changed" value="yes" required>
+                <input type="radio" name="consequenceChanged" id="byw-consequence-changed" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="consequenceChanged" id="byw-consequence-unchanged" value="no" required>
+                <input type="radio" name="consequenceChanged" id="byw-consequence-unchanged" value="no">
                 No
               </label>
             </div>
 
             <label for="byw-consequence-changed-note">
               <span class="field-label">Explanation</span>
-              <textarea id="byw-consequence-changed-note" name="consequenceChangedNote" required
+              <textarea id="byw-consequence-changed-note" name="consequenceChangedNote"
                 placeholder="Explain whether and how the consequence has changed."></textarea>
             </label>
           </div>
@@ -1485,19 +1483,19 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="assumptionsRemainValid" value="yes" required>
+                <input type="radio" name="assumptionsRemainValid" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="assumptionsRemainValid" value="no" required>
+                <input type="radio" name="assumptionsRemainValid" value="no">
                 No
               </label>
             </div>
 
             <label for="byw-assumptions-note">
               <span class="field-label">Explanation</span>
-              <textarea id="byw-assumptions-note" name="assumptionsNote" required
+              <textarea id="byw-assumptions-note" name="assumptionsNote"
                 placeholder="Explain whether the original key assumptions remain materially valid."></textarea>
             </label>
           </div>
@@ -1505,7 +1503,7 @@
           <div class="form-field">
             <label for="byw-new-material-facts">
               <span class="field-label">What new material facts have emerged?</span>
-              <textarea id="byw-new-material-facts" name="newMaterialFacts" required
+              <textarea id="byw-new-material-facts" name="newMaterialFacts"
                 placeholder="Describe new material facts, or explicitly enter None."></textarea>
             </label>
           </div>
@@ -1517,12 +1515,12 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="decisionSupportsRelease" value="yes" required>
+                <input type="radio" name="decisionSupportsRelease" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="decisionSupportsRelease" value="no" required>
+                <input type="radio" name="decisionSupportsRelease" value="no">
                 No
               </label>
             </div>
@@ -1542,7 +1540,7 @@
           <p class="field-help">
             Select the disposition supported by this verification. Selecting
             Authorized does not override unresolved conditions, an impermissible
-            waiver, missing required evidence or invalid approvals.
+            waiver, missing evidence or invalid approvals.
           </p>
 
           <div class="form-field">
@@ -1550,17 +1548,17 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="releaseDisposition" value="authorized" required>
+                <input type="radio" name="releaseDisposition" value="authorized">
                 Authorized
               </label>
 
               <label>
-                <input type="radio" name="releaseDisposition" value="on-hold" required>
+                <input type="radio" name="releaseDisposition" value="on-hold">
                 On Hold
               </label>
 
               <label>
-                <input type="radio" name="releaseDisposition" value="do-not-release" required>
+                <input type="radio" name="releaseDisposition" value="do-not-release">
                 Do Not Release
               </label>
             </div>
@@ -1587,7 +1585,7 @@
         <h2>Documents, Approvals & Changed Facts</h2>
 
         <p class="field-help">
-          Verify that the required documents, approvals, facts and assumptions
+          Verify that the documents, approvals, facts and assumptions
           remain consistent with the closed decision. Do not use this screen to
           amend the original decision.
         </p>
@@ -1616,28 +1614,28 @@
           <h3>3. Documents and Approvals</h3>
 
           <div class="form-field">
-            <span class="field-label">Have the required documents been received?</span>
+            <span class="field-label">Have the documents been received?</span>
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="documentsReceived" value="yes" required>
+                <input type="radio" name="documentsReceived" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="documentsReceived" value="no" required>
+                <input type="radio" name="documentsReceived" value="no">
                 No
               </label>
 
               <label>
-                <input type="radio" name="documentsReceived" value="na" required>
+                <input type="radio" name="documentsReceived" value="na">
                 N/A
               </label>
             </div>
 
             <label for="byw-documents-note">
               <span class="field-label">Supporting Note</span>
-              <textarea id="byw-documents-note" name="documentsNote" required
+              <textarea id="byw-documents-note" name="documentsNote"
                 placeholder="Identify the documents and their dates, or explain what is missing or why N/A applies."></textarea>
             </label>
           </div>
@@ -1649,24 +1647,24 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="exceptionsResolved" value="yes" required>
+                <input type="radio" name="exceptionsResolved" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="exceptionsResolved" value="no" required>
+                <input type="radio" name="exceptionsResolved" value="no">
                 No
               </label>
 
               <label>
-                <input type="radio" name="exceptionsResolved" value="na" required>
+                <input type="radio" name="exceptionsResolved" value="na">
                 N/A
               </label>
             </div>
 
             <label for="byw-exceptions-note">
               <span class="field-label">Supporting Note</span>
-              <textarea id="byw-exceptions-note" name="exceptionsNote" required
+              <textarea id="byw-exceptions-note" name="exceptionsNote"
                 placeholder="State the resolution or accepted exception and identify the accepting authority; explain N/A."></textarea>
             </label>
           </div>
@@ -1676,19 +1674,19 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="finalApprovalsValid" value="yes" required>
+                <input type="radio" name="finalApprovalsValid" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="finalApprovalsValid" value="no" required>
+                <input type="radio" name="finalApprovalsValid" value="no">
                 No
               </label>
             </div>
 
             <label for="byw-final-approvals-note">
               <span class="field-label">Supporting Note</span>
-              <textarea id="byw-final-approvals-note" name="finalApprovalsNote" required
+              <textarea id="byw-final-approvals-note" name="finalApprovalsNote"
                 placeholder="Identify the approval and the evidence that it remains valid, or explain the problem."></textarea>
             </label>
           </div>
@@ -1704,19 +1702,19 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="materialFactsUnchanged" value="yes" required>
+                <input type="radio" name="materialFactsUnchanged" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="materialFactsUnchanged" value="no" required>
+                <input type="radio" name="materialFactsUnchanged" value="no">
                 No
               </label>
             </div>
 
             <label for="byw-material-facts-note">
               <span class="field-label">Explanation</span>
-              <textarea id="byw-material-facts-note" name="materialFactsNote" required
+              <textarea id="byw-material-facts-note" name="materialFactsNote"
                 placeholder="Explain whether material facts have changed since the decision was closed."></textarea>
             </label>
           </div>
@@ -1726,19 +1724,19 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="consequenceChanged" id="byw-consequence-changed" value="yes" required>
+                <input type="radio" name="consequenceChanged" id="byw-consequence-changed" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="consequenceChanged" id="byw-consequence-unchanged" value="no" required>
+                <input type="radio" name="consequenceChanged" id="byw-consequence-unchanged" value="no">
                 No
               </label>
             </div>
 
             <label for="byw-consequence-changed-note">
               <span class="field-label">Explanation</span>
-              <textarea id="byw-consequence-changed-note" name="consequenceChangedNote" required
+              <textarea id="byw-consequence-changed-note" name="consequenceChangedNote"
                 placeholder="Explain whether and how the consequence has changed."></textarea>
             </label>
           </div>
@@ -1766,19 +1764,19 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="assumptionsRemainValid" value="yes" required>
+                <input type="radio" name="assumptionsRemainValid" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="assumptionsRemainValid" value="no" required>
+                <input type="radio" name="assumptionsRemainValid" value="no">
                 No
               </label>
             </div>
 
             <label for="byw-assumptions-note">
               <span class="field-label">Explanation</span>
-              <textarea id="byw-assumptions-note" name="assumptionsNote" required
+              <textarea id="byw-assumptions-note" name="assumptionsNote"
                 placeholder="Explain whether the original key assumptions remain materially valid."></textarea>
             </label>
           </div>
@@ -1786,7 +1784,7 @@
           <div class="form-field">
             <label for="byw-new-material-facts">
               <span class="field-label">What new material facts have emerged?</span>
-              <textarea id="byw-new-material-facts" name="newMaterialFacts" required
+              <textarea id="byw-new-material-facts" name="newMaterialFacts"
                 placeholder="Describe new material facts, or explicitly enter None."></textarea>
             </label>
           </div>
@@ -1798,12 +1796,12 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="decisionSupportsRelease" value="yes" required>
+                <input type="radio" name="decisionSupportsRelease" value="yes">
                 Yes
               </label>
 
               <label>
-                <input type="radio" name="decisionSupportsRelease" value="no" required>
+                <input type="radio" name="decisionSupportsRelease" value="no">
                 No
               </label>
             </div>
@@ -1823,7 +1821,7 @@
           <p class="field-help">
             Select the disposition supported by this verification. Selecting
             Authorized does not override unresolved conditions, an impermissible
-            waiver, missing required evidence or invalid approvals.
+            waiver, missing evidence or invalid approvals.
           </p>
 
           <div class="form-field">
@@ -1831,17 +1829,17 @@
 
             <div class="radio-options">
               <label>
-                <input type="radio" name="releaseDisposition" value="authorized" required>
+                <input type="radio" name="releaseDisposition" value="authorized">
                 Authorized
               </label>
 
               <label>
-                <input type="radio" name="releaseDisposition" value="on-hold" required>
+                <input type="radio" name="releaseDisposition" value="on-hold">
                 On Hold
               </label>
 
               <label>
-                <input type="radio" name="releaseDisposition" value="do-not-release" required>
+                <input type="radio" name="releaseDisposition" value="do-not-release">
                 Do Not Release
               </label>
             </div>

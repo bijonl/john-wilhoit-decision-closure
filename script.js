@@ -4,10 +4,10 @@
 
 const sections = [...document.querySelectorAll('#dk-form > .form-section')];
 
-  const recordId = `WAR-${Date.now()}-${Math.random()
-        .toString(36)
-        .substring(2, 8)
-        .toUpperCase()}`;
+const recordId = `DC-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase()}`;
 
 
 
@@ -1429,7 +1429,7 @@ updateConditionCounts();
 
 
 
-document.querySelector('#dk-view-pdf-btn').addEventListener('click', (e) => {
+document.querySelector('#test-pdf-button').addEventListener('click', (e) => {
 
     // e.preventDefault();
 
@@ -1586,100 +1586,100 @@ function addFooter(doc) {
 }
 
 
-function generatePDF(formData, recordId) {
+// function generatePDF(formData, recordId) {
 
-//       // =====================================================
-//     // CREATE PDF
-//     // =====================================================
+// //       // =====================================================
+// //     // CREATE PDF
+// //     // =====================================================
 
-    const doc = new PDFDocument({
-        font: 'Helvetica'
-    });
-
-
-//     // =====================================================
-//     // HEADER / FOOTER
-//     // =====================================================
-
-    // Add header/footer to every NEW page
-    doc.on('pageAdded', function () {
-
-        addHeader(doc);
-        // addFooter(doc);
-
-    });
-
-    // Add header/footer to first page
-    addHeader(doc);
-    // addFooter(doc);
-
-    // Start content below header
-    doc.y = 100;
+//     const doc = new PDFDocument({
+//         font: 'Helvetica'
+//     });
 
 
-//     // =====================================================
-//     // COLLECT PDF DATA
-//     // =====================================================
+// //     // =====================================================
+// //     // HEADER / FOOTER
+// //     // =====================================================
 
-    const chunks = [];
+//     // Add header/footer to every NEW page
+//     doc.on('pageAdded', function () {
 
+//         addHeader(doc);
+//         // addFooter(doc);
 
-    doc.on('data', function (chunk) {
+//     });
 
-        chunks.push(chunk);
+//     // Add header/footer to first page
+//     addHeader(doc);
+//     // addFooter(doc);
 
-    });
-
-
-//     // =====================================================
-//     // PDF FINISHED
-//     // =====================================================
-
-    doc.on('end', function () {
-
-        console.log('PDF generated!');
-        console.log('Chunks:', chunks.length);
+//     // Start content below header
+//     doc.y = 100;
 
 
-        const blob = new Blob(chunks, {
-            type: 'application/pdf'
-        });
+// //     // =====================================================
+// //     // COLLECT PDF DATA
+// //     // =====================================================
 
-        const url = URL.createObjectURL(blob);
-
-        console.log(url); 
+//     const chunks = [];
 
 
-        // View PDF button
-        const viewBtn = document.getElementById('dk-view-pdf-btn');
+//     doc.on('data', function (chunk) {
 
-        viewBtn.href = url;
-        viewBtn.target = '_blank';
-        viewBtn.style.display = 'inline-block';
+//         chunks.push(chunk);
+
+//     });
 
 
-        // Download PDF button
-        // const downloadBtn = document.getElementById('dk-download-btn');
+// //     // =====================================================
+// //     // PDF FINISHED
+// //     // =====================================================
 
-        // downloadBtn.href = url;
-        // downloadBtn.download = 'walk-away-results.pdf';
-        // downloadBtn.style.display = 'inline-block';
+//     doc.on('end', function () {
 
-         // Show success screen
-        // const successSection = document.getElementById('success-section');
+//         console.log('PDF generated!');
+//         console.log('Chunks:', chunks.length);
 
-        // if (successSection) {
-        //     showSection(successSection);
-        // }
 
-    });
+//         const blob = new Blob(chunks, {
+//             type: 'application/pdf'
+//         });
+
+//         const url = URL.createObjectURL(blob);
+
+//         console.log(url); 
+
+
+//         // View PDF button
+//         const viewBtn = document.getElementById('test-pdf-button');
+
+//         viewBtn.href = url;
+//         viewBtn.target = '_blank';
+//         viewBtn.style.display = 'inline-block';
+
+
+//         // Download PDF button
+//         // const downloadBtn = document.getElementById('dk-download-btn');
+
+//         // downloadBtn.href = url;
+//         // downloadBtn.download = 'walk-away-results.pdf';
+//         // downloadBtn.style.display = 'inline-block';
+
+//          // Show success screen
+//         // const successSection = document.getElementById('success-section');
+
+//         // if (successSection) {
+//         //     showSection(successSection);
+//         // }
+
+//     });
 
 
 //     // =====================================================
 //     // CREATE PDF SECTIONS
 //     // =====================================================
 
-    const title = 'Walk Away Decision Record'; 
+    // const title = 'Walk Away Decision Record'; 
 
 
     // createPDFIntro(
@@ -1713,930 +1713,930 @@ function generatePDF(formData, recordId) {
     // );
 
 
-    doc.end();
+//     doc.end();
 
-}
+// }
 
 
-function createPDFIntro(doc, formData, title) {
+// function createPDFIntro(doc, formData, title) {
 
-    const decision = formData.get('decision');
+//     const decision = formData.get('decision');
 
-    let decisionText; 
+//     let decisionText; 
 
-    if (decision === 'stop') { 
+//     if (decision === 'stop') { 
 
-        decisionText = 'STOP'; 
+//         decisionText = 'STOP'; 
 
-    } else if (decision === 'continue') {
+//     } else if (decision === 'continue') {
 
-        decisionText = 'CONTINUE'; 
+//         decisionText = 'CONTINUE'; 
 
-    } else if (decision === 'require-proof') {
+//     } else if (decision === 'require-proof') {
 
-        decisionText = 'REQUIRE MORE PROOF'; 
+//         decisionText = 'REQUIRE MORE PROOF'; 
 
-    }
+//     }
 
 
-    // Title
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(30)
-        .text(title, 50, doc.y);
+//     // Title
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(30)
+//         .text(title, 50, doc.y);
 
 
-    doc.moveDown();
+//     doc.moveDown();
 
 
-    // Selected decision
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(18)
-        .text('SELECTED DECISION: ', {
-            continued: true
-        })
-        .font('Helvetica')
-        .text(decisionText, {
-            width: 510,
-            align: 'left'
-        });
+//     // Selected decision
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(18)
+//         .text('SELECTED DECISION: ', {
+//             continued: true
+//         })
+//         .font('Helvetica')
+//         .text(decisionText, {
+//             width: 510,
+//             align: 'left'
+//         });
 
 
-    doc.moveDown();
+//     doc.moveDown();
 
-}
+// }
 
 
-function PDFCreateTable(doc, formData, recordId) {
+// function PDFCreateTable(doc, formData, recordId) {
 
-    const dealReference = formData.get('dealReference');
-    const decisionOwner = formData.get('email');
-    const decisionDate = formData.get('date');
+//     const dealReference = formData.get('dealReference');
+//     const decisionOwner = formData.get('email');
+//     const decisionDate = formData.get('date');
 
 
-    // Generate timestamp
-    const generatedTimestamp = new Date().toLocaleString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZoneName: 'short'
-    }); 
+//     // Generate timestamp
+//     const generatedTimestamp = new Date().toLocaleString('en-US', {
+//         month: 'long',
+//         day: 'numeric',
+//         year: 'numeric',
+//         hour: 'numeric',
+//         minute: '2-digit',
+//         timeZoneName: 'short'
+//     }); 
 
 
-    // Format decision date
-    const formattedDate = decisionDate
-        ? new Date(`${decisionDate}T00:00:00`).toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric'
-        })
-        : '';
+//     // Format decision date
+//     const formattedDate = decisionDate
+//         ? new Date(`${decisionDate}T00:00:00`).toLocaleDateString('en-US', {
+//             month: 'long',
+//             day: 'numeric',
+//             year: 'numeric'
+//         })
+//         : '';
 
 
-    const tableX = 50;
-    const tableWidth = 512;
+//     const tableX = 50;
+//     const tableWidth = 512;
 
-    const detailWidth = 200;
-    const valueWidth = tableWidth - detailWidth;
+//     const detailWidth = 200;
+//     const valueWidth = tableWidth - detailWidth;
 
-    const headerHeight = 32;
+//     const headerHeight = 32;
 
 
-    const rows = [
-        [
-            'Decision / deal name',
-            dealReference
-        ],
-        [
-            'Decision owner',
-            decisionOwner
-        ],
-        [
-            'Decision date',
-            formattedDate
-        ],
-        [
-            'Record ID',
-            recordId
-        ],
-        [
-            'Generated',
-            generatedTimestamp
-        ]
-    ];
-
-
-    // Font settings
-    const headerFontSize = 14;
-    const bodyFontSize = 12;
+//     const rows = [
+//         [
+//             'Decision / deal name',
+//             dealReference
+//         ],
+//         [
+//             'Decision owner',
+//             decisionOwner
+//         ],
+//         [
+//             'Decision date',
+//             formattedDate
+//         ],
+//         [
+//             'Record ID',
+//             recordId
+//         ],
+//         [
+//             'Generated',
+//             generatedTimestamp
+//         ]
+//     ];
+
+
+//     // Font settings
+//     const headerFontSize = 14;
+//     const bodyFontSize = 12;
 
 
-    // Row settings
-    const rowLineHeight = 12;
-    const minimumRowHeight = rowLineHeight * 2;
+//     // Row settings
+//     const rowLineHeight = 12;
+//     const minimumRowHeight = rowLineHeight * 2;
 
-
-    // Calculate row heights based on the value column
-    doc
-        .font('Helvetica')
-        .fontSize(bodyFontSize);
+
+//     // Calculate row heights based on the value column
+//     doc
+//         .font('Helvetica')
+//         .fontSize(bodyFontSize);
 
 
-    const rowHeights = rows.map(row => {
+//     const rowHeights = rows.map(row => {
 
-        const valueHeight = doc.heightOfString(row[1] || '', {
-            width: valueWidth - 20,
-            lineGap: 0
-        });
+//         const valueHeight = doc.heightOfString(row[1] || '', {
+//             width: valueWidth - 20,
+//             lineGap: 0
+//         });
 
-        return Math.max(
-            minimumRowHeight,
-            valueHeight
-        ) + 8;
+//         return Math.max(
+//             minimumRowHeight,
+//             valueHeight
+//         ) + 8;
 
-    });
+//     });
 
 
-    // Header
-    const headerY = doc.y;
+//     // Header
+//     const headerY = doc.y;
 
 
-    doc
-        .fillColor('#E6E6E6')
-        .rect(tableX, headerY, detailWidth, headerHeight)
-        .fill();
+//     doc
+//         .fillColor('#E6E6E6')
+//         .rect(tableX, headerY, detailWidth, headerHeight)
+//         .fill();
 
 
-    doc
-        .rect(
-            tableX + detailWidth,
-            headerY,
-            valueWidth,
-            headerHeight
-        )
-        .fill();
-
-
-    // Header borders
-    doc
-        .strokeColor('#104E75')
-        .lineWidth(1)
-        .rect(tableX, headerY, detailWidth, headerHeight)
-        .stroke();
-
-
-    doc
-        .rect(
-            tableX + detailWidth,
-            headerY,
-            valueWidth,
-            headerHeight
-        )
-        .stroke();
+//     doc
+//         .rect(
+//             tableX + detailWidth,
+//             headerY,
+//             valueWidth,
+//             headerHeight
+//         )
+//         .fill();
+
+
+//     // Header borders
+//     doc
+//         .strokeColor('#104E75')
+//         .lineWidth(1)
+//         .rect(tableX, headerY, detailWidth, headerHeight)
+//         .stroke();
+
+
+//     doc
+//         .rect(
+//             tableX + detailWidth,
+//             headerY,
+//             valueWidth,
+//             headerHeight
+//         )
+//         .stroke();
 
 
-    // Header text
-    doc
-        .fillColor('#000000')
-        .font('Helvetica-Bold')
-        .fontSize(headerFontSize)
-        .text(
-            'Decision Details',
-            tableX + 10,
-            headerY + 10,
-            {
-                width: detailWidth - 20
-            }
-        )
-        .text(
-            'Recorded value',
-            tableX + detailWidth + 10,
-            headerY + 10,
-            {
-                width: valueWidth - 20
-            }
-        );
+//     // Header text
+//     doc
+//         .fillColor('#000000')
+//         .font('Helvetica-Bold')
+//         .fontSize(headerFontSize)
+//         .text(
+//             'Decision Details',
+//             tableX + 10,
+//             headerY + 10,
+//             {
+//                 width: detailWidth - 20
+//             }
+//         )
+//         .text(
+//             'Recorded value',
+//             tableX + detailWidth + 10,
+//             headerY + 10,
+//             {
+//                 width: valueWidth - 20
+//             }
+//         );
 
 
-    // Rows
-    let currentY = headerY + headerHeight;
+//     // Rows
+//     let currentY = headerY + headerHeight;
 
 
-    rows.forEach((row, index) => {
+//     rows.forEach((row, index) => {
 
-        const rowHeight = rowHeights[index];
+//         const rowHeight = rowHeights[index];
 
-        const x1 = tableX;
-        const x2 = tableX + detailWidth;
+//         const x1 = tableX;
+//         const x2 = tableX + detailWidth;
 
 
-        // Cell backgrounds
-        doc
-            .fillColor('#FFFFFF')
-            .rect(x1, currentY, detailWidth, rowHeight)
-            .fill();
+//         // Cell backgrounds
+//         doc
+//             .fillColor('#FFFFFF')
+//             .rect(x1, currentY, detailWidth, rowHeight)
+//             .fill();
 
 
-        doc
-            .rect(x2, currentY, valueWidth, rowHeight)
-            .fill();
+//         doc
+//             .rect(x2, currentY, valueWidth, rowHeight)
+//             .fill();
 
 
-        // Cell borders
-        doc
-            .strokeColor('#104E75')
-            .lineWidth(1)
-            .rect(x1, currentY, detailWidth, rowHeight)
-            .stroke();
+//         // Cell borders
+//         doc
+//             .strokeColor('#104E75')
+//             .lineWidth(1)
+//             .rect(x1, currentY, detailWidth, rowHeight)
+//             .stroke();
 
 
-        doc
-            .rect(x2, currentY, valueWidth, rowHeight)
-            .stroke();
+//         doc
+//             .rect(x2, currentY, valueWidth, rowHeight)
+//             .stroke();
 
 
-        // Cell text
-        doc
-            .fillColor('#000000')
-            .font('Helvetica')
-            .fontSize(bodyFontSize)
-            .text(
-                row[0],
-                x1 + 10,
-                currentY + 6,
-                {
-                    width: detailWidth - 20,
-                    lineGap: 0
-                }
-            )
-            .text(
-                row[1] || '',
-                x2 + 10,
-                currentY + 6,
-                {
-                    width: valueWidth - 20,
-                    lineGap: 0
-                }
-            );
+//         // Cell text
+//         doc
+//             .fillColor('#000000')
+//             .font('Helvetica')
+//             .fontSize(bodyFontSize)
+//             .text(
+//                 row[0],
+//                 x1 + 10,
+//                 currentY + 6,
+//                 {
+//                     width: detailWidth - 20,
+//                     lineGap: 0
+//                 }
+//             )
+//             .text(
+//                 row[1] || '',
+//                 x2 + 10,
+//                 currentY + 6,
+//                 {
+//                     width: valueWidth - 20,
+//                     lineGap: 0
+//                 }
+//             );
 
 
-        currentY += rowHeight;
+//         currentY += rowHeight;
 
-    });
+//     });
 
 
-    // Move below table
-    doc.y = currentY;
+//     // Move below table
+//     doc.y = currentY;
 
 
-    // Reset formatting
-    doc
-        .fillColor('#000000')
-        .strokeColor('#000000')
-        .font('Helvetica')
-        .fontSize(12);
+//     // Reset formatting
+//     doc
+//         .fillColor('#000000')
+//         .strokeColor('#000000')
+//         .font('Helvetica')
+//         .fontSize(12);
 
-}
+// }
 
 
-function PDFCreateDecisionRecord(doc, formData, recordId) {
+// function PDFCreateDecisionRecord(doc, formData, recordId) {
 
-    const concern = formData.get('concern'); 
-    const commit = formData.get('commit'); 
-    const supportingFacts = formData.get('supportingFacts'); 
-    const opposingFacts = formData.get('opposingFacts'); 
-    const missingFacts = formData.get('missingFacts');
-    const consequence = formData.get('consequence'); 
+//     const concern = formData.get('concern'); 
+//     const commit = formData.get('commit'); 
+//     const supportingFacts = formData.get('supportingFacts'); 
+//     const opposingFacts = formData.get('opposingFacts'); 
+//     const missingFacts = formData.get('missingFacts');
+//     const consequence = formData.get('consequence'); 
 
 
-    const contentBottom = 730;
+//     const contentBottom = 730;
 
 
-    function checkPageSpace(requiredSpace) {
+//     function checkPageSpace(requiredSpace) {
 
-        if (doc.y + requiredSpace > contentBottom) {
+//         if (doc.y + requiredSpace > contentBottom) {
 
-            doc.addPage();
-            doc.y = 100;
+//             doc.addPage();
+//             doc.y = 100;
 
-        }
+//         }
 
-    }
+//     }
 
 
-    // Space before first section
-    doc.y += 30;
+//     // Space before first section
+//     doc.y += 30;
 
 
-    // Concern
-    checkPageSpace(100);
+//     // Concern
+//     checkPageSpace(100);
 
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(16)
-        .text('Concern', 50, doc.y);
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(16)
+//         .text('Concern', 50, doc.y);
 
-    doc
-        .font('Helvetica')
-        .fontSize(12)
-        .text(
-            concern,
-            50,
-            doc.y
-        );
+//     doc
+//         .font('Helvetica')
+//         .fontSize(12)
+//         .text(
+//             concern,
+//             50,
+//             doc.y
+//         );
 
-    doc.moveDown();
+//     doc.moveDown();
 
 
-    // Next commitment
-    checkPageSpace(100);
+//     // Next commitment
+//     checkPageSpace(100);
 
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(16)
-        .text('Next commitment', 50, doc.y);
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(16)
+//         .text('Next commitment', 50, doc.y);
 
-    doc
-        .font('Helvetica')
-        .fontSize(12)
-        .text(
-            commit,
-            50,
-            doc.y
-        );
+//     doc
+//         .font('Helvetica')
+//         .fontSize(12)
+//         .text(
+//             commit,
+//             50,
+//             doc.y
+//         );
 
-    doc.moveDown();
+//     doc.moveDown();
 
 
-    // Facts supporting the next step
-    checkPageSpace(100);
+//     // Facts supporting the next step
+//     checkPageSpace(100);
 
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(16)
-        .text('Facts supporting the next step', 50, doc.y);
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(16)
+//         .text('Facts supporting the next step', 50, doc.y);
 
-    doc
-        .font('Helvetica')
-        .fontSize(12)
-        .text(
-            supportingFacts,
-            50,
-            doc.y
-        );
+//     doc
+//         .font('Helvetica')
+//         .fontSize(12)
+//         .text(
+//             supportingFacts,
+//             50,
+//             doc.y
+//         );
 
-    doc.moveDown();
+//     doc.moveDown();
 
 
-    // Facts arguing against the next step
-    checkPageSpace(100);
+//     // Facts arguing against the next step
+//     checkPageSpace(100);
 
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(16)
-        .text('Facts arguing against the next step', 50, doc.y);
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(16)
+//         .text('Facts arguing against the next step', 50, doc.y);
 
-    doc
-        .font('Helvetica')
-        .fontSize(12)
-        .text(
-            opposingFacts,
-            50,
-            doc.y
-        );
+//     doc
+//         .font('Helvetica')
+//         .fontSize(12)
+//         .text(
+//             opposingFacts,
+//             50,
+//             doc.y
+//         );
 
-    doc.moveDown();
+//     doc.moveDown();
 
 
-    // Missing or unverified facts
-    checkPageSpace(100);
+//     // Missing or unverified facts
+//     checkPageSpace(100);
 
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(16)
-        .text('Missing or unverified facts', 50, doc.y);
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(16)
+//         .text('Missing or unverified facts', 50, doc.y);
 
-    doc
-        .font('Helvetica')
-        .fontSize(12)
-        .text(
-            missingFacts,
-            50,
-            doc.y
-        );
+//     doc
+//         .font('Helvetica')
+//         .fontSize(12)
+//         .text(
+//             missingFacts,
+//             50,
+//             doc.y
+//         );
 
-    doc.moveDown();
+//     doc.moveDown();
 
 
-    // Consequence
-    checkPageSpace(100);
+//     // Consequence
+//     checkPageSpace(100);
 
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(16)
-        .text('Consequence', 50, doc.y);
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(16)
+//         .text('Consequence', 50, doc.y);
 
-    doc
-        .font('Helvetica')
-        .fontSize(12)
-        .text(
-            consequence,
-            50,
-            doc.y
-        );
+//     doc
+//         .font('Helvetica')
+//         .fontSize(12)
+//         .text(
+//             consequence,
+//             50,
+//             doc.y
+//         );
 
-}
+// }
 
 
-function createPDFFourChecks(doc, formData, recordId) {
+// function createPDFFourChecks(doc, formData, recordId) {
 
-    const dealReference = formData.get('dealReference'); 
-    const decision = formData.get('decision'); 
-    const evidenceEnough = formData.get('evidenceEnough'); 
-    const wrongConsequence = formData.get('wrongConsequence'); 
-    const momentum = formData.get('momentum'); 
-    const undoability = formData.get('undoability'); 
-    const decisionRightNow = formData.get('decision-right-now'); 
-    const conditions = formData.get('conditions');  
+//     const dealReference = formData.get('dealReference'); 
+//     const decision = formData.get('decision'); 
+//     const evidenceEnough = formData.get('evidenceEnough'); 
+//     const wrongConsequence = formData.get('wrongConsequence'); 
+//     const momentum = formData.get('momentum'); 
+//     const undoability = formData.get('undoability'); 
+//     const decisionRightNow = formData.get('decision-right-now'); 
+//     const conditions = formData.get('conditions');  
 
 
-    doc.addPage(); 
-    doc.y = 100;
+//     doc.addPage(); 
+//     doc.y = 100;
 
 
-    // Deal reference
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(16)
-        .text(dealReference, 50, doc.y);
+//     // Deal reference
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(16)
+//         .text(dealReference, 50, doc.y);
 
 
-    doc
-        .font('Helvetica-Oblique')
-        .fontSize(10)
-        .text(recordId, 50, doc.y);
+//     doc
+//         .font('Helvetica-Oblique')
+//         .fontSize(10)
+//         .text(recordId, 50, doc.y);
 
 
-    doc.moveDown();
+//     doc.moveDown();
 
 
-    // Selected decision
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(18)
-        .text(`SELECTED DECISION: ${decision}`, 50, doc.y);
+//     // Selected decision
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(18)
+//         .text(`SELECTED DECISION: ${decision}`, 50, doc.y);
 
 
-    doc.moveDown();
+//     doc.moveDown();
 
 
-    // Section title
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(24)
-        .text('Four decision checks', 50, doc.y);
+//     // Section title
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(24)
+//         .text('Four decision checks', 50, doc.y);
 
 
-    // Table settings
-    const tableX = 50;
-    const tableWidth = 512;
-    const checkWidth = 350;
-    const answerWidth = tableWidth - checkWidth;
-    const rowHeight = 32;
+//     // Table settings
+//     const tableX = 50;
+//     const tableWidth = 512;
+//     const checkWidth = 350;
+//     const answerWidth = tableWidth - checkWidth;
+//     const rowHeight = 32;
 
 
-    const rows = [
-        ['Evidence Sufficiency', evidenceEnough.toUpperCase()],
-        ['Consequence Clarity', wrongConsequence.toUpperCase().replace('-', ' ')],
-        ['Reversibility', undoability.toUpperCase()],
-        ['Momentum / Sunk-Cost Pressure', momentum.toUpperCase()]
-    ];
+//     const rows = [
+//         ['Evidence Sufficiency', evidenceEnough.toUpperCase()],
+//         ['Consequence Clarity', wrongConsequence.toUpperCase().replace('-', ' ')],
+//         ['Reversibility', undoability.toUpperCase()],
+//         ['Momentum / Sunk-Cost Pressure', momentum.toUpperCase()]
+//     ];
 
 
-    // Header
-    const headerY = doc.y;
+//     // Header
+//     const headerY = doc.y;
 
 
-    doc
-        .rect(tableX, headerY, checkWidth, rowHeight)
-        .fill('#E6E6E6');
+//     doc
+//         .rect(tableX, headerY, checkWidth, rowHeight)
+//         .fill('#E6E6E6');
 
 
-    doc
-        .rect(
-            tableX + checkWidth,
-            headerY,
-            answerWidth,
-            rowHeight
-        )
-        .fill('#E6E6E6');
+//     doc
+//         .rect(
+//             tableX + checkWidth,
+//             headerY,
+//             answerWidth,
+//             rowHeight
+//         )
+//         .fill('#E6E6E6');
 
 
-    doc
-        .fillColor('#000000')
-        .font('Helvetica-Bold')
-        .fontSize(11)
-        .text(
-            'Check',
-            tableX + 10,
-            headerY + 10,
-            {
-                width: checkWidth - 20
-            }
-        )
-        .text(
-            'Selected answer',
-            tableX + checkWidth + 10,
-            headerY + 10,
-            {
-                width: answerWidth - 20
-            }
-        );
+//     doc
+//         .fillColor('#000000')
+//         .font('Helvetica-Bold')
+//         .fontSize(11)
+//         .text(
+//             'Check',
+//             tableX + 10,
+//             headerY + 10,
+//             {
+//                 width: checkWidth - 20
+//             }
+//         )
+//         .text(
+//             'Selected answer',
+//             tableX + checkWidth + 10,
+//             headerY + 10,
+//             {
+//                 width: answerWidth - 20
+//             }
+//         );
 
 
-    // Rows
-    rows.forEach((row, index) => {
+//     // Rows
+//     rows.forEach((row, index) => {
 
-        const rowY = headerY + rowHeight + (index * rowHeight);
+//         const rowY = headerY + rowHeight + (index * rowHeight);
 
 
-        doc
-            .fillColor('#FFFFFF')
-            .rect(tableX, rowY, checkWidth, rowHeight)
-            .stroke('#CCCCCC');
+//         doc
+//             .fillColor('#FFFFFF')
+//             .rect(tableX, rowY, checkWidth, rowHeight)
+//             .stroke('#CCCCCC');
 
 
-        doc
-            .rect(
-                tableX + checkWidth,
-                rowY,
-                answerWidth,
-                rowHeight
-            )
-            .stroke('#CCCCCC');
+//         doc
+//             .rect(
+//                 tableX + checkWidth,
+//                 rowY,
+//                 answerWidth,
+//                 rowHeight
+//             )
+//             .stroke('#CCCCCC');
 
 
-        doc
-            .fillColor('#000000')
-            .font('Helvetica')
-            .fontSize(11)
-            .text(
-                row[0],
-                tableX + 10,
-                rowY + 10,
-                {
-                    width: checkWidth - 20
-                }
-            )
-            .text(
-                row[1] || '',
-                tableX + checkWidth + 10,
-                rowY + 10,
-                {
-                    width: answerWidth - 20
-                }
-            );
+//         doc
+//             .fillColor('#000000')
+//             .font('Helvetica')
+//             .fontSize(11)
+//             .text(
+//                 row[0],
+//                 tableX + 10,
+//                 rowY + 10,
+//                 {
+//                     width: checkWidth - 20
+//                 }
+//             )
+//             .text(
+//                 row[1] || '',
+//                 tableX + checkWidth + 10,
+//                 rowY + 10,
+//                 {
+//                     width: answerWidth - 20
+//                 }
+//             );
 
-    });
+//     });
 
 
-    // Reset text formatting
-    doc
-        .fillColor('#000000')
-        .font('Helvetica')
-        .fontSize(12);
+//     // Reset text formatting
+//     doc
+//         .fillColor('#000000')
+//         .font('Helvetica')
+//         .fontSize(12);
 
 
-    doc.moveDown();
-    doc.moveDown();
+//     doc.moveDown();
+//     doc.moveDown();
 
 
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(16)
-        .text('Decision basis', 50, doc.y);
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(16)
+//         .text('Decision basis', 50, doc.y);
 
 
-    doc
-        .font('Helvetica')
-        .fontSize(12)
-        .text(
-            decisionRightNow,
-            50,
-            doc.y
-        );
+//     doc
+//         .font('Helvetica')
+//         .fontSize(12)
+//         .text(
+//             decisionRightNow,
+//             50,
+//             doc.y
+//         );
 
-    if(conditions) {
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(16)
-        .text('Decision Tension Conditions', 50, doc.y);
+//     if(conditions) {
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(16)
+//         .text('Decision Tension Conditions', 50, doc.y);
 
 
-    doc
-        .font('Helvetica')
-        .fontSize(12)
-        .text(
-            conditions,
-            50,
-            doc.y
-        );
-    }
+//     doc
+//         .font('Helvetica')
+//         .fontSize(12)
+//         .text(
+//             conditions,
+//             50,
+//             doc.y
+//         );
+//     }
     
 
-}
+// }
 
 
-function createPDFProofRequired(doc, formData, recordId) {
+// function createPDFProofRequired(doc, formData, recordId) {
 
-    const proof = formData.get('proof'); 
-    const whoObtain = formData.get('whoObtain'); 
-    const watWhenObtain = formData.get('whenObtain'); 
+//     const proof = formData.get('proof'); 
+//     const whoObtain = formData.get('whoObtain'); 
+//     const watWhenObtain = formData.get('whenObtain'); 
 
 
-    doc.addPage(); 
-    doc.y = 100;
+//     doc.addPage(); 
+//     doc.y = 100;
 
 
-    // Section title
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(24)
-        .text('Proof required', 50, doc.y);
+//     // Section title
+//     doc
+//         .font('Helvetica-Bold')
+//         .fontSize(24)
+//         .text('Proof required', 50, doc.y);
 
 
-    doc.moveDown(0.75);
+//     doc.moveDown(0.75);
 
 
-    // Table settings
-    const tableX = 50;
-    const tableWidth = 512;
+//     // Table settings
+//     const tableX = 50;
+//     const tableWidth = 512;
 
-    const proofWidth = 255;
-    const whoWidth = 130;
-    const byWidth = 75;
-    const statusWidth = tableWidth - proofWidth - whoWidth - byWidth;
+//     const proofWidth = 255;
+//     const whoWidth = 130;
+//     const byWidth = 75;
+//     const statusWidth = tableWidth - proofWidth - whoWidth - byWidth;
 
-    const headerHeight = 32;
+//     const headerHeight = 32;
 
 
-    const rows = [
-        [
-            proof,
-            whoObtain,
-            watWhenObtain,
-            'Open'
-        ],
-    ];
+//     const rows = [
+//         [
+//             proof,
+//             whoObtain,
+//             watWhenObtain,
+//             'Open'
+//         ],
+//     ];
 
 
-    // Set body text formatting
-    doc
-        .font('Helvetica')
-        .fontSize(10);
-
-
-    // Row height is based only on Proof or action needed
-    // Minimum height = 5 lines
-    const rowLineHeight = 12;
-    const minimumRowHeight = rowLineHeight * 5;
-
-
-    const rowHeights = rows.map(row => {
-
-        const proofHeight = doc.heightOfString(row[0] || '', {
-            width: proofWidth - 20,
-            lineGap: 0
-        });
+//     // Set body text formatting
+//     doc
+//         .font('Helvetica')
+//         .fontSize(10);
+
+
+//     // Row height is based only on Proof or action needed
+//     // Minimum height = 5 lines
+//     const rowLineHeight = 12;
+//     const minimumRowHeight = rowLineHeight * 5;
+
+
+//     const rowHeights = rows.map(row => {
+
+//         const proofHeight = doc.heightOfString(row[0] || '', {
+//             width: proofWidth - 20,
+//             lineGap: 0
+//         });
 
 
-        return Math.max(
-            minimumRowHeight,
-            proofHeight
-        ) + 8;
+//         return Math.max(
+//             minimumRowHeight,
+//             proofHeight
+//         ) + 8;
 
-    });
+//     });
 
 
-    // Header
-    const headerY = doc.y;
+//     // Header
+//     const headerY = doc.y;
 
 
-    doc
-        .fillColor('#E6E6E6')
-        .rect(
-            tableX,
-            headerY,
-            proofWidth,
-            headerHeight
-        )
-        .fill();
+//     doc
+//         .fillColor('#E6E6E6')
+//         .rect(
+//             tableX,
+//             headerY,
+//             proofWidth,
+//             headerHeight
+//         )
+//         .fill();
 
 
-    doc
-        .rect(
-            tableX + proofWidth,
-            headerY,
-            whoWidth,
-            headerHeight
-        )
-        .fill();
-
-
-    doc
-        .rect(
-            tableX + proofWidth + whoWidth,
-            headerY,
-            byWidth,
-            headerHeight
-        )
-        .fill();
-
-
-    doc
-        .rect(
-            tableX + proofWidth + whoWidth + byWidth,
-            headerY,
-            statusWidth,
-            headerHeight
-        )
-        .fill();
-
-
-    // Header text
-    doc
-        .fillColor('#000000')
-        .font('Helvetica-Bold')
-        .fontSize(10)
-        .text(
-            'Proof or action needed',
-            tableX + 10,
-            headerY + 10,
-            {
-                width: proofWidth - 20
-            }
-        )
-        .text(
-            'Who will obtain it',
-            tableX + proofWidth + 10,
-            headerY + 10,
-            {
-                width: whoWidth - 20
-            }
-        )
-        .text(
-            'By when',
-            tableX + proofWidth + whoWidth + 10,
-            headerY + 10,
-            {
-                width: byWidth - 20
-            }
-        )
-        .text(
-            'Status',
-            tableX + proofWidth + whoWidth + byWidth + 10,
-            headerY + 10,
-            {
-                width: statusWidth - 20
-            }
-        );
-
-
-    // Rows
-    let currentY = headerY + headerHeight;
-
-
-    rows.forEach((row, index) => {
-
-        const rowHeight = rowHeights[index];
-
-        const x1 = tableX;
-        const x2 = tableX + proofWidth;
-        const x3 = x2 + whoWidth;
-        const x4 = x3 + byWidth;
-
-
-        // Cell borders
-        doc
-            .fillColor('#FFFFFF')
-            .rect(
-                x1,
-                currentY,
-                proofWidth,
-                rowHeight
-            )
-            .stroke('#CCCCCC');
-
-
-        doc
-            .rect(
-                x2,
-                currentY,
-                whoWidth,
-                rowHeight
-            )
-            .stroke('#CCCCCC');
-
-
-        doc
-            .rect(
-                x3,
-                currentY,
-                byWidth,
-                rowHeight
-            )
-            .stroke('#CCCCCC');
-
-
-        doc
-            .rect(
-                x4,
-                currentY,
-                statusWidth,
-                rowHeight
-            )
-            .stroke('#CCCCCC');
-
-
-        // Cell text
-        doc
-            .fillColor('#000000')
-            .font('Helvetica')
-            .fontSize(10)
-            .text(
-                row[0] || '',
-                x1 + 10,
-                currentY + 6,
-                {
-                    width: proofWidth - 20,
-                    lineGap: 0
-                }
-            )
-            .text(
-                row[1] || '',
-                x2 + 10,
-                currentY + 6,
-                {
-                    width: whoWidth - 20,
-                    lineGap: 0
-                }
-            )
-            .text(
-                row[2] || '',
-                x3 + 10,
-                currentY + 6,
-                {
-                    width: byWidth - 20,
-                    lineGap: 0
-                }
-            )
-            .text(
-                row[3] || '',
-                x4 + 10,
-                currentY + 6,
-                {
-                    width: statusWidth - 20,
-                    lineGap: 0
-                }
-            );
-
-
-        currentY += rowHeight;
-
-    });
-
-
-    // Move below table
-    doc.y = currentY;
-
-
-    doc.moveDown(1.5);
-
-
-    // Disclaimer
-    doc
-        .font('Helvetica')
-        .fontSize(10)
-        .fillColor('#555555')
-        .text(
-            'This record documents the decision owner’s selected posture and stated basis for one live decision. It does not authorize capital commitment or release, replace required professional review, or provide legal, tax, accounting, or investment advice.',
-            50,
-            doc.y,
-            {
-                width: 512,
-                align: 'left',
-                lineGap: 0
-            }
-        );
-
-
-    // Reset formatting
-    doc
-        .fillColor('#000000')
-        .font('Helvetica')
-        .fontSize(12);
-
-}
+//     doc
+//         .rect(
+//             tableX + proofWidth,
+//             headerY,
+//             whoWidth,
+//             headerHeight
+//         )
+//         .fill();
+
+
+//     doc
+//         .rect(
+//             tableX + proofWidth + whoWidth,
+//             headerY,
+//             byWidth,
+//             headerHeight
+//         )
+//         .fill();
+
+
+//     doc
+//         .rect(
+//             tableX + proofWidth + whoWidth + byWidth,
+//             headerY,
+//             statusWidth,
+//             headerHeight
+//         )
+//         .fill();
+
+
+//     // Header text
+//     doc
+//         .fillColor('#000000')
+//         .font('Helvetica-Bold')
+//         .fontSize(10)
+//         .text(
+//             'Proof or action needed',
+//             tableX + 10,
+//             headerY + 10,
+//             {
+//                 width: proofWidth - 20
+//             }
+//         )
+//         .text(
+//             'Who will obtain it',
+//             tableX + proofWidth + 10,
+//             headerY + 10,
+//             {
+//                 width: whoWidth - 20
+//             }
+//         )
+//         .text(
+//             'By when',
+//             tableX + proofWidth + whoWidth + 10,
+//             headerY + 10,
+//             {
+//                 width: byWidth - 20
+//             }
+//         )
+//         .text(
+//             'Status',
+//             tableX + proofWidth + whoWidth + byWidth + 10,
+//             headerY + 10,
+//             {
+//                 width: statusWidth - 20
+//             }
+//         );
+
+
+//     // Rows
+//     let currentY = headerY + headerHeight;
+
+
+//     rows.forEach((row, index) => {
+
+//         const rowHeight = rowHeights[index];
+
+//         const x1 = tableX;
+//         const x2 = tableX + proofWidth;
+//         const x3 = x2 + whoWidth;
+//         const x4 = x3 + byWidth;
+
+
+//         // Cell borders
+//         doc
+//             .fillColor('#FFFFFF')
+//             .rect(
+//                 x1,
+//                 currentY,
+//                 proofWidth,
+//                 rowHeight
+//             )
+//             .stroke('#CCCCCC');
+
+
+//         doc
+//             .rect(
+//                 x2,
+//                 currentY,
+//                 whoWidth,
+//                 rowHeight
+//             )
+//             .stroke('#CCCCCC');
+
+
+//         doc
+//             .rect(
+//                 x3,
+//                 currentY,
+//                 byWidth,
+//                 rowHeight
+//             )
+//             .stroke('#CCCCCC');
+
+
+//         doc
+//             .rect(
+//                 x4,
+//                 currentY,
+//                 statusWidth,
+//                 rowHeight
+//             )
+//             .stroke('#CCCCCC');
+
+
+//         // Cell text
+//         doc
+//             .fillColor('#000000')
+//             .font('Helvetica')
+//             .fontSize(10)
+//             .text(
+//                 row[0] || '',
+//                 x1 + 10,
+//                 currentY + 6,
+//                 {
+//                     width: proofWidth - 20,
+//                     lineGap: 0
+//                 }
+//             )
+//             .text(
+//                 row[1] || '',
+//                 x2 + 10,
+//                 currentY + 6,
+//                 {
+//                     width: whoWidth - 20,
+//                     lineGap: 0
+//                 }
+//             )
+//             .text(
+//                 row[2] || '',
+//                 x3 + 10,
+//                 currentY + 6,
+//                 {
+//                     width: byWidth - 20,
+//                     lineGap: 0
+//                 }
+//             )
+//             .text(
+//                 row[3] || '',
+//                 x4 + 10,
+//                 currentY + 6,
+//                 {
+//                     width: statusWidth - 20,
+//                     lineGap: 0
+//                 }
+//             );
+
+
+//         currentY += rowHeight;
+
+//     });
+
+
+//     // Move below table
+//     doc.y = currentY;
+
+
+//     doc.moveDown(1.5);
+
+
+//     // Disclaimer
+//     doc
+//         .font('Helvetica')
+//         .fontSize(10)
+//         .fillColor('#555555')
+//         .text(
+//             'This record documents the decision owner’s selected posture and stated basis for one live decision. It does not authorize capital commitment or release, replace required professional review, or provide legal, tax, accounting, or investment advice.',
+//             50,
+//             doc.y,
+//             {
+//                 width: 512,
+//                 align: 'left',
+//                 lineGap: 0
+//             }
+//         );
+
+
+//     // Reset formatting
+//     doc
+//         .fillColor('#000000')
+//         .font('Helvetica')
+//         .fontSize(12);
+
+// }
