@@ -1294,10 +1294,10 @@ function updateConsequence() {
 
 // Assumptions
 function updateAssumptions() {
-  const output = document.getElementById("byw-assumptions");
+  // const output = document.getElementById("byw-assumptions");
   const noneSelected = document.getElementById("dc-no-assumptions")?.checked;
 
-  output.replaceChildren();
+  // output.replaceChildren();
 
   if (noneSelected) {
     const item = document.createElement("li");
@@ -1317,7 +1317,7 @@ function updateAssumptions() {
   if (assumptions.length === 0) {
     const item = document.createElement("li");
     item.textContent = "—";
-    output.appendChild(item);
+    // output.appendChild(item);
     return;
   }
 

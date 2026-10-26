@@ -1,4 +1,4 @@
-function generatePDF(formData, recordId) {
+function generatePDF(formData, recordId, form) {
 
     const doc = new PDFDocument({
         size: 'LETTER',
@@ -36,9 +36,9 @@ function generatePDF(formData, recordId) {
     
     createPDFAcceptedConsequence(doc, formData)
 
-    createPDFConditionsTable(doc, formData);
+    createPDFConditionsTable(doc, formData, form);
 
-    createPDFDecisionBasis(doc);
+    createPDFDecisionBasis(doc, formData);
 
 
 
@@ -77,7 +77,7 @@ function createPDFDecisionClosure(doc, formData = {}) {
         .font('Helvetica-Oblique')
         .fontSize(9)
         .fillColor('#666666')
-        .text('FICTIONAL COMPLETED EXAMPLE | Stage 1 | Page 1 of 2');
+        .text('Stage 1');
 
     doc.moveDown(1.5);
 
@@ -89,11 +89,20 @@ function createPDFDecisionClosure(doc, formData = {}) {
     // Keep this hardcoded for now.
     // We can connect it to the final decision posture later.
 
+    const proposedAction = formData.get('proposedAction') || 'Not selected';
+
+    const actionLabels = {
+        advance: 'ADVANCE',
+        modify: 'MODIFY',
+        defer: 'DEFER',
+        decline: 'DECLINE'
+    };
+
     doc
         .font('Helvetica-Bold')
         .fontSize(14)
         .fillColor('#222222')
-        .text('CLOSED DECISION: ADVANCE');
+        .text(`CLOSED DECISION: ${actionLabels[proposedAction] || proposedAction.toUpperCase()}`);
 
     doc.moveDown(1);
 
@@ -568,274 +577,269 @@ function createPDFAcceptedConsequence(doc, formData) {
 }
 
 
-function createPDFConditionsTable(doc, formData) {
 
-    // =====================================================
-    // HARDCODED DATA — REPLACE WITH REPEATER DATA LATER
-    // =====================================================
-
-    const conditions = [
-        {
-            id: 'C1',
-            timing: 'Pre-funding',
-            status: 'Open',
-            condition: 'Establish the funded roof escrow at $450,000.',
-            owner: 'Jordan Lee, Financing Lead',
-            due: 'September 24, 2026',
-            evidence: 'Closing agent’s written escrow confirmation.',
-            lastUpdated: 'September 17, 2026, 3:20 PM UTC',
-            waiver: 'No waiver contemplated.'
-        },
-        {
-            id: 'C2',
-            timing: 'Pre-funding',
-            status: 'Open',
-            condition: 'Obtain the insurance binder meeting the lender’s stated requirements.',
-            owner: 'Morgan Ellis, Acquisitions Director',
-            due: 'September 24, 2026',
-            evidence: 'Binder and lender acceptance.',
-            lastUpdated: 'September 17, 2026, 3:22 PM UTC',
-            waiver: 'No waiver contemplated.'
-        }
-    ];
-
-
-    // =====================================================
-    // SECTION HEADING
-    // =====================================================
-
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(14)
-        .fillColor('#000000')
-        .text('Conditions at closure', 50, doc.y, {
-            width: 512
-        });
-
-    doc.moveDown(0.6);
-
-
-    // =====================================================
-    // TABLE SETTINGS
-    // =====================================================
+function createPDFConditionsTable(doc, formData, form) {
+    const conditionCards = Array.from(
+        form.querySelectorAll('[data-condition-card]')
+    );
 
     const tableX = 50;
     const tableWidth = 512;
     const labelWidth = 155;
-    const valueWidth = tableWidth - labelWidth;
+    const detailWidth = tableWidth - labelWidth;
+    const padding = 9;
 
-    const headerHeight = 32;
-    const headerFontSize = 14;
-    const bodyFontSize = 12;
-    const padding = 10;
-    const lineGap = 2;
+    const timingLabels = {
+        'pre-commitment': 'Pre-commitment',
+        'pre-funding': 'Pre-funding',
+        'monitoring': 'Monitoring',
+        'accepted-exception': 'Accepted exception'
+    };
 
+    const statusLabels = {
+        open: 'Open',
+        satisfied: 'Satisfied',
+        waived: 'Waived',
+        failed: 'Failed',
+        changed: 'Changed'
+    };
 
-    // =====================================================
-    // PREPARE TABLE ROWS
-    // =====================================================
-
-    const rows = conditions.map(condition => {
-
-        const label =
-            `${condition.id} | ${condition.timing} | ${condition.status}`;
-
-        const value = [
-            `Condition: ${condition.condition}`,
-            `Owner: ${condition.owner}`,
-            `Due: ${condition.due}`,
-            `Evidence: ${condition.evidence}`,
-            `Last updated: ${condition.lastUpdated}`,
-            condition.waiver
-        ].join('\n');
-
-        return [label, value];
-    });
-
-
-    // =====================================================
-    // CALCULATE ROW HEIGHTS
-    // =====================================================
-
-    doc.font('Helvetica').fontSize(bodyFontSize);
-
-    const rowHeights = rows.map(row => {
-
-        const labelHeight = doc.heightOfString(row[0], {
-            width: labelWidth - padding * 2,
-            lineGap: lineGap
-        });
-
-        const valueHeight = doc.heightOfString(row[1], {
-            width: valueWidth - padding * 2,
-            lineGap: lineGap
-        });
-
-        return Math.max(labelHeight, valueHeight, 24) + padding * 2;
-    });
-
-
-    // =====================================================
-    // TABLE HEADER
-    // =====================================================
-
-    const headerY = doc.y;
-
-    // Backgrounds
-    doc
-        .fillColor('#E6E6E6')
-        .rect(tableX, headerY, labelWidth, headerHeight)
-        .fill();
-
-    doc
-        .rect(
-            tableX + labelWidth,
-            headerY,
-            valueWidth,
-            headerHeight
-        )
-        .fill();
-
-    // Borders
-    doc
-        .strokeColor('#104E75')
-        .lineWidth(1)
-        .rect(tableX, headerY, labelWidth, headerHeight)
-        .stroke();
-
-    doc
-        .rect(
-            tableX + labelWidth,
-            headerY,
-            valueWidth,
-            headerHeight
-        )
-        .stroke();
-
-    // Header text
-    doc
-        .fillColor('#000000')
-        .font('Helvetica-Bold')
-        .fontSize(headerFontSize)
-        .text('Item', tableX + 10, headerY + 10, {
-            width: labelWidth - 20,
-            lineBreak: false
-        })
-        .text(
-            'Closed requirement',
-            tableX + labelWidth + 10,
-            headerY + 10,
-            {
-                width: valueWidth - 20,
-                lineBreak: false
-            }
+    const getFieldValue = (card, fieldName) => {
+        const field = card.querySelector(
+            `[data-field="${fieldName}"]`
         );
 
+        if (!field) return '';
 
-    // =====================================================
-    // TABLE BODY
-    // =====================================================
-
-    let currentY = headerY + headerHeight;
-
-    rows.forEach((row, index) => {
-
-        const rowHeight = rowHeights[index];
-
-        const x1 = tableX;
-        const x2 = tableX + labelWidth;
-
-        // Cell backgrounds
-        doc
-            .fillColor('#FFFFFF')
-            .rect(x1, currentY, labelWidth, rowHeight)
-            .fill();
-
-        doc
-            .rect(x2, currentY, valueWidth, rowHeight)
-            .fill();
-
-        // Cell borders
-        doc
-            .strokeColor('#104E75')
-            .lineWidth(1)
-            .rect(x1, currentY, labelWidth, rowHeight)
-            .stroke();
-
-        doc
-            .rect(x2, currentY, valueWidth, rowHeight)
-            .stroke();
-
-        // Item label
-        doc
-            .fillColor('#000000')
-            .font('Helvetica')
-            .fontSize(bodyFontSize)
-            .text(
-                row[0],
-                x1 + padding,
-                currentY + padding,
-                {
-                    width: labelWidth - padding * 2,
-                    lineGap: lineGap
-                }
+        if (field.type === 'radio') {
+            const selected = card.querySelector(
+                `[data-field="${fieldName}"]:checked`
             );
 
-        // Closed requirement
-        doc
-            .font('Helvetica')
-            .fontSize(bodyFontSize)
-            .text(
-                row[1],
-                x2 + padding,
-                currentY + padding,
-                {
-                    width: valueWidth - padding * 2,
-                    lineGap: lineGap
-                }
-            );
+            return selected ? selected.value : '';
+        }
 
-        currentY += rowHeight;
-    });
+        return field.value.trim();
+    };
 
+    const formatDate = (value) => {
+        if (!value) return 'Not provided';
 
-    // =====================================================
-    // CONDITIONS SUMMARY
-    // =====================================================
+        const parts = value.split('-');
 
-    doc.y = currentY + 12;
+        if (parts.length !== 3) return value;
 
-    doc
-        .font('Helvetica')
-        .fontSize(12)
-        .fillColor('#000000')
+        const date = new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            Number(parts[2])
+        );
+
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+
+    const conditions = conditionCards.map((card, index) => ({
+        id: `C${index + 1}`,
+        timing: getFieldValue(card, 'timing'),
+        status: getFieldValue(card, 'status') || 'open',
+        condition: getFieldValue(card, 'condition'),
+        owner: getFieldValue(card, 'owner'),
+        dueDate: getFieldValue(card, 'dueDate'),
+        waiverScope: getFieldValue(card, 'waiverScope'),
+        evidence: getFieldValue(card, 'evidence')
+    }));
+
+    const countStatus = (status) =>
+        conditions.filter(condition => condition.status === status).length;
+
+    const acceptedExceptions = conditions.filter(
+        condition => condition.timing === 'accepted-exception'
+    ).length;
+
+    // Section heading
+    doc.moveDown(1);
+
+    doc.font('Helvetica-Bold')
+        .fontSize(16)
+        .fillColor('#222222')
+        .text('Conditions Register', 50, doc.y, {
+            width: tableWidth
+        });
+
+    doc.moveDown(0.5);
+
+    doc.font('Helvetica')
+        .fontSize(10)
+        .fillColor('#555555')
         .text(
-            'Conditions at closure: 0 Satisfied | 0 Waived | 2 Open | 0 Failed or Changed. Accepted exceptions: 0.',
+            'Closed requirements and their assigned responsibility, evidence, and status.',
+            50,
+            doc.y,
+            { width: tableWidth }
+        );
+
+    doc.moveDown(1);
+
+    // Summary
+    doc.font('Helvetica-Bold')
+        .fontSize(11)
+        .fillColor('#222222')
+        .text('Condition Summary', 50, doc.y, {
+            width: tableWidth
+        });
+
+    doc.moveDown(0.35);
+
+    doc.font('Helvetica')
+        .fontSize(10)
+        .text(
+            [
+                `Total conditions: ${conditions.length}`,
+                `Open: ${countStatus('open')}`,
+                `Satisfied: ${countStatus('satisfied')}`,
+                `Waived: ${countStatus('waived')}`,
+                `Failed: ${countStatus('failed')}`,
+                `Changed: ${countStatus('changed')}`,
+                `Accepted exceptions: ${acceptedExceptions}`
+            ].join('\n'),
             50,
             doc.y,
             {
-                width: 512,
-                lineGap: 2
+                width: tableWidth,
+                lineGap: 3
             }
         );
 
     doc.moveDown(1);
 
+    if (conditions.length === 0) {
+        doc.font('Helvetica-Oblique')
+            .fontSize(10)
+            .fillColor('#555555')
+            .text('No conditions were recorded.', 50, doc.y, {
+                width: tableWidth
+            });
 
-    // =====================================================
-    // RESET FORMATTING
-    // =====================================================
+        doc.fillColor('#000000');
+        return;
+    }
 
-    doc
-        .fillColor('#000000')
-        .strokeColor('#000000')
-        .font('Helvetica')
-        .fontSize(12);
-    
-    doc.moveDown(1);
+    // Draw each condition
+    conditions.forEach((condition) => {
+        const timingLabel =
+            timingLabels[condition.timing] || 'Not specified';
 
+        const statusLabel =
+            statusLabels[condition.status] || condition.status;
 
+        const leftText = [
+            condition.id,
+            timingLabel,
+            statusLabel
+        ].join('\n');
+
+        const rightText = [
+            `Condition: ${condition.condition || 'Not provided'}`,
+            `Owner: ${condition.owner || 'Not provided'}`,
+            `Due: ${formatDate(condition.dueDate)}`,
+            `Evidence: ${condition.evidence || 'Not provided'}`,
+            `Waiver scope: ${condition.waiverScope || 'None specified'}`
+        ].join('\n\n');
+
+        const leftOptions = {
+            width: labelWidth - padding * 2,
+            lineGap: 3
+        };
+
+        const rightOptions = {
+            width: detailWidth - padding * 2,
+            lineGap: 2
+        };
+
+        const leftHeight = doc
+            .font('Helvetica-Bold')
+            .fontSize(10)
+            .heightOfString(leftText, leftOptions);
+
+        const rightHeight = doc
+            .font('Helvetica')
+            .fontSize(10)
+            .heightOfString(rightText, rightOptions);
+
+        const rowHeight =
+            Math.max(leftHeight, rightHeight) + padding * 2;
+
+        // Start a new page if needed
+        const pageBottom =
+            doc.page.height - doc.page.margins.bottom;
+
+        if (doc.y + rowHeight > pageBottom) {
+            doc.addPage();
+            doc.y = 100;
+        }
+
+        const rowY = doc.y;
+
+        // Backgrounds
+        doc.rect(tableX, rowY, labelWidth, rowHeight)
+            .fill('#E6E6E6');
+
+        doc.rect(
+            tableX + labelWidth,
+            rowY,
+            detailWidth,
+            rowHeight
+        ).fill('#FFFFFF');
+
+        // Borders
+        doc.rect(tableX, rowY, labelWidth, rowHeight)
+            .lineWidth(0.8)
+            .strokeColor('#104E75')
+            .stroke();
+
+        doc.rect(
+            tableX + labelWidth,
+            rowY,
+            detailWidth,
+            rowHeight
+        )
+            .lineWidth(0.8)
+            .strokeColor('#104E75')
+            .stroke();
+
+        // Left cell
+        doc.font('Helvetica-Bold')
+            .fontSize(10)
+            .fillColor('#222222')
+            .text(
+                leftText,
+                tableX + padding,
+                rowY + padding,
+                leftOptions
+            );
+
+        // Right cell
+        doc.font('Helvetica')
+            .fontSize(10)
+            .fillColor('#222222')
+            .text(
+                rightText,
+                tableX + labelWidth + padding,
+                rowY + padding,
+                rightOptions
+            );
+
+        doc.y = rowY + rowHeight + 8;
+    });
+
+    doc.fillColor('#000000');
 }
+
+
 
 function createPDFDecisionBasis(doc) {
 
@@ -1008,8 +1012,11 @@ document.getElementById('dc-form').addEventListener('submit', function (event) {
     event.preventDefault();
 
 
-    const formData = new FormData(event.target);
+    const form = event.target;
+    const formData = new FormData(form);
 
 
-    generatePDF(formData, 'DC-EXAMPLE-001');
+
+    generatePDF(formData, 'DC-EXAMPLE-001', form);
+
 });

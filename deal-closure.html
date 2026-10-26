@@ -350,17 +350,19 @@
               <div class="form-field">
                 <label>
                   <span class="field-label">Condition</span>
-                  <textarea data-field="condition" placeholder="Describe the outcome that must occur."></textarea>
+                  <textarea name="condition[]" data-field="condition"
+                    placeholder="Describe the outcome that must occur."></textarea>
                 </label>
               </div>
 
               <div class="form-field radio-group-field">
                 <span class="field-label">When must it be met?</span>
+
                 <p class="field-description">
                   Pre-commitment: Must clear before this decision's commitment point.
                 </p>
                 <p class="field-description">
-                  Pre-Funding: Must clear or be permissibly waived before funds move.
+                  Pre-funding: Must clear or be permissibly waived before funds move.
                 </p>
                 <p class="field-description">
                   Monitoring: Continues after release. This test does not provide ongoing monitoring.
@@ -370,51 +372,47 @@
                   this decision.
                 </p>
 
-
                 <div class="radio-group d-block">
                   <label>
-                    <input type="radio" data-field="timing" value="pre-commitment">
+                    <input type="radio" name="timing[TEMP_ID]" data-field="timing" value="pre-commitment">
                     Pre-commitment
                   </label>
 
-
                   <label>
-                    <input type="radio" data-field="timing" value="pre-funding">
+                    <input type="radio" name="timing[TEMP_ID]" data-field="timing" value="pre-funding">
                     Pre-funding
                   </label>
 
                   <label>
-                    <input type="radio" data-field="timing" value="monitoring">
+                    <input type="radio" name="timing[TEMP_ID]" data-field="timing" value="monitoring">
                     Monitoring
                   </label>
 
-
                   <label>
-                    <input type="radio" data-field="timing" value="accepted-exception">
+                    <input type="radio" name="timing[TEMP_ID]" data-field="timing" value="accepted-exception">
                     Accepted exception
                   </label>
-
                 </div>
               </div>
 
               <div class="form-field">
                 <label>
                   <span class="field-label">Who is responsible?</span>
-                  <input type="text" data-field="owner" placeholder="Person or party responsible">
+                  <input type="text" name="owner[]" data-field="owner" placeholder="Person or party responsible">
                 </label>
               </div>
 
               <div class="form-field">
                 <label>
                   <span class="field-label">Due date</span>
-                  <input type="date" data-field="dueDate">
+                  <input type="date" name="dueDate[]" data-field="dueDate">
                 </label>
               </div>
 
               <div class="form-field">
                 <label>
-                  <span class="field-label">Evidence </span>
-                  <textarea data-field="evidence"
+                  <span class="field-label">Evidence</span>
+                  <textarea name="evidence[]" data-field="evidence"
                     placeholder="What document, confirmation, or action demonstrates resolution?"></textarea>
                 </label>
               </div>
@@ -422,32 +420,37 @@
               <div class="form-field">
                 <label>
                   <span class="field-label">Permitted waiver scope (if applicable)</span>
-                  <textarea data-field="waiverScope"
+                  <textarea name="waiverScope[]" data-field="waiverScope"
                     placeholder="If a future waiver is allowed, define its permitted scope. Leave blank if no waiver is permitted."></textarea>
                 </label>
               </div>
 
               <div class="form-field radio-group-field">
                 <span class="field-label">Status</span>
+
                 <div class="radio-group">
                   <label>
-                    <input type="radio" data-field="status" value="open" checked>
+                    <input type="radio" name="status[TEMP_ID]" data-field="status" value="open" checked>
                     Open
                   </label>
+
                   <label>
-                    <input type="radio" data-field="status" value="satisfied">
+                    <input type="radio" name="status[TEMP_ID]" data-field="status" value="satisfied">
                     Satisfied
                   </label>
+
                   <label>
-                    <input type="radio" data-field="status" value="waived">
+                    <input type="radio" name="status[TEMP_ID]" data-field="status" value="waived">
                     Waived
                   </label>
+
                   <label>
-                    <input type="radio" data-field="status" value="failed">
+                    <input type="radio" name="status[TEMP_ID]" data-field="status" value="failed">
                     Failed
                   </label>
+
                   <label>
-                    <input type="radio" data-field="status" value="changed">
+                    <input type="radio" name="status[TEMP_ID]" data-field="status" value="changed">
                     Changed
                   </label>
                 </div>
@@ -456,7 +459,7 @@
               <div class="form-field" data-resolution-fields hidden>
                 <label>
                   <span class="field-label">Resolution note</span>
-                  <textarea data-field="resolutionNote"
+                  <textarea name="resolutionNote[]" data-field="resolutionNote"
                     placeholder="Explain the status, change, or resolution."></textarea>
                 </label>
               </div>
@@ -464,19 +467,20 @@
               <div class="form-field" data-accepted-fields hidden>
                 <label>
                   <span class="field-label">Accepted by</span>
-                  <input type="text" data-field="acceptedBy" placeholder="Name and role of accepting authority">
+                  <input type="text" name="acceptedBy[]" data-field="acceptedBy"
+                    placeholder="Name and role of accepting authority">
                 </label>
 
                 <label>
                   <span class="field-label">Acceptance date and time</span>
-                  <input type="datetime-local" data-field="acceptedAt">
+                  <input type="datetime-local" name="acceptedAt[]" data-field="acceptedAt">
                 </label>
               </div>
 
               <div class="form-field" data-reclassification-fields hidden>
                 <label>
                   <span class="field-label">Reclassification explanation</span>
-                  <textarea data-field="reclassificationNote"
+                  <textarea name="reclassificationNote[]" data-field="reclassificationNote"
                     placeholder="Explain why the condition's classification is changing."></textarea>
                 </label>
               </div>
@@ -488,6 +492,7 @@
 
             </div>
           </template>
+
         </div>
 
         <div class="section-navigation">
@@ -593,8 +598,7 @@
 
           <p class="field-description">
             State the material facts or expectations on which this decision depends.
-            Record each assumption separately. These assumptions will carry forward
-            to Before You Wire for verification before funds move.
+            Record each assumption separately.
           </p>
 
           <div class="form-field" style="padding-bottom: 25px">
