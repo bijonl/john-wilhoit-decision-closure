@@ -1,1388 +1,2266 @@
-// const dateField = document.getElementById("wat-date");
+/* =====================================================
+   GLOBAL VARIABLES AND DOM REFERENCES
+===================================================== */
 
-// const today = new Date().toISOString().split("T")[0];
+/* ---------- Form and navigation ---------- */
 
-const sections = [...document.querySelectorAll('#dk-form > .form-section')];
+const dcForm = document.getElementById("dc-form");
 
-const recordId = `DC-${Date.now()}-${Math.random()
-      .toString(36)
-      .substring(2, 8)
-      .toUpperCase()}`;
-
-
-
-
-// =====================================================
-// SHOW SECTION
-// =====================================================
-
-function showSection(section) {
-
-    if (!section) {
-        return;
-    }
-
-    sections.forEach(section => {
-        section.classList.remove('active-section');
-    });
-
-    section.classList.add('active-section');
-
-    updateSectionNavigation(section);
-
-    window.scrollTo({
-        top: document.getElementById('dk-app').offsetTop,
-        behavior: 'smooth'
-    });
-}
-
-// =====================================================
-// CHECK IF SECTION IS COMPLETE
-// =====================================================
-
-function isSectionComplete(section) {
-
-    const fields = section.querySelectorAll(
-        'input:not([type="button"]):not([type="submit"]), textarea, select'
-    );
-
-    const radioGroups = new Set();
-
-    for (const field of fields) {
-
-        // Ignore disabled fields
-        if (field.disabled) {
-            continue;
-        }
-
-        // Ignore fields that are hidden
-        if (field.offsetParent === null) {
-            continue;
-        }
-
-        // Radio buttons are checked as a group below
-        if (field.type === 'radio') {
-            radioGroups.add(field.name);
-            continue;
-        }
-
-        // Everything else needs a value
-        if (!field.value.trim()) {
-            return false;
-        }
-    }
-
-
-    // Check every radio group
-    for (const name of radioGroups) {
-
-        const checked = section.querySelector(
-            `input[type="radio"][name="${name}"]:checked`
-        );
-
-        if (!checked) {
-            return false;
-        }
-    }
-
-
-    return true;
-}
-
-// =====================================================
-// UPDATE SECTION NAVIGATION
-// =====================================================
-
-function updateSectionNavigation(section) {
-
-    if (!section) {
-        return;
-    }
-
-    const nextButton = section.querySelector('.section-next');
-
-    if (nextButton) {
-        nextButton.disabled = !isSectionComplete(section);
-    }
-}
-
-// =====================================================
-// NEXT BUTTONS
-// =====================================================
-
-// document.querySelectorAll('.section-next').forEach(button => {
-
-//     button.addEventListener('click', () => {
-
-//         const currentSection = button.closest('.form-section');
-
-//         if (!currentSection) {
-//             return;
-//         }
-
-
-//         // Don't allow navigation if the section isn't complete
-//         if (!isSectionComplete(currentSection)) {
-//             updateSectionNavigation(currentSection);
-//             return;
-//         }
-
-
-//         const currentIndex = sections.indexOf(currentSection);
-//         const nextSection = sections[currentIndex + 1];
-
-//         if (!nextSection) {
-//             return;
-//         }
-
-
-//         // If we're moving into the review section,
-//         // update the review before showing it.
-//         // if (nextSection.id === 'review-section') {
-//         //     updateReview();
-//         // }
-
-
-//         showSection(nextSection);
-
-//     });
-
-// });
-
-// =====================================================
-// PREVIOUS BUTTONS
-// =====================================================
-
-// document.querySelectorAll('.section-prev').forEach(button => {
-
-//     button.addEventListener('click', () => {
-
-//         const currentSection = button.closest('.form-section');
-
-//         if (!currentSection) {
-//             return;
-//         }
-
-
-//         const currentIndex = sections.indexOf(currentSection);
-//         const previousSection = sections[currentIndex - 1];
-
-//         if (!previousSection) {
-//             return;
-//         }
-
-
-//         showSection(previousSection);
-
-//     });
-
-// });
-
-
-// =====================================================
-// UPDATE NAVIGATION WHEN FIELDS CHANGE
-// =====================================================
-
-document.querySelectorAll(
-    '.form-section input, .form-section textarea, .form-section select'
-).forEach(field => {
-
-    field.addEventListener('input', () => {
-
-        const section = field.closest('.form-section');
-
-        if (section) {
-            updateSectionNavigation(section);
-        }
-
-    });
-
-
-    field.addEventListener('change', () => {
-
-        const section = field.closest('.form-section');
-
-        if (section) {
-            updateSectionNavigation(section);
-        }
-
-    });
-
-});
-
-
-// =====================================================
-// EDIT BUTTONS
-// =====================================================
-
-document.querySelectorAll('.edit-record-control').forEach(button => {
-
-    button.addEventListener('click', () => {
-
-        const targetId = button.dataset.target;
-        const targetSection = document.getElementById(targetId);
-
-        if (!targetSection) {
-            return;
-        }
-
-        showSection(targetSection);
-
-    });
-
-});
-
-
-// =====================================================
-// INITIALIZE
-// =====================================================
-
-const activeSection = document.querySelector(
-    '.form-section.active-section'
+const sections = Array.from(
+    document.querySelectorAll("#dc-form .form-section")
 );
 
-if (activeSection) {
-    updateSectionNavigation(activeSection);
-}
+const activeSection = document.querySelector(
+    ".form-section.active-section"
+);
+
+const app = document.getElementById("dk-app");
 
 
+/* ---------- Record identification ---------- */
+
+// // Generate one record ID for this page session.
+// const recordId = `WAT-${Date.now()}-${Math.random()
+//     .toString(36)
+//     .slice(2, 7)
+//     .toUpperCase()}`;
+
+const closedRecordIdOutput = document.getElementById(
+    "dc-closed-record-id"
+);
+
+const closedRecordTimestampOutput = document.getElementById(
+    "dc-closed-record-timestamp"
+);
 
 
+/* ---------- Required acknowledgements ---------- */
+
+const REQUIRED_CHECKBOX_IDS = [
+    "dc-ack-consequence-accepted",
+    "dc-ack-decision-basis",
+    "dc-ack-final-closure"
+];
 
 
-
-
-
-
-
-
-
-
-
-
-
-// const recordControl = document.querySelector('#record-control');
-
-// function updateRecordControl() {
-
-//     const now = new Date();
-
-//     const timestamp = now.toLocaleString('en-US', {
-//         month: '2-digit',
-//         day: '2-digit',
-//         year: 'numeric',
-//         hour: '2-digit',
-//         minute: '2-digit',
-//         second: '2-digit'
-//     });
-
-//     recordControl.innerHTML = `
-//         <strong>Generation Timestamp:</strong> ${timestamp}<br>
-//         <strong>Record ID:</strong> ${recordId}<br><br>
-
-//         This record documents the decision owner’s selected posture and stated
-//         basis for one live decision. It does not authorize capital commitment
-//         or release, replace required professional review, or provide legal,
-//         tax, accounting, or investment advice.
-//     `;
-// }
-
-// updateRecordControl();
-
-
-const editButtons = document.querySelectorAll('.edit-record-control')
-
-
-editButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-        document.querySelector('.form-section.active-section')
-            .classList.remove('active-section');
-        const targetSection = document.getElementById(button.dataset.target);
-        targetSection.classList.add('active-section');
-    });
-});
+/* ---------- Proposed action and conditional fields ---------- */
 
 const actionRadios = document.querySelectorAll(
-  'input[name="proposedAction"]'
+    'input[name="proposedAction"]'
 );
 
 const modifyFields = document.getElementById("dc-modify-fields");
 const deferFields = document.getElementById("dc-defer-fields");
 
-const modifyInputs = modifyFields.querySelectorAll("textarea");
-const deferInputs = deferFields.querySelectorAll("textarea");
+const modifyInputs = modifyFields?.querySelectorAll("textarea") ?? [];
+const deferInputs = deferFields?.querySelectorAll("textarea") ?? [];
+
 const riskQuestion = document.getElementById("dc-risk-question");
-const consequenceQuestion = document.getElementById("dc-consequence-question");
+const consequenceQuestion = document.getElementById(
+    "dc-consequence-question"
+);
+
 const finalAction = document.getElementById("dc-final-action");
 const statedConsequence = document.getElementById("dc-final-consequence");
-const approvalAuthority = document.getElementById("dc-final-approval-authority");
-const consequenceInput = document.getElementById("dc-consequenceStatement");
 
-const approvalAuthorityInput = document.getElementById("dc-approvalAuthority");
+const consequenceAcceptanceField = document.getElementById(
+    "dc-consequence-acceptance-field"
+);
 
-function updateApprovalAuthority() {
-  approvalAuthority.textContent = approvalAuthorityInput.value;
-}
+const consequenceInput = document.getElementById(
+    "dc-consequenceStatement"
+);
 
-approvalAuthorityInput.addEventListener("input", updateApprovalAuthority);
+const approvalAuthorityInput = document.getElementById(
+    "dc-approvalAuthority"
+);
 
-// Initialize the display.
-updateApprovalAuthority();
-
-function updateStatedConsequence() {
-  statedConsequence.textContent = consequenceInput.value;
-}
-
-consequenceInput.addEventListener("input", updateStatedConsequence);
-
-// Initialize the display.
-updateStatedConsequence();
+const approvalAuthority = document.getElementById(
+    "dc-final-approval-authority"
+);
 
 
-function updateProposedAction() {
-  const selected = document.querySelector(
-    'input[name="proposedAction"]:checked'
-  )?.value;
+/* ---------- Risk repeater ---------- */
 
-  modifyFields.hidden = selected !== "modify";
-  deferFields.hidden = selected !== "defer";
+const riskEntries = document.getElementById("dc-risk-entries");
+const riskEntriesContainer = riskEntries;
+const addRiskButton = document.getElementById("dc-add-risk");
 
-  modifyInputs.forEach((input) => {
-    input.required = selected === "modify";
-  });
-
-  deferInputs.forEach((input) => {
-    input.required = selected === "defer";
-  });
-
-    // Update the risk question.
-  if (selected === "defer" || selected === "decline") {
-    riskQuestion.textContent = "What risks remain with this choice?";
-  } else {
-    riskQuestion.textContent = "What known risks is ownership accepting?";
-  }
-
-    const consequenceAcceptanceField = document.getElementById(
-        "dc-consequence-acceptance-field"
-    );
-
-    // Inside updateProposedAction(), after getting `selected`:
-    consequenceAcceptanceField.hidden = !(
-        selected === "advance" || selected === "modify"
-    );
-
-      // Update the risk question.
-  if (selected === "defer" || selected === "decline") {
-    consequenceQuestion.textContent = "What consequence is ownership knowingly accepting by authorizing this decision?";
-  } else {
-    consequenceQuestion.textContent = "What material consequence follows from this decision?";
-  }
-
-    // Update the final action display.
-  if (finalAction) {
-    const actionLabels = {
-      advance: "Advance",
-      modify: "Modify",
-      defer: "Defer",
-      decline: "Decline"
-    };
-
-    finalAction.textContent = actionLabels[selected] || "Not selected";
-  }
+const acceptedRisksOutput = document.getElementById(
+    "record-accepted-risks"
+);
 
 
-}
+/* ---------- Conditions repeater ---------- */
 
-actionRadios.forEach((radio) => {
-  radio.addEventListener("change", updateProposedAction);
-});
+const conditionsContainer = document.getElementById(
+    "dc-condition-register"
+);
 
-updateProposedAction();
+const conditionRegister = conditionsContainer;
 
-
-const riskEntries = document.getElementById('dc-risk-entries');
-const addRiskButton = document.getElementById('dc-add-risk');
-
-addRiskButton.addEventListener('click', function () {
-  const riskCount = riskEntries.querySelectorAll('.risk-entry').length + 1;
-
-  const riskEntry = document.createElement('div');
-  riskEntry.className = 'risk-entry form-field';
-
-  riskEntry.innerHTML = `
-    <label>
-      <span class="field-label">Risk ${riskCount}
-        <button type="button" class="basic-app-button remove-risk">
-            Remove risk
-        </button>
-      </span>
-      <textarea
-        name="acceptedRisks[]"
-        placeholder="Describe a known risk, or enter None identified."
-        required
-      ></textarea>
-    </label>
-
-   
-  `;
-
-  riskEntries.appendChild(riskEntry);
-});
-
-// Remove a risk entry using event delegation.
-// Remove a risk entry using event delegation.
-riskEntries.addEventListener('click', function (event) {
-  const removeButton = event.target.closest('.remove-risk');
-
-  if (!removeButton) return;
-
-  removeButton.closest('.risk-entry').remove();
-
-  // Renumber remaining risks without removing their buttons.
-  riskEntries.querySelectorAll('.risk-entry').forEach((entry, index) => {
-    const label = entry.querySelector('.field-label');
-    const button = label.querySelector('.remove-risk');
-
-    label.firstChild.textContent = `Risk ${index + 1} `;
-
-    // Keep the existing Remove risk button intact.
-    if (button) {
-      label.appendChild(button);
-    }
-  });
-});
-
-const recoveryReasonInput = document.getElementById("dc-recovery-not-applicable-reason");
-const recoveryInput = document.getElementById("dc-recovery");
-const recoveryOutput = document.getElementById("record-recovery");
-const conditionsContainer = document.getElementById("dc-condition-register");
 const addConditionButton = document.getElementById("dc-add-condition");
-const conditionTemplate = document.getElementById("dc-condition-template");
-const noConditionsCheckbox = document.getElementById("dc-no-unresolved-conditions");
+
+const conditionTemplate = document.getElementById(
+    "dc-condition-template"
+);
+
+const noConditionsCheckbox = document.getElementById(
+    "dc-no-unresolved-conditions"
+);
+
 const nextConditionsButton = document.querySelector(
-  "#decision-closure-conditions-section .section-next"
+    "#decision-closure-conditions-section .section-next"
+);
+
+const recordNoConditions = document.getElementById("record-no-conditions");
+
+const recordConditionEntries = document.getElementById(
+    "record-condition-entries"
 );
 
 let conditionCounter = 0;
 
-// NO CONDITIONS DECLARATION
-function updateNoConditionsState() {
-  const cards = conditionsContainer.querySelectorAll("[data-condition-card]");
-  const noneSelected = noConditionsCheckbox.checked;
 
-  // Do not allow both a declaration and condition entries.
-  if (noneSelected && cards.length > 0) {
-    noConditionsCheckbox.checked = false;
-  }
-
-  const noConditionsDeclared = noConditionsCheckbox.checked;
-
-  conditionsContainer.hidden = noConditionsDeclared;
-
-  cards.forEach((card) => {
-    card.querySelectorAll("input, textarea, select").forEach((field) => {
-      field.disabled = noConditionsDeclared;
-    });
-  });
-
-  // Once conditions exist, remove them before declaring none.
-  noConditionsCheckbox.disabled = cards.length > 0;
-
-  // Enable Next only if conditions exist or none are explicitly declared.
-  nextConditionsButton.disabled =
-    cards.length === 0 && !noConditionsDeclared;
-}
-
-noConditionsCheckbox.addEventListener("change", updateNoConditionsState);
-
-// CONDITION FIELDS
-function updateConditionFields(card) {
-  const status = card.querySelector('[data-field="status"]:checked')?.value;
-  const timing = card.querySelector('[data-field="timing"]:checked')?.value;
-
-  const resolutionFields = card.querySelector("[data-resolution-fields]");
-  const acceptedFields = card.querySelector("[data-accepted-fields]");
-  const reclassificationFields = card.querySelector(
-    "[data-reclassification-fields]"
-  );
-
-  const resolutionNote = card.querySelector('[data-field="resolutionNote"]');
-  const acceptedBy = card.querySelector('[data-field="acceptedBy"]');
-  const acceptedAt = card.querySelector('[data-field="acceptedAt"]');
-  const reclassificationNote = card.querySelector(
-    '[data-field="reclassificationNote"]'
-  );
-  const waiverScope = card.querySelector('[data-field="waiverScope"]');
-
-  // Require a note for any status other than Open.
-  const needsResolutionNote = status && status !== "open";
-  resolutionFields.hidden = !needsResolutionNote;
-  resolutionNote.required = Boolean(needsResolutionNote);
-
-  // Waived status and Accepted Exception classification require authority.
-  const needsAcceptance =
-    status === "waived" || timing === "accepted-exception";
-
-  acceptedFields.hidden = !needsAcceptance;
-  acceptedBy.required = needsAcceptance;
-  acceptedAt.required = needsAcceptance;
-
-  // Require an explanation if the condition's classification changes.
-  const originalTiming = card.dataset.initialTiming || "";
-  const needsReclassification =
-    Boolean(originalTiming) && timing !== originalTiming;
-
-  reclassificationFields.hidden = !needsReclassification;
-  reclassificationNote.required = needsReclassification;
-
-  // A waived condition must state the permitted waiver scope.
-  waiverScope.required = status === "waived";
-}
-
-// ADD CONDITIONS
-function updateConditionNumbers() {
-  const cards = conditionsContainer.querySelectorAll("[data-condition-card]");
-
-  cards.forEach((card, index) => {
-    const number = card.querySelector('[data-display="number"]');
-    if (number) number.textContent = index + 1;
-  });
-}
-
-addConditionButton.addEventListener("click", () => {
-  noConditionsCheckbox.checked = false;
-
-  conditionCounter += 1;
-
-  const conditionId = `DC-COND-${Date.now()}-${conditionCounter}`;
-  const fragment = conditionTemplate.content.cloneNode(true);
-  const card = fragment.querySelector("[data-condition-card]");
-
-  card.dataset.conditionId = conditionId;
-
-  const idDisplay = card.querySelector('[data-display="condition-id"]');
-  if (idDisplay) idDisplay.textContent = conditionId;
-
-  // Give every card its own radio groups.
-  card.querySelectorAll('input[type="radio"][data-field]').forEach((radio) => {
-    radio.name = `${conditionId}-${radio.dataset.field}`;
-  });
-
-  // Start with no timing selected so the user must choose one.
-  card.querySelectorAll('[data-field="timing"]').forEach((radio) => {
-    radio.checked = false;
-  });
-
-  conditionsContainer.appendChild(fragment);
-
-  const newCard = conditionsContainer.lastElementChild;
-
-  updateConditionFields(newCard);
-  updateConditionNumbers();
-  updateNoConditionsState();
-
-  newCard.querySelector('[data-field="condition"]').focus();
-});
-
-// REMOVE CONDITIONS AND UPDATE FIELDS
-conditionsContainer.addEventListener("click", (event) => {
-  const removeButton = event.target.closest('[data-action="remove"]');
-  if (!removeButton) return;
-
-  removeButton.closest("[data-condition-card]").remove();
-
-  updateConditionNumbers();
-  updateNoConditionsState();
-});
-
-conditionsContainer.addEventListener("change", (event) => {
-  const card = event.target.closest("[data-condition-card]");
-  if (!card) return;
-
-  if (event.target.matches('[data-field="timing"]')) {
-    const selectedTiming = event.target.value;
-
-    if (!card.dataset.initialTiming) {
-      card.dataset.initialTiming = selectedTiming;
-    }
-  }
-
-  updateConditionFields(card);
-
-  const lastUpdated = card.querySelector('[data-display="last-updated"]');
-  if (lastUpdated) lastUpdated.textContent = new Date().toLocaleString();
-});
-
-// VALIDATE BEFORE MOVING TO THE NEXT SECTION
-nextConditionsButton.addEventListener("click", (event) => {
-  const cards = conditionsContainer.querySelectorAll("[data-condition-card]");
-
-  if (noConditionsCheckbox.checked && cards.length === 0) return;
-
-  if (cards.length === 0) {
-    event.preventDefault();
-    noConditionsCheckbox.focus();
-    return;
-  }
-
-  for (const card of cards) {
-    const fields = card.querySelectorAll("input, textarea, select");
-
-    for (const field of fields) {
-      if (field.disabled) continue;
-
-      if (!field.checkValidity()) {
-        event.preventDefault();
-        field.reportValidity();
-        field.focus();
-        return;
-      }
-    }
-  }
-});
-
-// INITIALIZE
-updateConditionNumbers();
-conditionsContainer.querySelectorAll("[data-condition-card]").forEach((card) => {
-  updateConditionFields(card);
-});
-updateNoConditionsState();
+/* ---------- Recovery fields ---------- */
 
 const recoveryField = document.getElementById("dc-recovery");
-const recoveryReasonField = document.getElementById("dc-recovery-reason-field");
-const recoveryReason = document.getElementById("dc-recovery-not-applicable-reason");
-const recoveryNotApplicable = document.getElementById("dc-recovery-not-applicable");
 
-const assumptionsContainer = document.getElementById("assumption-container");
-const addAssumptionButton = document.getElementById("dc-add-assumption");
-const noAssumptionsCheckbox = document.getElementById("dc-no-assumptions");
+const recoveryInput = recoveryField;
 
-// RECOVERY
-// An empty recovery field means the user must provide a reason.
-function updateRecoveryFields() {
-  const notApplicable = recoveryField.value.trim().toLowerCase() === "not applicable";
+const recoveryReasonField = document.getElementById(
+    "dc-recovery-reason-field"
+);
 
-  recoveryReasonField.hidden = !notApplicable;
-  recoveryReason.required = notApplicable;
+const recoveryReasonInput = document.getElementById(
+    "dc-recovery-not-applicable-reason"
+);
 
-  if (!notApplicable) {
-    recoveryReason.value = "";
-  }
-}
+const recoveryReason = recoveryReasonInput;
 
-recoveryField.addEventListener("input", updateRecoveryFields);
-updateRecoveryFields();
+const recoveryReasonInputElement = recoveryReasonInput;
+
+const recoveryNotApplicable = document.getElementById(
+    "dc-recovery-not-applicable"
+);
+
+const recoveryOutput = document.getElementById("record-recovery");
 
 
-// ASSUMPTIONS
-function updateAssumptionNumbers() {
-  const entries = assumptionsContainer.querySelectorAll(".assumption-entry");
-  const noneSelected = noAssumptionsCheckbox.checked;
+/* ---------- Assumptions repeater ---------- */
 
-  entries.forEach((entry, index) => {
-    const label = entry.querySelector(".field-label");
-    const removeButton = label.querySelector(".remove-assumption");
-    const textarea = entry.querySelector('textarea[name="keyAssumptions[]"]');
+const assumptionsContainer = document.getElementById(
+    "assumption-container"
+);
 
-    // Update label without removing the button.
-    label.firstChild.textContent = `Assumption ${index + 1} `;
+const assumptionContainer = assumptionsContainer;
 
-    if (removeButton) {
-      removeButton.hidden = entries.length === 1;
-      label.appendChild(removeButton);
+const addAssumptionButton = document.getElementById(
+    "dc-add-assumption"
+);
+
+const noAssumptionsCheckbox = document.getElementById(
+    "dc-no-assumptions"
+);
+
+const assumptionsOutput = document.getElementById("record-assumptions");
+
+
+/* ---------- Decision details and review outputs ---------- */
+
+const decisionDetailFields = [
+    {
+        input: "dc-dealReference",
+        output: "record-deal-reference"
+    },
+    {
+        input: "dc-propertyIdentifier",
+        output: "record-property-identifier"
+    },
+    {
+        input: "dc-date",
+        output: "record-decision-date",
+        type: "date"
+    },
+    {
+        input: "dc-fundingDate",
+        output: "record-funding-date",
+        type: "date"
+    },
+    {
+        input: "dc-decisionOwner",
+        output: "record-decision-owner"
+    },
+    {
+        input: "dc-approvalAuthority",
+        output: "record-approval-authority"
+    }
+];
+
+const capitalEventRadios = document.querySelectorAll(
+    'input[name="capitalEvent"]'
+);
+
+const capitalEventOutput = document.getElementById("record-capital-event");
+
+const proposedActionRadios = document.querySelectorAll(
+    'input[name="proposedAction"]'
+);
+
+const proposedActionOutput = document.getElementById(
+    "record-proposed-action"
+);
+
+const materialEvidenceInput = document.getElementById(
+    "dc-materialEvidence"
+);
+
+const materialEvidenceOutput = document.getElementById(
+    "record-material-evidence"
+);
+
+const consequenceQuestionInput = document.getElementById(
+    "dc-consequence-question"
+);
+
+const recordConsequenceQuestion = document.getElementById(
+    "record-consequence-question"
+);
+
+const recordConsequence = document.getElementById("record-consequence");
+
+const decisionBasisInput = document.getElementById("dc-decisionBasis");
+
+const decisionBasisOutput = document.getElementById(
+    "record-decision-basis"
+);
+
+const accountabilityApprovalAuthorityOutput = document.getElementById(
+    "record-accountability-approval-authority"
+);
+
+const confirmingPersonInput = document.getElementById("dc-confirmingPerson");
+
+const confirmingPersonOutput = document.getElementById(
+    "record-confirming-person"
+);
+
+
+/* ---------- Stage 1 summary outputs ---------- */
+
+const stage1RecordIdOutput = document.getElementById(
+    "byw-stage1-record-id"
+);
+
+const transactionSummaryOutput = document.getElementById("byw-transaction");
+
+const actionSummaryOutput = document.getElementById("byw-action");
+
+const decisionDateSummaryOutput = document.getElementById(
+    "byw-decision-date"
+);
+
+const consequenceSummaryOutput = document.getElementById(
+    "byw-consequence"
+);
+
+const assumptionsSummaryOutput = document.getElementById(
+    "byw-assumptions"
+);
+
+const conditionCountsOutput = document.getElementById(
+    "byw-condition-counts"
+);
+
+
+/* ---------- Observers ---------- */
+
+let riskObserver;
+let conditionReviewObserver;
+let consequenceQuestionObserver;
+let assumptionObserver;
+let summaryObserver;
+
+
+/* =====================================================
+   1. VALIDATION HELPERS
+===================================================== */
+
+// Determine whether a field is currently relevant to validation.
+function isFieldActive(field) {
+    if (!field || field.disabled) {
+        return false;
     }
 
-    textarea.required = !noneSelected;
-    textarea.disabled = noneSelected;
-  });
+    if (
+        field.closest("template") ||
+        field.closest("[hidden]") ||
+        field.closest('[aria-hidden="true"]') ||
+        field.offsetParent === null
+    ) {
+        return false;
+    }
 
-  addAssumptionButton.disabled = noneSelected;
-  entries.forEach((entry) => {
-    entry.hidden = noneSelected;
-  });
+    return true;
 }
 
 
-// Add another assumption.
-addAssumptionButton.addEventListener("click", () => {
-  if (noAssumptionsCheckbox.checked) {
-    noAssumptionsCheckbox.checked = false;
-  }
-
-  const entry = document.createElement("div");
-  entry.className = "assumption-entry form-field";
-
-  entry.innerHTML = `
-    <label>
-      <span class="field-label">
-        Assumption
-        <button type="button" class="basic-app-button remove-assumption">
-          Remove assumption
-        </button>
-      </span>
-
-      <textarea
-        name="keyAssumptions[]"
-        placeholder="Describe a material fact or expectation this decision depends on."
-        required
-      ></textarea>
-    </label>
-  `;
-
-  assumptionsContainer.insertBefore(entry, addAssumptionButton);
-  updateAssumptionNumbers();
-
-  entry.querySelector("textarea").focus();
-});
+// Check whether a field contains a non-whitespace value.
+function isBlank(field) {
+    return !String(field.value ?? "").trim();
+}
 
 
-// Remove an assumption using event delegation.
-assumptionsContainer.addEventListener("click", (event) => {
-  const removeButton = event.target.closest(".remove-assumption");
-  if (!removeButton) return;
+// Retrieve a readable field label for validation messages.
+function getFieldLabel(field) {
+    const label = field.closest("label");
 
-  removeButton.closest(".assumption-entry").remove();
-  updateAssumptionNumbers();
-});
+    if (label) {
+        return (
+            label.querySelector(".field-label")?.textContent.trim() ||
+            label.textContent.trim() ||
+            field.name ||
+            "Required field"
+        );
+    }
+
+    const wrapper = field.closest(".form-field");
+
+    return (
+        wrapper?.querySelector(".field-label")?.textContent.trim() ||
+        field.name ||
+        "Required field"
+    );
+}
 
 
-// None identified.
-noAssumptionsCheckbox.addEventListener("change", () => {
-  if (noAssumptionsCheckbox.checked) {
-    assumptionsContainer.querySelectorAll('textarea[name="keyAssumptions[]"]').forEach((textarea) => {
-      textarea.value = "";
+// Add or remove invalid styling and accessibility attributes.
+function markFieldInvalid(field, invalid) {
+    if (!field) {
+        return;
+    }
+
+    const wrapper = field.closest(".form-field");
+
+    if (wrapper) {
+        wrapper.classList.toggle("field-invalid", invalid);
+    }
+
+    if (invalid) {
+        field.setAttribute("aria-invalid", "true");
+    } else {
+        field.removeAttribute("aria-invalid");
+    }
+}
+
+
+/* =====================================================
+   2. CONDITIONAL FIELD VALIDATION
+===================================================== */
+
+function validateConditionalFields(section, errors) {
+    const action = section.querySelector(
+        'input[name="proposedAction"]:checked'
+    )?.value;
+
+
+    // MODIFY: require the material change and modification condition.
+    if (
+        section.id === "decision-closure-action-section" &&
+        action === "modify"
+    ) {
+        ["dc-materialChange", "dc-modifyCondition"].forEach(id => {
+            const field = document.getElementById(id);
+
+            if (field && isFieldActive(field) && isBlank(field)) {
+                errors.push({
+                    field,
+                    message: `${getFieldLabel(field)} is required.`
+                });
+            }
+        });
+    }
+
+
+    // DEFER: require the reconsideration requirements.
+    if (
+        section.id === "decision-closure-action-section" &&
+        action === "defer"
+    ) {
+        const field = document.getElementById(
+            "dc-reconsiderationRequirements"
+        );
+
+        if (field && isFieldActive(field) && isBlank(field)) {
+            errors.push({
+                field,
+                message: `${getFieldLabel(field)} is required.`
+            });
+        }
+    }
+
+
+    // RECOVERY: require either a recovery plan or a reason
+    // explaining why recovery is not applicable.
+    if (section.id === "decision-closure-recovery-section") {
+        if (recoveryNotApplicable?.checked) {
+            if (
+                recoveryReasonInput &&
+                isFieldActive(recoveryReasonInput) &&
+                isBlank(recoveryReasonInput)
+            ) {
+                errors.push({
+                    field: recoveryReasonInput,
+                    message: "Explain why recovery is not applicable."
+                });
+            }
+        } else if (
+            recoveryInput &&
+            isFieldActive(recoveryInput) &&
+            isBlank(recoveryInput)
+        ) {
+            errors.push({
+                field: recoveryInput,
+                message:
+                    'Provide a recovery plan or select "Recovery is not applicable".'
+            });
+        }
+    }
+
+
+    // CONDITIONS: validate conditional fields on each condition card.
+    section.querySelectorAll("[data-condition-card]").forEach(card => {
+        const timing = card.querySelector(
+            '[data-field="timing"]:checked'
+        )?.value;
+
+        const status = card.querySelector(
+            '[data-field="status"]:checked'
+        )?.value;
+
+
+        // Accepted-exception classifications require acceptance details.
+        if (timing === "accepted-exception") {
+            card.querySelectorAll(
+                "[data-accepted-fields] input, [data-accepted-fields] textarea"
+            ).forEach(field => {
+                if (isFieldActive(field) && isBlank(field)) {
+                    errors.push({
+                        field,
+                        message: `${getFieldLabel(field)} is required.`
+                    });
+                }
+            });
+        }
+
+
+        // Resolved conditions require an explanation.
+        if (["satisfied", "waived", "failed", "changed"].includes(status)) {
+            card.querySelectorAll(
+                "[data-resolution-fields] textarea, [data-resolution-fields] input"
+            ).forEach(field => {
+                if (isFieldActive(field) && isBlank(field)) {
+                    errors.push({
+                        field,
+                        message: `${getFieldLabel(field)} is required.`
+                    });
+                }
+            });
+        }
+
+
+        // Changed classifications require a reclassification explanation.
+        if (status === "changed") {
+            card.querySelectorAll(
+                "[data-reclassification-fields] textarea, [data-reclassification-fields] input"
+            ).forEach(field => {
+                if (isFieldActive(field) && isBlank(field)) {
+                    errors.push({
+                        field,
+                        message: `${getFieldLabel(field)} is required.`
+                    });
+                }
+            });
+        }
     });
-  }
+}
 
-  updateAssumptionNumbers();
+
+/* =====================================================
+   3. REPEATABLE ENTRY VALIDATION
+===================================================== */
+
+function validateRepeatableFields(section, errors) {
+
+    // RISKS: require at least one risk entry and complete values.
+    if (section.id === "decision-closure-evidence-section") {
+        const risks = Array.from(
+            section.querySelectorAll('textarea[name="acceptedRisks[]"]')
+        ).filter(isFieldActive);
+
+        if (!risks.length || risks.some(isBlank)) {
+            risks.filter(isBlank).forEach(field => {
+                errors.push({
+                    field,
+                    message:
+                        'Complete each risk entry, or enter "None identified".'
+                });
+            });
+
+            if (!risks.length) {
+                errors.push({
+                    field: section.querySelector("#dc-add-risk"),
+                    message:
+                        'Add a risk entry and describe the known risks, or enter "None identified".'
+                });
+            }
+        }
+    }
+
+
+    // CONDITIONS: either confirm none exist or provide at least one card.
+    if (section.id === "decision-closure-conditions-section") {
+        if (noConditionsCheckbox?.checked) {
+            return;
+        }
+
+        const cards = Array.from(
+            section.querySelectorAll("[data-condition-card]")
+        );
+
+        if (!cards.length) {
+            errors.push({
+                field: section.querySelector("#dc-add-condition"),
+                message:
+                    "Add at least one condition, or confirm that no unresolved conditions exist."
+            });
+        }
+    }
+
+
+    // ASSUMPTIONS: require entries unless none have been identified.
+    if (section.id === "decision-closure-recovery-section") {
+        if (noAssumptionsCheckbox?.checked) {
+            return;
+        }
+
+        const assumptions = Array.from(
+            section.querySelectorAll('textarea[name="keyAssumptions[]"]')
+        ).filter(isFieldActive);
+
+        if (!assumptions.length) {
+            errors.push({
+                field: section.querySelector("#dc-add-assumption"),
+                message:
+                    "Add an assumption or confirm that none have been identified."
+            });
+        } else {
+            assumptions.filter(isBlank).forEach(field => {
+                errors.push({
+                    field,
+                    message:
+                        'Complete each assumption entry, or select "None identified".'
+                });
+            });
+        }
+    }
+}
+
+
+/* =====================================================
+   4. SECTION COMPLETENESS VALIDATION
+===================================================== */
+
+function getSectionErrors(section) {
+    const errors = [];
+
+    if (!section) {
+        return errors;
+    }
+
+
+    // Validate ordinary fields. Conditional and repeatable fields
+    // are handled separately below.
+    const fields = section.querySelectorAll(
+        'input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="radio"]):not([type="checkbox"]), textarea, select'
+    );
+
+    fields.forEach(field => {
+        if (!isFieldActive(field)) {
+            return;
+        }
+
+        if (
+            field.matches('[data-field="waiverScope"]') ||
+            field.id === "dc-recovery" ||
+            field.name === "keyAssumptions[]" ||
+            field.name === "acceptedRisks[]" ||
+            field.closest("[data-resolution-fields]") ||
+            field.closest("[data-accepted-fields]") ||
+            field.closest("[data-reclassification-fields]")
+        ) {
+            return;
+        }
+
+        if (isBlank(field)) {
+            errors.push({
+                field,
+                message: `${getFieldLabel(field)} is required.`
+            });
+        }
+    });
+
+
+    // RADIO GROUPS: every active group needs a selection.
+    const radioGroups = new Map();
+
+    section.querySelectorAll('input[type="radio"]').forEach(radio => {
+        if (!isFieldActive(radio)) {
+            return;
+        }
+
+        if (!radioGroups.has(radio.name)) {
+            radioGroups.set(radio.name, []);
+        }
+
+        radioGroups.get(radio.name).push(radio);
+    });
+
+    radioGroups.forEach(radios => {
+        if (!radios.some(radio => radio.checked)) {
+            errors.push({
+                field: radios[0],
+                message: `Select an option for ${getFieldLabel(radios[0])}.`
+            });
+        }
+    });
+
+
+    // ACKNOWLEDGEMENTS: validate designated mandatory checkboxes.
+    REQUIRED_CHECKBOX_IDS.forEach(id => {
+        const checkbox = section.querySelector(`#${id}`);
+
+        if (checkbox && isFieldActive(checkbox) && !checkbox.checked) {
+            errors.push({
+                field: checkbox,
+                message: `${getFieldLabel(checkbox)} must be checked.`
+            });
+        }
+    });
+
+
+    validateConditionalFields(section, errors);
+    validateRepeatableFields(section, errors);
+
+    return errors;
+}
+
+
+function isSectionComplete(section) {
+    return getSectionErrors(section).length === 0;
+}
+
+
+/* =====================================================
+   5. SECTION DISPLAY AND NAVIGATION
+===================================================== */
+
+function showSection(section) {
+    if (!section) {
+        return;
+    }
+
+    sections.forEach(item => {
+        item.classList.remove("active-section");
+    });
+
+    section.classList.add("active-section");
+
+    updateAllNavigation();
+
+    if (app) {
+        window.scrollTo({
+            top: app.offsetTop,
+            behavior: "smooth"
+        });
+    }
+}
+
+
+function updateSectionNavigation(section) {
+    if (!section) {
+        return;
+    }
+
+    const nextButton = section.querySelector(
+        ".section-navigation .section-next"
+    );
+
+    if (nextButton) {
+        nextButton.disabled = !isSectionComplete(section);
+
+        nextButton.setAttribute(
+            "aria-disabled",
+            String(nextButton.disabled)
+        );
+    }
+
+
+    section.querySelectorAll(
+        ".section-navigation button[data-go-to]"
+    ).forEach(button => {
+        const target = document.getElementById(button.dataset.goTo);
+
+        if (!target) {
+            return;
+        }
+
+        const currentIndex = sections.indexOf(section);
+        const targetIndex = sections.indexOf(target);
+
+        if (targetIndex > currentIndex) {
+            button.disabled = !isSectionComplete(section);
+
+            button.setAttribute(
+                "aria-disabled",
+                String(button.disabled)
+            );
+        } else {
+            button.disabled = false;
+            button.setAttribute("aria-disabled", "false");
+        }
+    });
+}
+
+
+function updateAllNavigation() {
+    sections.forEach(updateSectionNavigation);
+}
+
+
+/* =====================================================
+   6. NEXT, BACK, AND DIRECT NAVIGATION EVENTS
+===================================================== */
+
+dcForm?.addEventListener("click", event => {
+    const button = event.target.closest("button");
+
+    if (!button || !dcForm.contains(button)) {
+        return;
+    }
+
+    if (button.id === "test-pdf-button") {
+        return;
+    }
+
+    const currentSection = button.closest(".form-section");
+
+    if (!currentSection) {
+        const targetId = button.dataset.goTo || button.dataset.target;
+
+        if (targetId) {
+            showSection(document.getElementById(targetId));
+        }
+
+        return;
+    }
+
+    const isNavigationButton = button.matches(
+        ".section-next, .section-prev, .section-navigation [data-go-to]"
+    );
+
+    if (!isNavigationButton) {
+        const targetId = button.dataset.goTo || button.dataset.target;
+
+        if (targetId) {
+            showSection(document.getElementById(targetId));
+        }
+
+        return;
+    }
+
+    event.preventDefault();
+
+
+    // BACK: no validation required.
+    if (button.matches(".section-prev")) {
+        const currentIndex = sections.indexOf(currentSection);
+        const previousSection = sections[currentIndex - 1];
+
+        if (previousSection) {
+            showSection(previousSection);
+        }
+
+        return;
+    }
+
+
+    // NEXT: resolve the destination.
+    let nextSection;
+
+    if (button.dataset.goTo) {
+        nextSection = document.getElementById(button.dataset.goTo);
+    } else {
+        const currentIndex = sections.indexOf(currentSection);
+        nextSection = sections[currentIndex + 1];
+    }
+
+    if (!nextSection) {
+        return;
+    }
+
+
+    // Validate when moving forward.
+    const currentIndex = sections.indexOf(currentSection);
+    const targetIndex = sections.indexOf(nextSection);
+
+    if (targetIndex > currentIndex) {
+        const errors = getSectionErrors(currentSection);
+
+        if (errors.length) {
+            updateSectionNavigation(currentSection);
+
+            const firstError = errors[0];
+
+            if (firstError.field) {
+                firstError.field.focus({ preventScroll: true });
+
+                firstError.field.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+
+            console.warn(
+                "Section is incomplete:",
+                currentSection.id,
+                errors.map(error => error.message)
+            );
+
+            return;
+        }
+    }
+
+
+    // Refresh review content before opening the review section.
+    if (
+        nextSection.id === "review-section" &&
+        typeof updateReview === "function"
+    ) {
+        updateReview();
+    }
+
+    showSection(nextSection);
 });
+
+
+/* =====================================================
+   7. LIVE NAVIGATION VALIDATION
+===================================================== */
+
+dcForm?.addEventListener("input", event => {
+    const section = event.target.closest(".form-section");
+
+    if (section) {
+        updateSectionNavigation(section);
+    }
+});
+
+
+dcForm?.addEventListener("change", event => {
+    const section = event.target.closest(".form-section");
+
+    if (section) {
+        updateSectionNavigation(section);
+        updateAllNavigation();
+    }
+});
+
+
+/* =====================================================
+   8. RECORD ID AND EDIT CONTROLS
+===================================================== */
+
+// Display the generated record ID wherever it is shown.
+if (closedRecordIdOutput) {
+    closedRecordIdOutput.textContent = recordId;
+}
+
+setSummaryValue("byw-stage1-record-id", recordId);
+
+
+// Edit controls use the shared navigation function.
+document.querySelectorAll(".edit-record-control").forEach(button => {
+    button.addEventListener("click", () => {
+        showSection(document.getElementById(button.dataset.target));
+    });
+});
+
+
+/* =====================================================
+   9. INITIAL SECTION STATE
+===================================================== */
+
+if (activeSection) {
+    updateSectionNavigation(activeSection);
+}
+
+updateAllNavigation();
+
+
+/* =====================================================
+   10. PROPOSED ACTION AND CONDITIONAL FIELDS
+===================================================== */
+
+function updateApprovalAuthority() {
+    if (approvalAuthority) {
+        approvalAuthority.textContent = approvalAuthorityInput?.value ?? "";
+    }
+
+    updateAccountabilityReview();
+}
+
+
+approvalAuthorityInput?.addEventListener(
+    "input",
+    updateApprovalAuthority
+);
+
+
+function updateStatedConsequence() {
+    if (statedConsequence && consequenceInput) {
+        statedConsequence.textContent = consequenceInput.value;
+    }
+}
+
+
+consequenceInput?.addEventListener("input", updateStatedConsequence);
+
+
+function updateProposedAction() {
+    const selected = document.querySelector(
+        'input[name="proposedAction"]:checked'
+    )?.value;
+
+    if (modifyFields) {
+        modifyFields.hidden = selected !== "modify";
+    }
+
+    if (deferFields) {
+        deferFields.hidden = selected !== "defer";
+    }
+
+    modifyInputs.forEach(input => {
+        input.required = selected === "modify";
+    });
+
+    deferInputs.forEach(input => {
+        input.required = selected === "defer";
+    });
+
+
+    if (riskQuestion) {
+        riskQuestion.textContent =
+            selected === "defer" || selected === "decline"
+                ? "What risks remain with this choice?"
+                : "What known risks is ownership accepting?";
+    }
+
+
+    if (consequenceAcceptanceField) {
+        consequenceAcceptanceField.hidden = !(
+            selected === "advance" || selected === "modify"
+        );
+    }
+
+
+    if (consequenceQuestion) {
+        consequenceQuestion.textContent =
+            selected === "defer" || selected === "decline"
+                ? "What consequence is ownership knowingly accepting by authorizing this decision?"
+                : "What material consequence follows from this decision?";
+    }
+
+
+    if (finalAction) {
+        const actionLabels = {
+            advance: "Advance",
+            modify: "Modify",
+            defer: "Defer",
+            decline: "Decline"
+        };
+
+        finalAction.textContent = actionLabels[selected] || "Not selected";
+    }
+}
+
+
+actionRadios.forEach(radio => {
+    radio.addEventListener("change", updateProposedAction);
+});
+
+updateProposedAction();
+updateApprovalAuthority();
+updateStatedConsequence();
+
+
+/* =====================================================
+   11. REPEATABLE RISK ENTRIES
+===================================================== */
+
+addRiskButton?.addEventListener("click", () => {
+    const riskCount =
+        riskEntries.querySelectorAll(".risk-entry").length + 1;
+
+    const riskEntry = document.createElement("div");
+    riskEntry.className = "risk-entry form-field";
+
+    riskEntry.innerHTML = `
+        <label>
+            <span class="field-label">
+                Risk ${riskCount}
+                <button type="button" class="basic-app-button remove-risk">
+                    Remove risk
+                </button>
+            </span>
+
+            <textarea
+                name="acceptedRisks[]"
+                placeholder="Describe a known risk, or enter None identified."
+                required
+            ></textarea>
+        </label>
+    `;
+
+    riskEntries.appendChild(riskEntry);
+});
+
+
+riskEntries?.addEventListener("click", event => {
+    const removeButton = event.target.closest(".remove-risk");
+
+    if (!removeButton) {
+        return;
+    }
+
+    removeButton.closest(".risk-entry").remove();
+
+    riskEntries.querySelectorAll(".risk-entry").forEach((entry, index) => {
+        const label = entry.querySelector(".field-label");
+        const button = label.querySelector(".remove-risk");
+
+        label.firstChild.textContent = `Risk ${index + 1} `;
+
+        if (button) {
+            label.appendChild(button);
+        }
+    });
+});
+
+
+/* =====================================================
+   12. NO-CONDITIONS DECLARATION
+===================================================== */
+
+function updateNoConditionsState() {
+    if (!conditionsContainer || !noConditionsCheckbox) {
+        return;
+    }
+
+    const cards = conditionsContainer.querySelectorAll(
+        "[data-condition-card]"
+    );
+
+    if (noConditionsCheckbox.checked && cards.length > 0) {
+        noConditionsCheckbox.checked = false;
+    }
+
+    const noConditionsDeclared = noConditionsCheckbox.checked;
+
+    conditionsContainer.hidden = noConditionsDeclared;
+
+    cards.forEach(card => {
+        card.querySelectorAll("input, textarea, select").forEach(field => {
+            field.disabled = noConditionsDeclared;
+        });
+    });
+
+    noConditionsCheckbox.disabled = cards.length > 0;
+
+    if (nextConditionsButton) {
+        nextConditionsButton.disabled =
+            cards.length === 0 && !noConditionsDeclared;
+    }
+
+    updateConditionRepeaterState();
+    updateConditionCounts();
+    updateConditionReview();
+}
+
+
+noConditionsCheckbox?.addEventListener(
+    "change",
+    updateNoConditionsState
+);
+
+
+/* =====================================================
+   13. CONDITIONAL CONDITION FIELDS
+===================================================== */
+
+function updateConditionFields(card) {
+    const status = card.querySelector(
+        '[data-field="status"]:checked'
+    )?.value;
+
+    const timing = card.querySelector(
+        '[data-field="timing"]:checked'
+    )?.value;
+
+    const resolutionFields = card.querySelector("[data-resolution-fields]");
+    const acceptedFields = card.querySelector("[data-accepted-fields]");
+
+    const reclassificationFields = card.querySelector(
+        "[data-reclassification-fields]"
+    );
+
+    const resolutionNote = card.querySelector(
+        '[data-field="resolutionNote"]'
+    );
+
+    const acceptedBy = card.querySelector('[data-field="acceptedBy"]');
+    const acceptedAt = card.querySelector('[data-field="acceptedAt"]');
+
+    const reclassificationNote = card.querySelector(
+        '[data-field="reclassificationNote"]'
+    );
+
+    const waiverScope = card.querySelector('[data-field="waiverScope"]');
+
+
+    const needsResolutionNote = Boolean(status && status !== "open");
+
+    if (resolutionFields) {
+        resolutionFields.hidden = !needsResolutionNote;
+    }
+
+    if (resolutionNote) {
+        resolutionNote.required = needsResolutionNote;
+    }
+
+
+    const needsAcceptance =
+        status === "waived" || timing === "accepted-exception";
+
+    if (acceptedFields) {
+        acceptedFields.hidden = !needsAcceptance;
+    }
+
+    if (acceptedBy) {
+        acceptedBy.required = needsAcceptance;
+    }
+
+    if (acceptedAt) {
+        acceptedAt.required = needsAcceptance;
+    }
+
+
+    const originalTiming = card.dataset.initialTiming || "";
+
+    const needsReclassification =
+        Boolean(originalTiming) && timing !== originalTiming;
+
+    if (reclassificationFields) {
+        reclassificationFields.hidden = !needsReclassification;
+    }
+
+    if (reclassificationNote) {
+        reclassificationNote.required = needsReclassification;
+    }
+
+    if (waiverScope) {
+        waiverScope.required = status === "waived";
+    }
+}
+
+
+/* =====================================================
+   14. CONDITION NUMBERING AND CREATION
+===================================================== */
+
+function updateConditionNumbers() {
+    conditionsContainer?.querySelectorAll(
+        "[data-condition-card]"
+    ).forEach((card, index) => {
+        const number = card.querySelector('[data-display="number"]');
+
+        if (number) {
+            number.textContent = index + 1;
+        }
+    });
+}
+
+
+addConditionButton?.addEventListener("click", () => {
+    noConditionsCheckbox.checked = false;
+
+    conditionCounter += 1;
+
+    const conditionId = `DC-COND-${Date.now()}-${conditionCounter}`;
+
+    const fragment = conditionTemplate.content.cloneNode(true);
+    const card = fragment.querySelector("[data-condition-card]");
+
+    card.dataset.conditionId = conditionId;
+
+    const idDisplay = card.querySelector(
+        '[data-display="condition-id"]'
+    );
+
+    if (idDisplay) {
+        idDisplay.textContent = conditionId;
+    }
+
+
+    // Give each condition card independent radio groups.
+    card.querySelectorAll('input[type="radio"][data-field]').forEach(radio => {
+        radio.name = `${conditionId}-${radio.dataset.field}`;
+    });
+
+
+    // Start with no timing selection.
+    card.querySelectorAll('[data-field="timing"]').forEach(radio => {
+        radio.checked = false;
+    });
+
+
+    conditionsContainer.appendChild(fragment);
+
+    const newCard = conditionsContainer.lastElementChild;
+
+    updateConditionFields(newCard);
+    updateConditionNumbers();
+    updateNoConditionsState();
+
+    newCard.querySelector('[data-field="condition"]')?.focus();
+});
+
+
+/* =====================================================
+   15. CONDITION REMOVAL AND CHANGE EVENTS
+===================================================== */
+
+conditionsContainer?.addEventListener("click", event => {
+    const removeButton = event.target.closest('[data-action="remove"]');
+
+    if (!removeButton) {
+        return;
+    }
+
+    removeButton.closest("[data-condition-card]").remove();
+
+    updateConditionNumbers();
+    updateNoConditionsState();
+});
+
+
+conditionsContainer?.addEventListener("change", event => {
+    const card = event.target.closest("[data-condition-card]");
+
+    if (!card) {
+        return;
+    }
+
+    if (event.target.matches('[data-field="timing"]')) {
+        const selectedTiming = event.target.value;
+
+        if (!card.dataset.initialTiming) {
+            card.dataset.initialTiming = selectedTiming;
+        }
+    }
+
+    updateConditionFields(card);
+
+    const lastUpdated = card.querySelector(
+        '[data-display="last-updated"]'
+    );
+
+    if (lastUpdated) {
+        lastUpdated.textContent = new Date().toLocaleString();
+    }
+});
+
+
+/* =====================================================
+   16. CONDITION NEXT-BUTTON VALIDATION
+===================================================== */
+
+nextConditionsButton?.addEventListener("click", event => {
+    const cards = conditionsContainer.querySelectorAll(
+        "[data-condition-card]"
+    );
+
+    if (noConditionsCheckbox.checked && cards.length === 0) {
+        return;
+    }
+
+    if (cards.length === 0) {
+        event.preventDefault();
+        noConditionsCheckbox.focus();
+        return;
+    }
+
+    for (const card of cards) {
+        const fields = card.querySelectorAll("input, textarea, select");
+
+        for (const field of fields) {
+            if (field.disabled) {
+                continue;
+            }
+
+            if (!field.checkValidity()) {
+                event.preventDefault();
+                field.reportValidity();
+                field.focus();
+                return;
+            }
+        }
+    }
+});
+
+
+/* =====================================================
+   17. INITIAL CONDITION REGISTER STATE
+===================================================== */
+
+updateConditionNumbers();
+
+conditionsContainer?.querySelectorAll(
+    "[data-condition-card]"
+).forEach(updateConditionFields);
+
+updateNoConditionsState();
+
+
+/* =====================================================
+   18. ASSUMPTION NUMBERING AND STATE
+===================================================== */
+
+function updateAssumptionNumbers() {
+    if (!assumptionsContainer || !noAssumptionsCheckbox) {
+        return;
+    }
+
+    const entries = assumptionsContainer.querySelectorAll(
+        ".assumption-entry"
+    );
+
+    const noneSelected = noAssumptionsCheckbox.checked;
+
+    entries.forEach((entry, index) => {
+        const label = entry.querySelector(".field-label");
+
+        if (!label) {
+            return;
+        }
+
+        const removeButton = label.querySelector(".remove-assumption");
+
+        const textarea = entry.querySelector(
+            'textarea[name="keyAssumptions[]"]'
+        );
+
+        label.firstChild.textContent = `Assumption ${index + 1} `;
+
+        if (removeButton) {
+            removeButton.hidden = entries.length === 1;
+            label.appendChild(removeButton);
+        }
+
+        if (textarea) {
+            textarea.required = !noneSelected;
+            textarea.disabled = noneSelected;
+        }
+
+        entry.hidden = noneSelected;
+    });
+
+    if (addAssumptionButton) {
+        addAssumptionButton.disabled = noneSelected;
+    }
+}
+
+
+addAssumptionButton?.addEventListener("click", () => {
+    noAssumptionsCheckbox.checked = false;
+
+    const entry = document.createElement("div");
+    entry.className = "assumption-entry form-field";
+
+    entry.innerHTML = `
+        <label>
+            <span class="field-label">
+                Assumption
+                <button type="button" class="basic-app-button remove-assumption">
+                    Remove assumption
+                </button>
+            </span>
+
+            <textarea
+                name="keyAssumptions[]"
+                placeholder="Describe a material fact or expectation this decision depends on."
+                required
+            ></textarea>
+        </label>
+    `;
+
+    assumptionsContainer.insertBefore(entry, addAssumptionButton);
+
+    updateAssumptionNumbers();
+    updateAssumptionsReview();
+    updateAssumptions();
+
+    entry.querySelector("textarea")?.focus();
+});
+
+
+assumptionsContainer?.addEventListener("click", event => {
+    const removeButton = event.target.closest(".remove-assumption");
+
+    if (!removeButton) {
+        return;
+    }
+
+    removeButton.closest(".assumption-entry").remove();
+
+    updateAssumptionNumbers();
+    updateAssumptionsReview();
+    updateAssumptions();
+});
+
+
+noAssumptionsCheckbox?.addEventListener("change", () => {
+    if (noAssumptionsCheckbox.checked) {
+        assumptionsContainer.querySelectorAll(
+            'textarea[name="keyAssumptions[]"]'
+        ).forEach(textarea => {
+            textarea.value = "";
+        });
+    }
+
+    updateAssumptionNumbers();
+    updateAssumptionsReview();
+    updateAssumptions();
+});
+
 
 updateAssumptionNumbers();
 
 
-const decisionDetailFields = [
-  {
-    input: "dc-dealReference",
-    output: "record-deal-reference"
-  },
-  {
-    input: "dc-propertyIdentifier",
-    output: "record-property-identifier"
-  },
-  {
-    input: "dc-date",
-    output: "record-decision-date",
-    type: "date"
-  },
-  {
-    input: "dc-fundingDate",
-    output: "record-funding-date",
-    type: "date"
-  },
-  {
-    input: "dc-decisionOwner",
-    output: "record-decision-owner"
-  },
-  {
-    input: "dc-approvalAuthority",
-    output: "record-approval-authority"
-  }
-];
+/* =====================================================
+   19. DECISION DETAILS REVIEW
+===================================================== */
 
-// Update text inputs and dates.
 decisionDetailFields.forEach(({ input, output, type }) => {
-  const inputElement = document.getElementById(input);
-  const outputElement = document.getElementById(output);
+    const inputElement = document.getElementById(input);
+    const outputElement = document.getElementById(output);
 
-  if (!inputElement || !outputElement) return;
-
-  function updateValue() {
-    const value = inputElement.value.trim();
-
-    if (type === "date" && value) {
-      const [year, month, day] = value.split("-");
-      outputElement.textContent = `${month}/${day}/${year}`;
-    } else {
-      outputElement.textContent = value;
+    if (!inputElement || !outputElement) {
+        return;
     }
-  }
 
-  inputElement.addEventListener("input", updateValue);
-  inputElement.addEventListener("change", updateValue);
+    function updateValue() {
+        const value = inputElement.value.trim();
 
-  // Initialize the review display.
-  updateValue();
+        if (type === "date" && value) {
+            const [year, month, day] = value.split("-");
+            outputElement.textContent = `${month}/${day}/${year}`;
+        } else {
+            outputElement.textContent = value;
+        }
+    }
+
+    inputElement.addEventListener("input", updateValue);
+    inputElement.addEventListener("change", updateValue);
+
+    updateValue();
 });
 
-// Capital event radio group.
-const capitalEventRadios = document.querySelectorAll(
-  'input[name="capitalEvent"]'
-);
-const capitalEventOutput = document.getElementById("record-capital-event");
+
+/* =====================================================
+   20. CAPITAL EVENT REVIEW
+===================================================== */
 
 function updateCapitalEvent() {
-  const selected = document.querySelector(
-    'input[name="capitalEvent"]:checked'
-  );
+    const selected = document.querySelector(
+        'input[name="capitalEvent"]:checked'
+    );
 
-  capitalEventOutput.textContent = selected
-    ? selected.parentElement.textContent.trim()
-    : "";
+    if (capitalEventOutput) {
+        capitalEventOutput.textContent = selected
+            ? selected.parentElement.textContent.trim()
+            : "";
+    }
 }
 
-capitalEventRadios.forEach((radio) => {
-  radio.addEventListener("change", updateCapitalEvent);
+
+capitalEventRadios.forEach(radio => {
+    radio.addEventListener("change", updateCapitalEvent);
 });
 
 updateCapitalEvent();
 
-// Proposed action radio group.
-const proposedActionRadios = document.querySelectorAll(
-  'input[name="proposedAction"]'
-);
-const proposedActionOutput = document.getElementById("record-proposed-action");
+
+/* =====================================================
+   21. PROPOSED ACTION REVIEW
+===================================================== */
 
 function updateRecordProposedAction() {
-  const selected = document.querySelector(
-    'input[name="proposedAction"]:checked'
-  );
+    const selected = document.querySelector(
+        'input[name="proposedAction"]:checked'
+    );
 
-  proposedActionOutput.textContent = selected
-    ? selected.value.toUpperCase()
-    : "";
+    if (proposedActionOutput) {
+        proposedActionOutput.textContent = selected
+            ? selected.value.toUpperCase()
+            : "";
+    }
 }
 
-proposedActionRadios.forEach((radio) => {
-  radio.addEventListener("change", updateRecordProposedAction);
+
+proposedActionRadios.forEach(radio => {
+    radio.addEventListener("change", updateRecordProposedAction);
 });
 
 updateRecordProposedAction();
 
 
+/* =====================================================
+   22. MATERIAL EVIDENCE REVIEW
+===================================================== */
 
-
-const materialEvidenceInput = document.getElementById("dc-materialEvidence");
-const materialEvidenceOutput = document.getElementById("record-material-evidence");
-
-const riskEntriesContainer = document.getElementById("dc-risk-entries");
-const acceptedRisksOutput = document.getElementById("record-accepted-risks");
-
-// MATERIAL EVIDENCE
 function updateMaterialEvidence() {
-  materialEvidenceOutput.textContent = materialEvidenceInput.value.trim();
+    if (materialEvidenceOutput && materialEvidenceInput) {
+        materialEvidenceOutput.textContent =
+            materialEvidenceInput.value.trim();
+    }
 }
 
-materialEvidenceInput.addEventListener("input", updateMaterialEvidence);
+
+materialEvidenceInput?.addEventListener("input", updateMaterialEvidence);
+
 updateMaterialEvidence();
 
-// ACCEPTED RISKS
+
+/* =====================================================
+   23. ACCEPTED RISKS REVIEW
+===================================================== */
+
 function updateAcceptedRisks() {
-  const riskInputs = riskEntriesContainer.querySelectorAll(
-    'textarea[name="acceptedRisks[]"]'
-  );
+    if (!riskEntriesContainer || !acceptedRisksOutput) {
+        return;
+    }
 
-  acceptedRisksOutput.replaceChildren();
+    const riskInputs = riskEntriesContainer.querySelectorAll(
+        'textarea[name="acceptedRisks[]"]'
+    );
 
-  if (riskInputs.length === 0) {
-    acceptedRisksOutput.textContent = "No risks entered.";
-    return;
-  }
+    acceptedRisksOutput.replaceChildren();
 
-  riskInputs.forEach((input, index) => {
-    const risk = document.createElement("div");
-    risk.className = "review-field";
+    if (riskInputs.length === 0) {
+        acceptedRisksOutput.textContent = "No risks entered.";
+        return;
+    }
 
-    const label = document.createElement("strong");
-    label.textContent = `Risk ${index + 1}:`;
+    riskInputs.forEach((input, index) => {
+        const risk = document.createElement("div");
+        risk.className = "review-field";
 
-    const value = document.createElement("span");
-    value.textContent = input.value.trim();
+        const label = document.createElement("strong");
+        label.textContent = `Risk ${index + 1}:`;
 
-    risk.append(label, document.createTextNode(" "), value);
-    acceptedRisksOutput.appendChild(risk);
-  });
+        const value = document.createElement("span");
+        value.textContent = input.value.trim();
+
+        risk.append(label, document.createTextNode(" "), value);
+
+        acceptedRisksOutput.appendChild(risk);
+    });
 }
 
-// Update when a risk is edited.
-riskEntriesContainer.addEventListener("input", (event) => {
-  if (event.target.matches('textarea[name="acceptedRisks[]"]')) {
-    updateAcceptedRisks();
-  }
+
+riskEntriesContainer?.addEventListener("input", event => {
+    if (event.target.matches('textarea[name="acceptedRisks[]"]')) {
+        updateAcceptedRisks();
+    }
 });
 
-// Update when risks are added or removed.
-// The existing repeater changes the DOM, so observe those changes too.
-const riskObserver = new MutationObserver(updateAcceptedRisks);
 
-riskObserver.observe(riskEntriesContainer, {
-  childList: true,
-  subtree: true
-});
+riskObserver = new MutationObserver(updateAcceptedRisks);
+
+if (riskEntriesContainer) {
+    riskObserver.observe(riskEntriesContainer, {
+        childList: true,
+        subtree: true
+    });
+}
 
 updateAcceptedRisks();
 
 
+/* =====================================================
+   24. CONDITION REGISTER REVIEW
+===================================================== */
 
-
-const conditionRegister = document.getElementById("dc-condition-register");
-
-const recordNoConditions = document.getElementById("record-no-conditions");
-const recordConditionEntries = document.getElementById("record-condition-entries");
-
-// CONDITIONS REVIEW
 function updateConditionReview() {
-  const cards = conditionRegister.querySelectorAll("[data-condition-card]");
-  const noConditionsDeclared = noConditionsCheckbox.checked;
-
-  recordConditionEntries.replaceChildren();
-
-  recordNoConditions.textContent = noConditionsDeclared
-    ? "No unresolved conditions identified."
-    : "";
-
-  if (noConditionsDeclared || cards.length === 0) {
-    if (!noConditionsDeclared) {
-      recordNoConditions.textContent = "No conditions entered.";
-    }
-    return;
-  }
-
-  cards.forEach((card, index) => {
-    const entry = document.createElement("div");
-    entry.className = "review-field";
-
-    const title = document.createElement("h4");
-    title.textContent = `Condition ${index + 1}`;
-
-    const conditionId = card.dataset.conditionId || "";
-    const conditionText = card.querySelector('[data-field="condition"]')?.value.trim() || "";
-    const timing = card.querySelector('[data-field="timing"]:checked');
-    const owner = card.querySelector('[data-field="owner"]')?.value.trim() || "";
-    const dueDate = card.querySelector('[data-field="dueDate"]')?.value || "";
-    const evidence = card.querySelector('[data-field="evidence"]')?.value.trim() || "";
-    const waiverScope = card.querySelector('[data-field="waiverScope"]')?.value.trim() || "";
-    const status = card.querySelector('[data-field="status"]:checked');
-    const resolutionNote = card.querySelector('[data-field="resolutionNote"]')?.value.trim() || "";
-    const acceptedBy = card.querySelector('[data-field="acceptedBy"]')?.value.trim() || "";
-    const acceptedAt = card.querySelector('[data-field="acceptedAt"]')?.value || "";
-    const reclassificationNote = card.querySelector('[data-field="reclassificationNote"]')?.value.trim() || "";
-    const lastUpdated = card.querySelector('[data-display="last-updated"]')?.textContent.trim() || "";
-
-    function addDetail(label, value) {
-      const row = document.createElement("p");
-      const strong = document.createElement("strong");
-      strong.textContent = `${label}: `;
-      row.appendChild(strong);
-      row.appendChild(document.createTextNode(value || "Not provided"));
-      entry.appendChild(row);
+    if (
+        !conditionRegister ||
+        !recordNoConditions ||
+        !recordConditionEntries
+    ) {
+        return;
     }
 
-    entry.appendChild(title);
+    const cards = conditionRegister.querySelectorAll(
+        "[data-condition-card]"
+    );
 
-    addDetail("Condition ID", conditionId);
-    addDetail("Condition", conditionText);
-    addDetail("When it must be met", timing?.parentElement.textContent.trim() || "");
-    addDetail("Owner", owner);
+    const noConditionsDeclared = noConditionsCheckbox.checked;
 
-    if (dueDate) {
-      const [year, month, day] = dueDate.split("-");
-      addDetail("Due date", `${month}/${day}/${year}`);
-    } else {
-      addDetail("Due date", "");
+    recordConditionEntries.replaceChildren();
+
+    recordNoConditions.textContent = noConditionsDeclared
+        ? "No unresolved conditions identified."
+        : "";
+
+    if (noConditionsDeclared || cards.length === 0) {
+        if (!noConditionsDeclared) {
+            recordNoConditions.textContent = "No conditions entered.";
+        }
+
+        return;
     }
 
-    addDetail("Evidence required", evidence);
-    addDetail("Permitted waiver scope", waiverScope);
-    addDetail("Status", status?.parentElement.textContent.trim() || "");
-    addDetail("Resolution note", resolutionNote);
 
-    if (acceptedBy) addDetail("Accepted by", acceptedBy);
-    if (acceptedAt) addDetail("Acceptance date and time", acceptedAt);
-    if (reclassificationNote) {
-      addDetail("Reclassification explanation", reclassificationNote);
-    }
+    cards.forEach((card, index) => {
+        const entry = document.createElement("div");
+        entry.className = "review-field";
 
-    addDetail("Last updated", lastUpdated);
+        const title = document.createElement("h4");
+        title.textContent = `Condition ${index + 1}`;
 
-    recordConditionEntries.appendChild(entry);
-  });
+        const conditionId = card.dataset.conditionId || "";
+
+        const conditionText =
+            card.querySelector('[data-field="condition"]')?.value.trim() || "";
+
+        const timing = card.querySelector(
+            '[data-field="timing"]:checked'
+        );
+
+        const owner =
+            card.querySelector('[data-field="owner"]')?.value.trim() || "";
+
+        const dueDate =
+            card.querySelector('[data-field="dueDate"]')?.value || "";
+
+        const evidence =
+            card.querySelector('[data-field="evidence"]')?.value.trim() || "";
+
+        const waiverScope =
+            card.querySelector('[data-field="waiverScope"]')?.value.trim() || "";
+
+        const status = card.querySelector(
+            '[data-field="status"]:checked'
+        );
+
+        const resolutionNote =
+            card.querySelector('[data-field="resolutionNote"]')?.value.trim() || "";
+
+        const acceptedBy =
+            card.querySelector('[data-field="acceptedBy"]')?.value.trim() || "";
+
+        const acceptedAt =
+            card.querySelector('[data-field="acceptedAt"]')?.value || "";
+
+        const reclassificationNote =
+            card.querySelector('[data-field="reclassificationNote"]')?.value.trim() || "";
+
+        const lastUpdated =
+            card.querySelector('[data-display="last-updated"]')?.textContent.trim() || "";
+
+
+        function addDetail(label, value) {
+            const row = document.createElement("p");
+
+            const strong = document.createElement("strong");
+            strong.textContent = `${label}: `;
+
+            row.appendChild(strong);
+            row.appendChild(
+                document.createTextNode(value || "Not provided")
+            );
+
+            entry.appendChild(row);
+        }
+
+
+        entry.appendChild(title);
+
+        addDetail("Condition ID", conditionId);
+        addDetail("Condition", conditionText);
+
+        addDetail(
+            "When it must be met",
+            timing?.parentElement.textContent.trim() || ""
+        );
+
+        addDetail("Owner", owner);
+
+        if (dueDate) {
+            const [year, month, day] = dueDate.split("-");
+            addDetail("Due date", `${month}/${day}/${year}`);
+        } else {
+            addDetail("Due date", "");
+        }
+
+        addDetail("Evidence required", evidence);
+        addDetail("Permitted waiver scope", waiverScope);
+
+        addDetail(
+            "Status",
+            status?.parentElement.textContent.trim() || ""
+        );
+
+        addDetail("Resolution note", resolutionNote);
+
+        if (acceptedBy) {
+            addDetail("Accepted by", acceptedBy);
+        }
+
+        if (acceptedAt) {
+            addDetail("Acceptance date and time", acceptedAt);
+        }
+
+        if (reclassificationNote) {
+            addDetail(
+                "Reclassification explanation",
+                reclassificationNote
+            );
+        }
+
+        addDetail("Last updated", lastUpdated);
+
+        recordConditionEntries.appendChild(entry);
+    });
 }
 
-// Update the review when condition fields change.
-conditionRegister.addEventListener("input", updateConditionReview);
-conditionRegister.addEventListener("change", updateConditionReview);
 
-// Detect conditions added or removed by the repeater.
-const conditionReviewObserver = new MutationObserver(updateConditionReview);
+conditionRegister?.addEventListener("input", updateConditionReview);
+conditionRegister?.addEventListener("change", updateConditionReview);
 
-conditionReviewObserver.observe(conditionRegister, {
-  childList: true,
-  subtree: true
-});
 
-// Update when the no-conditions declaration changes.
-noConditionsCheckbox.addEventListener("change", updateConditionReview);
+conditionReviewObserver = new MutationObserver(updateConditionReview);
 
-// Initial render.
+if (conditionRegister) {
+    conditionReviewObserver.observe(conditionRegister, {
+        childList: true,
+        subtree: true
+    });
+}
+
+
+noConditionsCheckbox?.addEventListener("change", updateConditionReview);
+
 updateConditionReview();
 
 
+/* =====================================================
+   25. CONSEQUENCE REVIEW
+===================================================== */
 
-const consequenceQuestionInput = document.getElementById("dc-consequence-question");
-
-const recordConsequenceQuestion = document.getElementById("record-consequence-question");
-const recordConsequence = document.getElementById("record-consequence");
-
-// Update the displayed consequence question.
 function updateRecordConsequenceQuestion() {
-  recordConsequenceQuestion.textContent = consequenceQuestionInput.textContent.trim();
+    if (recordConsequenceQuestion && consequenceQuestionInput) {
+        recordConsequenceQuestion.textContent =
+            consequenceQuestionInput.textContent.trim();
+    }
 }
 
-// Update the displayed consequence statement.
+
 function updateRecordConsequence() {
-  recordConsequence.textContent = consequenceInput.value.trim();
+    if (recordConsequence && consequenceInput) {
+        recordConsequence.textContent = consequenceInput.value.trim();
+    }
 }
 
-// Listen for changes.
-consequenceInput.addEventListener("input", updateRecordConsequence);
 
-// The action logic updates the question's text, so observe those changes.
-const consequenceQuestionObserver = new MutationObserver(
-  updateRecordConsequenceQuestion
+consequenceInput?.addEventListener("input", updateRecordConsequence);
+
+
+consequenceQuestionObserver = new MutationObserver(
+    updateRecordConsequenceQuestion
 );
 
-consequenceQuestionObserver.observe(consequenceQuestionInput, {
-  childList: true,
-  characterData: true,
-  subtree: true
-});
+if (consequenceQuestionInput) {
+    consequenceQuestionObserver.observe(consequenceQuestionInput, {
+        childList: true,
+        characterData: true,
+        subtree: true
+    });
+}
 
-// Initial values.
+
 updateRecordConsequenceQuestion();
 updateRecordConsequence();
 
 
-// RECOVERY REVIEW
+/* =====================================================
+   26. RECOVERY REVIEW
+===================================================== */
 
-
+// Checkbox-driven recovery state is the single source of truth.
 function updateRecoveryFields() {
-  const notApplicable = recoveryNotApplicable.checked;
+    const notApplicable = Boolean(recoveryNotApplicable?.checked);
 
-  recoveryReasonField.hidden = !notApplicable;
-  recoveryReasonInput.required = notApplicable;
-  recoveryInput.required = !notApplicable;
+    if (recoveryReasonField) {
+        recoveryReasonField.hidden = !notApplicable;
+    }
 
-  if (notApplicable) {
-    recoveryInput.value = "";
-  } else {
-    recoveryReasonInput.value = "";
-  }
+    if (recoveryReasonInput) {
+        recoveryReasonInput.required = notApplicable;
+    }
 
-  updateRecoveryReview();
+    if (recoveryInput) {
+        recoveryInput.required = !notApplicable;
+    }
+
+    if (notApplicable) {
+        if (recoveryInput) {
+            recoveryInput.value = "";
+        }
+    } else if (recoveryReasonInput) {
+        recoveryReasonInput.value = "";
+    }
+
+    updateRecoveryReview();
 }
+
 
 function updateRecoveryReview() {
-  recoveryOutput.replaceChildren();
+    if (!recoveryOutput) {
+        return;
+    }
 
-  if (recoveryNotApplicable.checked) {
-    const status = document.createElement("p");
-    status.textContent = "Recovery: Not applicable";
+    recoveryOutput.replaceChildren();
 
-    const reason = document.createElement("p");
-    const label = document.createElement("strong");
-    label.textContent = "Reason: ";
-    reason.append(label, document.createTextNode(
-      recoveryReasonInput.value.trim() || "Not provided"
-    ));
+    if (recoveryNotApplicable?.checked) {
+        const status = document.createElement("p");
+        status.textContent = "Recovery: Not applicable";
 
-    recoveryOutput.append(status, reason);
-    return;
-  }
+        const reason = document.createElement("p");
 
-  recoveryOutput.textContent = recoveryInput.value.trim() || "Not provided";
+        const label = document.createElement("strong");
+        label.textContent = "Reason: ";
+
+        reason.append(
+            label,
+            document.createTextNode(
+                recoveryReasonInput?.value.trim() || "Not provided"
+            )
+        );
+
+        recoveryOutput.append(status, reason);
+        return;
+    }
+
+    recoveryOutput.textContent =
+        recoveryInput?.value.trim() || "Not provided";
 }
 
-recoveryInput.addEventListener("input", updateRecoveryReview);
-recoveryReasonInput.addEventListener("input", updateRecoveryReview);
-recoveryNotApplicable.addEventListener("change", updateRecoveryFields);
+
+recoveryInput?.addEventListener("input", updateRecoveryReview);
+recoveryReasonInput?.addEventListener("input", updateRecoveryReview);
+
+recoveryNotApplicable?.addEventListener(
+    "change",
+    updateRecoveryFields
+);
 
 updateRecoveryFields();
 
 
-// ASSUMPTIONS REVIEW
-const assumptionContainer = document.getElementById("assumption-container");
-const assumptionsOutput = document.getElementById("record-assumptions");
+/* =====================================================
+   27. ASSUMPTIONS REVIEW
+===================================================== */
 
 function updateAssumptionsReview() {
-  assumptionsOutput.replaceChildren();
+    if (!assumptionsOutput || !assumptionContainer) {
+        return;
+    }
 
-  if (noAssumptionsCheckbox.checked) {
-    assumptionsOutput.textContent = "No key assumptions identified.";
-    return;
-  }
+    assumptionsOutput.replaceChildren();
 
-  const assumptionInputs = assumptionContainer.querySelectorAll(
-    'textarea[name="keyAssumptions[]"]'
-  );
+    if (noAssumptionsCheckbox?.checked) {
+        assumptionsOutput.textContent = "No key assumptions identified.";
+        return;
+    }
 
-  const enteredAssumptions = Array.from(assumptionInputs)
-    .map(input => input.value.trim())
-    .filter(value => value !== "");
-
-  if (enteredAssumptions.length === 0) {
-    assumptionsOutput.textContent = "No assumptions entered.";
-    return;
-  }
-
-  enteredAssumptions.forEach((assumption, index) => {
-    const entry = document.createElement("p");
-    const label = document.createElement("strong");
-
-    label.textContent = `Assumption ${index + 1}: `;
-    entry.append(label, document.createTextNode(assumption));
-
-    assumptionsOutput.appendChild(entry);
-  });
-}
-
-assumptionContainer.addEventListener("input", event => {
-  if (event.target.matches('textarea[name="keyAssumptions[]"]')) {
-    updateAssumptionsReview();
-  }
-});
-
-assumptionContainer.addEventListener("change", event => {
-  if (event.target === noAssumptionsCheckbox) {
     const assumptionInputs = assumptionContainer.querySelectorAll(
-      'textarea[name="keyAssumptions[]"]'
+        'textarea[name="keyAssumptions[]"]'
     );
 
-    assumptionInputs.forEach(input => {
-      input.required = !noAssumptionsCheckbox.checked;
+    const enteredAssumptions = Array.from(assumptionInputs)
+        .map(input => input.value.trim())
+        .filter(Boolean);
 
-      if (noAssumptionsCheckbox.checked) {
-        input.value = "";
-      }
+    if (enteredAssumptions.length === 0) {
+        assumptionsOutput.textContent = "No assumptions entered.";
+        return;
+    }
+
+    enteredAssumptions.forEach((assumption, index) => {
+        const entry = document.createElement("p");
+        const label = document.createElement("strong");
+
+        label.textContent = `Assumption ${index + 1}: `;
+
+        entry.append(label, document.createTextNode(assumption));
+
+        assumptionsOutput.appendChild(entry);
     });
+}
 
-    addAssumptionButton.disabled = noAssumptionsCheckbox.checked;
+
+assumptionContainer?.addEventListener("input", event => {
+    if (event.target.matches('textarea[name="keyAssumptions[]"]')) {
+        updateAssumptionsReview();
+    }
+});
+
+
+assumptionContainer?.addEventListener("change", event => {
+    if (event.target === noAssumptionsCheckbox) {
+        const assumptionInputs = assumptionContainer.querySelectorAll(
+            'textarea[name="keyAssumptions[]"]'
+        );
+
+        assumptionInputs.forEach(input => {
+            input.required = !noAssumptionsCheckbox.checked;
+
+            if (noAssumptionsCheckbox.checked) {
+                input.value = "";
+            }
+        });
+
+        if (addAssumptionButton) {
+            addAssumptionButton.disabled = noAssumptionsCheckbox.checked;
+        }
+
+        updateAssumptionsReview();
+        updateAssumptions();
+    }
+});
+
+
+assumptionObserver = new MutationObserver(() => {
     updateAssumptionsReview();
-  }
+    updateAssumptions();
 });
 
-// Watch for assumptions added or removed dynamically.
-const assumptionObserver = new MutationObserver(updateAssumptionsReview);
+if (assumptionContainer) {
+    assumptionObserver.observe(assumptionContainer, {
+        childList: true,
+        subtree: true
+    });
+}
 
-assumptionObserver.observe(assumptionContainer, {
-  childList: true,
-  subtree: true
-});
 
 updateAssumptionsReview();
 
-// DECISION BASIS REVIEW
-const decisionBasisInput = document.getElementById("dc-decisionBasis");
-const decisionBasisOutput = document.getElementById("record-decision-basis");
+
+/* =====================================================
+   28. DECISION BASIS REVIEW
+===================================================== */
 
 function updateDecisionBasisReview() {
-  decisionBasisOutput.textContent =
-    decisionBasisInput.value.trim() || "Not provided";
+    if (decisionBasisOutput && decisionBasisInput) {
+        decisionBasisOutput.textContent =
+            decisionBasisInput.value.trim() || "Not provided";
+    }
 }
 
-decisionBasisInput.addEventListener("input", updateDecisionBasisReview);
+
+decisionBasisInput?.addEventListener("input", updateDecisionBasisReview);
+
 updateDecisionBasisReview();
 
-// ACCOUNTABILITY REVIEW FIELDS
-const accountabilityApprovalAuthorityOutput = document.getElementById("record-accountability-approval-authority");
 
-const confirmingPersonInput = document.getElementById("dc-confirmingPerson");
-const confirmingPersonOutput = document.getElementById("record-confirming-person");
+/* =====================================================
+   29. ACCOUNTABILITY REVIEW
+===================================================== */
 
 function updateAccountabilityReview() {
-  accountabilityApprovalAuthorityOutput.textContent =
-    approvalAuthorityInput.value.trim() || "Not provided";
+    if (accountabilityApprovalAuthorityOutput) {
+        accountabilityApprovalAuthorityOutput.textContent =
+            approvalAuthorityInput?.value.trim() || "Not provided";
+    }
 
-  confirmingPersonOutput.textContent =
-    confirmingPersonInput.value.trim() || "Not provided";
+    if (confirmingPersonOutput) {
+        confirmingPersonOutput.textContent =
+            confirmingPersonInput?.value.trim() || "Not provided";
+    }
 }
 
-approvalAuthorityInput.addEventListener("input", updateAccountabilityReview);
-confirmingPersonInput.addEventListener("input", updateAccountabilityReview);
+
+approvalAuthorityInput?.addEventListener(
+    "input",
+    updateAccountabilityReview
+);
+
+confirmingPersonInput?.addEventListener(
+    "input",
+    updateAccountabilityReview
+);
 
 updateAccountabilityReview();
 
 
-
-// BEFORE YOU WIRE — LIVE STAGE 1 SUMMARY
+/* =====================================================
+   30. STAGE 1 SUMMARY HELPERS
+===================================================== */
 
 function setSummaryValue(id, value) {
-  const output = document.getElementById(id);
-  if (output) output.textContent = value || "—";
-}
+    const output = document.getElementById(id);
 
-
-setSummaryValue("byw-stage1-record-id", recordId);
-
-
-// Transaction
-function updateTransaction() {
-  const selected = document.querySelector(
-    'input[name="capitalEvent"]:checked'
-  );
-
-  const labels = {
-    acquisition: "Acquisition",
-    refinance: "Refinance",
-    recapitalization: "Recapitalization",
-    "major-capital": "Major capital",
-    disposition: "Disposition",
-    other: "Other"
-  };
-
-  setSummaryValue("byw-transaction", labels[selected?.value]);
-}
-
-
-// Closed decision
-function updateClosedDecision() {
-  const selected = document.querySelector(
-    'input[name="proposedAction"]:checked'
-  );
-
-  const labels = {
-    advance: "ADVANCE",
-    modify: "MODIFY",
-    defer: "DEFER",
-    decline: "DECLINE"
-  };
-
-  setSummaryValue("byw-action", labels[selected?.value]);
-}
-
-
-// Decision date
-function updateDecisionDate() {
-  const value = document.getElementById("dc-date")?.value;
-
-  if (!value) {
-    setSummaryValue("byw-decision-date", "");
-    return;
-  }
-
-  const [year, month, day] = value.split("-");
-  setSummaryValue("byw-decision-date", `${month}/${day}/${year}`);
-}
-
-
-// Approval authority
-function updateApprovalAuthority() {
-  setSummaryValue(
-    "byw-authority",
-    document.getElementById("dc-approvalAuthority")?.value.trim()
-  );
-}
-
-
-// Consequence
-function updateConsequence() {
-  setSummaryValue(
-    "byw-consequence",
-    document.getElementById("dc-consequenceStatement")?.value.trim()
-  );
-}
-
-
-// Assumptions
-function updateAssumptions() {
-  // const output = document.getElementById("byw-assumptions");
-  const noneSelected = document.getElementById("dc-no-assumptions")?.checked;
-
-  // output.replaceChildren();
-
-  if (noneSelected) {
-    const item = document.createElement("li");
-    item.textContent = "No key assumptions identified.";
-    output.appendChild(item);
-    return;
-  }
-
-  const inputs = document.querySelectorAll(
-    '#assumption-container textarea[name="keyAssumptions[]"]'
-  );
-
-  const assumptions = Array.from(inputs)
-    .map(input => input.value.trim())
-    .filter(Boolean);
-
-  if (assumptions.length === 0) {
-    const item = document.createElement("li");
-    item.textContent = "—";
-    // output.appendChild(item);
-    return;
-  }
-
-  assumptions.forEach(assumption => {
-    const item = document.createElement("li");
-    item.textContent = assumption;
-    output.appendChild(item);
-  });
-}
-
-
-// Condition counts
-function updateConditionCounts() {
-  const noConditions = document.getElementById(
-    "dc-no-unresolved-conditions"
-  )?.checked;
-
-  const cards = document.querySelectorAll(
-    "#dc-condition-register [data-condition-card]"
-  );
-
-  if (noConditions) {
-    setSummaryValue("byw-condition-counts", "No unresolved conditions identified.");
-    return;
-  }
-
-  if (!cards.length) {
-    setSummaryValue("byw-condition-counts", "No conditions entered.");
-    return;
-  }
-
-  const counts = {
-    open: 0,
-    satisfied: 0,
-    waived: 0,
-    failed: 0,
-    changed: 0
-  };
-
-  cards.forEach(card => {
-    const status = card.querySelector('[data-field="status"]:checked')?.value;
-    if (status && Object.hasOwn(counts, status)) {
-      counts[status]++;
+    if (output) {
+        output.textContent = value || "—";
     }
-  });
-
-  setSummaryValue(
-    "byw-condition-counts",
-    `Total: ${cards.length} | Open: ${counts.open} | Satisfied: ${counts.satisfied} | Waived: ${counts.waived} | Failed: ${counts.failed} | Changed: ${counts.changed}`
-  );
 }
 
 
-// Attach listeners
-document.querySelectorAll('input[name="capitalEvent"]').forEach(input => {
-  input.addEventListener("change", updateTransaction);
+/* =====================================================
+   31. TRANSACTION SUMMARY
+===================================================== */
+
+function updateTransaction() {
+    const selected = document.querySelector(
+        'input[name="capitalEvent"]:checked'
+    );
+
+    const labels = {
+        acquisition: "Acquisition",
+        refinance: "Refinance",
+        recapitalization: "Recapitalization",
+        "major-capital": "Major capital",
+        disposition: "Disposition",
+        other: "Other"
+    };
+
+    setSummaryValue("byw-transaction", labels[selected?.value]);
+}
+
+
+/* =====================================================
+   32. CLOSED DECISION SUMMARY
+===================================================== */
+
+function updateClosedDecision() {
+    const selected = document.querySelector(
+        'input[name="proposedAction"]:checked'
+    );
+
+    const labels = {
+        advance: "ADVANCE",
+        modify: "MODIFY",
+        defer: "DEFER",
+        decline: "DECLINE"
+    };
+
+    setSummaryValue("byw-action", labels[selected?.value]);
+}
+
+
+/* =====================================================
+   33. DECISION DATE SUMMARY
+===================================================== */
+
+function updateDecisionDate() {
+    const value = document.getElementById("dc-date")?.value;
+
+    if (!value) {
+        setSummaryValue("byw-decision-date", "");
+        return;
+    }
+
+    const [year, month, day] = value.split("-");
+
+    setSummaryValue("byw-decision-date", `${month}/${day}/${year}`);
+}
+
+
+/* =====================================================
+   34. CONSEQUENCE SUMMARY
+===================================================== */
+
+function updateConsequence() {
+    setSummaryValue(
+        "byw-consequence",
+        document.getElementById("dc-consequenceStatement")?.value.trim()
+    );
+}
+
+
+/* =====================================================
+   35. ASSUMPTIONS SUMMARY
+===================================================== */
+
+function updateAssumptions() {
+    if (!assumptionsSummaryOutput) {
+        return;
+    }
+
+    assumptionsSummaryOutput.replaceChildren();
+
+    if (noAssumptionsCheckbox?.checked) {
+        const item = document.createElement("li");
+        item.textContent = "No key assumptions identified.";
+
+        assumptionsSummaryOutput.appendChild(item);
+        return;
+    }
+
+    const inputs = document.querySelectorAll(
+        '#assumption-container textarea[name="keyAssumptions[]"]'
+    );
+
+    const assumptions = Array.from(inputs)
+        .map(input => input.value.trim())
+        .filter(Boolean);
+
+    if (assumptions.length === 0) {
+        const item = document.createElement("li");
+        item.textContent = "—";
+
+        assumptionsSummaryOutput.appendChild(item);
+        return;
+    }
+
+    assumptions.forEach(assumption => {
+        const item = document.createElement("li");
+        item.textContent = assumption;
+
+        assumptionsSummaryOutput.appendChild(item);
+    });
+}
+
+
+/* =====================================================
+   36. CONDITION REPEATER STATE
+===================================================== */
+
+function updateConditionRepeaterState() {
+    const noConditions = Boolean(noConditionsCheckbox?.checked);
+
+    if (!conditionsContainer || !addConditionButton) {
+        return;
+    }
+
+    addConditionButton.disabled = noConditions;
+
+    conditionsContainer.querySelectorAll(
+        "[data-condition-card] input, " +
+        "[data-condition-card] textarea, " +
+        "[data-condition-card] select, " +
+        "[data-condition-card] button"
+    ).forEach(field => {
+        field.disabled = noConditions;
+    });
+
+    updateAllNavigation();
+}
+
+
+/* =====================================================
+   37. CONDITION SUMMARY COUNTS
+===================================================== */
+
+function updateConditionCounts() {
+    const noConditions = Boolean(noConditionsCheckbox?.checked);
+
+    const cards = document.querySelectorAll(
+        "#dc-condition-register [data-condition-card]"
+    );
+
+    if (noConditions) {
+        setSummaryValue(
+            "byw-condition-counts",
+            "No unresolved conditions identified."
+        );
+
+        return;
+    }
+
+    if (!cards.length) {
+        setSummaryValue(
+            "byw-condition-counts",
+            "No conditions entered."
+        );
+
+        return;
+    }
+
+    const counts = {
+        open: 0,
+        satisfied: 0,
+        waived: 0,
+        failed: 0,
+        changed: 0
+    };
+
+    cards.forEach(card => {
+        const status = card.querySelector(
+            '[data-field="status"]:checked'
+        )?.value;
+
+        if (status && Object.hasOwn(counts, status)) {
+            counts[status]++;
+        }
+    });
+
+    setSummaryValue(
+        "byw-condition-counts",
+        `Total: ${cards.length} | Open: ${counts.open} | Satisfied: ${counts.satisfied} | Waived: ${counts.waived} | Failed: ${counts.failed} | Changed: ${counts.changed}`
+    );
+}
+
+
+/* =====================================================
+   38. STAGE 1 SUMMARY EVENT LISTENERS
+===================================================== */
+
+capitalEventRadios.forEach(input => {
+    input.addEventListener("change", updateTransaction);
 });
 
-document.querySelectorAll('input[name="proposedAction"]').forEach(input => {
-  input.addEventListener("change", updateClosedDecision);
+
+proposedActionRadios.forEach(input => {
+    input.addEventListener("change", updateClosedDecision);
 });
 
-document.getElementById("dc-date")?.addEventListener("input", updateDecisionDate);
-document.getElementById("dc-approvalAuthority")?.addEventListener("input", updateApprovalAuthority);
-document.getElementById("dc-consequenceStatement")?.addEventListener("input", updateConsequence);
+
+document.getElementById("dc-date")?.addEventListener(
+    "input",
+    updateDecisionDate
+);
+
+
+approvalAuthorityInput?.addEventListener(
+    "input",
+    updateApprovalAuthority
+);
+
+
+consequenceInput?.addEventListener("input", updateConsequence);
 
 
 assumptionContainer?.addEventListener("input", updateAssumptions);
@@ -1392,33 +2270,37 @@ assumptionContainer?.addEventListener("change", updateAssumptions);
 conditionRegister?.addEventListener("input", updateConditionCounts);
 conditionRegister?.addEventListener("change", updateConditionCounts);
 
-document.getElementById("dc-no-unresolved-conditions")?.addEventListener(
-  "change",
-  updateConditionCounts
-);
 
-// Detect dynamically added or removed assumption and condition entries.
-const summaryObserver = new MutationObserver(() => {
-  updateAssumptions();
-  updateConditionCounts();
+/* =====================================================
+   39. DYNAMIC SUMMARY OBSERVER
+===================================================== */
+
+summaryObserver = new MutationObserver(() => {
+    updateAssumptions();
+    updateConditionCounts();
 });
 
+
 if (assumptionContainer) {
-  summaryObserver.observe(assumptionContainer, {
-    childList: true,
-    subtree: true
-  });
+    summaryObserver.observe(assumptionContainer, {
+        childList: true,
+        subtree: true
+    });
 }
+
 
 if (conditionRegister) {
-  summaryObserver.observe(conditionRegister, {
-    childList: true,
-    subtree: true
-  });
+    summaryObserver.observe(conditionRegister, {
+        childList: true,
+        subtree: true
+    });
 }
 
 
-// Initial population
+/* =====================================================
+   40. INITIAL SUMMARY POPULATION
+===================================================== */
+
 updateTransaction();
 updateClosedDecision();
 updateDecisionDate();
@@ -1426,1217 +2308,77 @@ updateApprovalAuthority();
 updateConsequence();
 updateAssumptions();
 updateConditionCounts();
+updateConditionRepeaterState();
 
 
+/* =====================================================
+   41. CLOSE DECISION AND GENERATE RECORD
+===================================================== */
 
-document.querySelector('#test-pdf-button').addEventListener('click', (e) => {
+// This button is a submit button. Handle it through the form's
+// submit event so both button clicks and Enter-key submissions work.
+//
+// This handler records the submission time and updates the visible
+// record metadata. Connect your existing PDF-generation routine here.
+dcForm?.addEventListener("submit", event => {
+    const submitter = event.submitter;
 
-    // e.preventDefault();
+    if (submitter?.id !== "dc-close-and-generate-btn") {
+        return;
+    }
 
-    // const formData = new FormData(e.target);
+    // Stop the browser's default submission only if this form is
+    // intended to be handled entirely by JavaScript.
+    event.preventDefault();
 
-    generatePDF(); 
+    const submittedAt = new Date();
 
+    const timestamp = submittedAt.toLocaleString("en-US", {
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    });
+
+    if (closedRecordIdOutput) {
+        closedRecordIdOutput.textContent = recordId;
+    }
+
+    if (closedRecordTimestampOutput) {
+        closedRecordTimestampOutput.textContent = timestamp;
+    }
+
+    // Refresh review and summary content before generating the PDF.
+    updateCapitalEvent();
+    updateRecordProposedAction();
+    updateAcceptedRisks();
+    updateConditionReview();
+    updateRecoveryReview();
+    updateAssumptionsReview();
+    updateDecisionBasisReview();
+    updateAccountabilityReview();
+
+    updateTransaction();
+    updateClosedDecision();
+    updateDecisionDate();
+    updateConsequence();
+    updateAssumptions();
+    updateConditionCounts();
+
+    /*
+       Call your existing PDF-generation function here.
+
+       Example:
+       generateDecisionClosurePDF({
+           recordId,
+           submittedAt,
+           timestamp
+       });
+
+       After the PDF has been generated successfully, set the
+       View PDF and Download PDF links in #success-section to the
+       resulting PDF URL.
+    */
 });
-
-
-
-
-// document.querySelector('form').addEventListener('submit', (e) => {
-
-//     e.preventDefault();
-
-//     const formData = new FormData(e.target);
-
-//     generatePDF(formData, recordId); 
-
-// });
-
-//     // =====================================================
-//     // PDF STARTS HERE
-//     // =====================================================
-
-
-
-function addHeader(doc) {
-
-    // -------------------------
-    // Logo placeholder
-    // -------------------------
-
-    doc
-        .rect(50, 30, 35, 35)
-        .fill('#1470af');
-
-    doc
-        .fillColor('#FFFFFF')
-        .font('Helvetica-Bold')
-        .fontSize(22)
-        .text('W', 50, 35, {
-            width: 35,
-            align: 'center',
-            lineBreak: false
-        });
-
-
-    // -------------------------
-    // Header title
-    // -------------------------
-
-    doc
-        .fillColor('#000000')
-        .font('Helvetica-Bold')
-        .fontSize(18)
-        .text('Deal Killers', 100, 30, {
-            width: 412,
-            align: 'center',
-            lineBreak: false
-        });
-
-
-    // -------------------------
-    // Header line
-    // -------------------------
-
-    doc
-        .moveTo(100, 55)
-        .lineTo(512, 55)
-        .lineWidth(1)
-        .strokeColor('#1470af')
-        .stroke();
-
-
-    // -------------------------
-    // Header subtitle
-    // -------------------------
-
-    doc
-        .font('Helvetica-Oblique')
-        .fontSize(9)
-        .fillColor('#555555')
-        .text('an analysis tool from John', 100, 60, {
-            width: 412,
-            align: 'center',
-            lineBreak: false
-        });
-
-
-    // Reset text color
-    doc.fillColor('#000000');
-}
-
-
-function addFooter(doc) {
-
-    const pageWidth = 612;
-    const pageHeight = 792;
-
-
-    // -------------------------
-    // Footer line
-    // -------------------------
-
-    doc
-        .moveTo(50, pageHeight - 55)
-        .lineTo(pageWidth - 50, pageHeight - 55)
-        .lineWidth(0.5)
-        .strokeColor('#CCCCCC')
-        .stroke();
-
-
-    // -------------------------
-    // Footer text
-    // -------------------------
-
-    doc
-        .font('Helvetica')
-        .fontSize(8)
-        .fillColor('#777777')
-        .text(
-            'Deal Killers • Professional Decision-Support Tool',
-            50,
-            pageHeight - 45,
-            {
-                width: 400,
-                align: 'left',
-                lineBreak: false
-            }
-        );
-
-
-    // -------------------------
-    // Page number
-    // -------------------------
-
-    doc
-        .text(
-            `Page ${doc.page.index + 1}`,
-            450,
-            pageHeight - 45,
-            {
-                width: 110,
-                align: 'right',
-                lineBreak: false
-            }
-        );
-
-
-    // Reset text color
-    doc.fillColor('#000000');
-}
-
-
-// function generatePDF(formData, recordId) {
-
-// //       // =====================================================
-// //     // CREATE PDF
-// //     // =====================================================
-
-//     const doc = new PDFDocument({
-//         font: 'Helvetica'
-//     });
-
-
-// //     // =====================================================
-// //     // HEADER / FOOTER
-// //     // =====================================================
-
-//     // Add header/footer to every NEW page
-//     doc.on('pageAdded', function () {
-
-//         addHeader(doc);
-//         // addFooter(doc);
-
-//     });
-
-//     // Add header/footer to first page
-//     addHeader(doc);
-//     // addFooter(doc);
-
-//     // Start content below header
-//     doc.y = 100;
-
-
-// //     // =====================================================
-// //     // COLLECT PDF DATA
-// //     // =====================================================
-
-//     const chunks = [];
-
-
-//     doc.on('data', function (chunk) {
-
-//         chunks.push(chunk);
-
-//     });
-
-
-// //     // =====================================================
-// //     // PDF FINISHED
-// //     // =====================================================
-
-//     doc.on('end', function () {
-
-//         console.log('PDF generated!');
-//         console.log('Chunks:', chunks.length);
-
-
-//         const blob = new Blob(chunks, {
-//             type: 'application/pdf'
-//         });
-
-//         const url = URL.createObjectURL(blob);
-
-//         console.log(url); 
-
-
-//         // View PDF button
-//         const viewBtn = document.getElementById('test-pdf-button');
-
-//         viewBtn.href = url;
-//         viewBtn.target = '_blank';
-//         viewBtn.style.display = 'inline-block';
-
-
-//         // Download PDF button
-//         // const downloadBtn = document.getElementById('dk-download-btn');
-
-//         // downloadBtn.href = url;
-//         // downloadBtn.download = 'walk-away-results.pdf';
-//         // downloadBtn.style.display = 'inline-block';
-
-//          // Show success screen
-//         // const successSection = document.getElementById('success-section');
-
-//         // if (successSection) {
-//         //     showSection(successSection);
-//         // }
-
-//     });
-
-
-//     // =====================================================
-//     // CREATE PDF SECTIONS
-//     // =====================================================
-
-    // const title = 'Walk Away Decision Record'; 
-
-
-    // createPDFIntro(
-    //     doc,
-    //     formData,
-    //     title
-    // );
-
-    // PDFCreateTable(
-    //     doc,
-    //     formData,
-    //     recordId
-    // );
-
-    // PDFCreateDecisionRecord(
-    //     doc,
-    //     formData,
-    //     recordId
-    // );
-
-    // createPDFFourChecks(
-    //     doc,
-    //     formData,
-    //     recordId
-    // );
-
-    // createPDFProofRequired(
-    //     doc,
-    //     formData,
-    //     recordId
-    // );
-
-
-//     doc.end();
-
-// }
-
-
-// function createPDFIntro(doc, formData, title) {
-
-//     const decision = formData.get('decision');
-
-//     let decisionText; 
-
-//     if (decision === 'stop') { 
-
-//         decisionText = 'STOP'; 
-
-//     } else if (decision === 'continue') {
-
-//         decisionText = 'CONTINUE'; 
-
-//     } else if (decision === 'require-proof') {
-
-//         decisionText = 'REQUIRE MORE PROOF'; 
-
-//     }
-
-
-//     // Title
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(30)
-//         .text(title, 50, doc.y);
-
-
-//     doc.moveDown();
-
-
-//     // Selected decision
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(18)
-//         .text('SELECTED DECISION: ', {
-//             continued: true
-//         })
-//         .font('Helvetica')
-//         .text(decisionText, {
-//             width: 510,
-//             align: 'left'
-//         });
-
-
-//     doc.moveDown();
-
-// }
-
-
-// function PDFCreateTable(doc, formData, recordId) {
-
-//     const dealReference = formData.get('dealReference');
-//     const decisionOwner = formData.get('email');
-//     const decisionDate = formData.get('date');
-
-
-//     // Generate timestamp
-//     const generatedTimestamp = new Date().toLocaleString('en-US', {
-//         month: 'long',
-//         day: 'numeric',
-//         year: 'numeric',
-//         hour: 'numeric',
-//         minute: '2-digit',
-//         timeZoneName: 'short'
-//     }); 
-
-
-//     // Format decision date
-//     const formattedDate = decisionDate
-//         ? new Date(`${decisionDate}T00:00:00`).toLocaleDateString('en-US', {
-//             month: 'long',
-//             day: 'numeric',
-//             year: 'numeric'
-//         })
-//         : '';
-
-
-//     const tableX = 50;
-//     const tableWidth = 512;
-
-//     const detailWidth = 200;
-//     const valueWidth = tableWidth - detailWidth;
-
-//     const headerHeight = 32;
-
-
-//     const rows = [
-//         [
-//             'Decision / deal name',
-//             dealReference
-//         ],
-//         [
-//             'Decision owner',
-//             decisionOwner
-//         ],
-//         [
-//             'Decision date',
-//             formattedDate
-//         ],
-//         [
-//             'Record ID',
-//             recordId
-//         ],
-//         [
-//             'Generated',
-//             generatedTimestamp
-//         ]
-//     ];
-
-
-//     // Font settings
-//     const headerFontSize = 14;
-//     const bodyFontSize = 12;
-
-
-//     // Row settings
-//     const rowLineHeight = 12;
-//     const minimumRowHeight = rowLineHeight * 2;
-
-
-//     // Calculate row heights based on the value column
-//     doc
-//         .font('Helvetica')
-//         .fontSize(bodyFontSize);
-
-
-//     const rowHeights = rows.map(row => {
-
-//         const valueHeight = doc.heightOfString(row[1] || '', {
-//             width: valueWidth - 20,
-//             lineGap: 0
-//         });
-
-//         return Math.max(
-//             minimumRowHeight,
-//             valueHeight
-//         ) + 8;
-
-//     });
-
-
-//     // Header
-//     const headerY = doc.y;
-
-
-//     doc
-//         .fillColor('#E6E6E6')
-//         .rect(tableX, headerY, detailWidth, headerHeight)
-//         .fill();
-
-
-//     doc
-//         .rect(
-//             tableX + detailWidth,
-//             headerY,
-//             valueWidth,
-//             headerHeight
-//         )
-//         .fill();
-
-
-//     // Header borders
-//     doc
-//         .strokeColor('#104E75')
-//         .lineWidth(1)
-//         .rect(tableX, headerY, detailWidth, headerHeight)
-//         .stroke();
-
-
-//     doc
-//         .rect(
-//             tableX + detailWidth,
-//             headerY,
-//             valueWidth,
-//             headerHeight
-//         )
-//         .stroke();
-
-
-//     // Header text
-//     doc
-//         .fillColor('#000000')
-//         .font('Helvetica-Bold')
-//         .fontSize(headerFontSize)
-//         .text(
-//             'Decision Details',
-//             tableX + 10,
-//             headerY + 10,
-//             {
-//                 width: detailWidth - 20
-//             }
-//         )
-//         .text(
-//             'Recorded value',
-//             tableX + detailWidth + 10,
-//             headerY + 10,
-//             {
-//                 width: valueWidth - 20
-//             }
-//         );
-
-
-//     // Rows
-//     let currentY = headerY + headerHeight;
-
-
-//     rows.forEach((row, index) => {
-
-//         const rowHeight = rowHeights[index];
-
-//         const x1 = tableX;
-//         const x2 = tableX + detailWidth;
-
-
-//         // Cell backgrounds
-//         doc
-//             .fillColor('#FFFFFF')
-//             .rect(x1, currentY, detailWidth, rowHeight)
-//             .fill();
-
-
-//         doc
-//             .rect(x2, currentY, valueWidth, rowHeight)
-//             .fill();
-
-
-//         // Cell borders
-//         doc
-//             .strokeColor('#104E75')
-//             .lineWidth(1)
-//             .rect(x1, currentY, detailWidth, rowHeight)
-//             .stroke();
-
-
-//         doc
-//             .rect(x2, currentY, valueWidth, rowHeight)
-//             .stroke();
-
-
-//         // Cell text
-//         doc
-//             .fillColor('#000000')
-//             .font('Helvetica')
-//             .fontSize(bodyFontSize)
-//             .text(
-//                 row[0],
-//                 x1 + 10,
-//                 currentY + 6,
-//                 {
-//                     width: detailWidth - 20,
-//                     lineGap: 0
-//                 }
-//             )
-//             .text(
-//                 row[1] || '',
-//                 x2 + 10,
-//                 currentY + 6,
-//                 {
-//                     width: valueWidth - 20,
-//                     lineGap: 0
-//                 }
-//             );
-
-
-//         currentY += rowHeight;
-
-//     });
-
-
-//     // Move below table
-//     doc.y = currentY;
-
-
-//     // Reset formatting
-//     doc
-//         .fillColor('#000000')
-//         .strokeColor('#000000')
-//         .font('Helvetica')
-//         .fontSize(12);
-
-// }
-
-
-// function PDFCreateDecisionRecord(doc, formData, recordId) {
-
-//     const concern = formData.get('concern'); 
-//     const commit = formData.get('commit'); 
-//     const supportingFacts = formData.get('supportingFacts'); 
-//     const opposingFacts = formData.get('opposingFacts'); 
-//     const missingFacts = formData.get('missingFacts');
-//     const consequence = formData.get('consequence'); 
-
-
-//     const contentBottom = 730;
-
-
-//     function checkPageSpace(requiredSpace) {
-
-//         if (doc.y + requiredSpace > contentBottom) {
-
-//             doc.addPage();
-//             doc.y = 100;
-
-//         }
-
-//     }
-
-
-//     // Space before first section
-//     doc.y += 30;
-
-
-//     // Concern
-//     checkPageSpace(100);
-
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(16)
-//         .text('Concern', 50, doc.y);
-
-//     doc
-//         .font('Helvetica')
-//         .fontSize(12)
-//         .text(
-//             concern,
-//             50,
-//             doc.y
-//         );
-
-//     doc.moveDown();
-
-
-//     // Next commitment
-//     checkPageSpace(100);
-
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(16)
-//         .text('Next commitment', 50, doc.y);
-
-//     doc
-//         .font('Helvetica')
-//         .fontSize(12)
-//         .text(
-//             commit,
-//             50,
-//             doc.y
-//         );
-
-//     doc.moveDown();
-
-
-//     // Facts supporting the next step
-//     checkPageSpace(100);
-
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(16)
-//         .text('Facts supporting the next step', 50, doc.y);
-
-//     doc
-//         .font('Helvetica')
-//         .fontSize(12)
-//         .text(
-//             supportingFacts,
-//             50,
-//             doc.y
-//         );
-
-//     doc.moveDown();
-
-
-//     // Facts arguing against the next step
-//     checkPageSpace(100);
-
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(16)
-//         .text('Facts arguing against the next step', 50, doc.y);
-
-//     doc
-//         .font('Helvetica')
-//         .fontSize(12)
-//         .text(
-//             opposingFacts,
-//             50,
-//             doc.y
-//         );
-
-//     doc.moveDown();
-
-
-//     // Missing or unverified facts
-//     checkPageSpace(100);
-
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(16)
-//         .text('Missing or unverified facts', 50, doc.y);
-
-//     doc
-//         .font('Helvetica')
-//         .fontSize(12)
-//         .text(
-//             missingFacts,
-//             50,
-//             doc.y
-//         );
-
-//     doc.moveDown();
-
-
-//     // Consequence
-//     checkPageSpace(100);
-
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(16)
-//         .text('Consequence', 50, doc.y);
-
-//     doc
-//         .font('Helvetica')
-//         .fontSize(12)
-//         .text(
-//             consequence,
-//             50,
-//             doc.y
-//         );
-
-// }
-
-
-// function createPDFFourChecks(doc, formData, recordId) {
-
-//     const dealReference = formData.get('dealReference'); 
-//     const decision = formData.get('decision'); 
-//     const evidenceEnough = formData.get('evidenceEnough'); 
-//     const wrongConsequence = formData.get('wrongConsequence'); 
-//     const momentum = formData.get('momentum'); 
-//     const undoability = formData.get('undoability'); 
-//     const decisionRightNow = formData.get('decision-right-now'); 
-//     const conditions = formData.get('conditions');  
-
-
-//     doc.addPage(); 
-//     doc.y = 100;
-
-
-//     // Deal reference
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(16)
-//         .text(dealReference, 50, doc.y);
-
-
-//     doc
-//         .font('Helvetica-Oblique')
-//         .fontSize(10)
-//         .text(recordId, 50, doc.y);
-
-
-//     doc.moveDown();
-
-
-//     // Selected decision
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(18)
-//         .text(`SELECTED DECISION: ${decision}`, 50, doc.y);
-
-
-//     doc.moveDown();
-
-
-//     // Section title
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(24)
-//         .text('Four decision checks', 50, doc.y);
-
-
-//     // Table settings
-//     const tableX = 50;
-//     const tableWidth = 512;
-//     const checkWidth = 350;
-//     const answerWidth = tableWidth - checkWidth;
-//     const rowHeight = 32;
-
-
-//     const rows = [
-//         ['Evidence Sufficiency', evidenceEnough.toUpperCase()],
-//         ['Consequence Clarity', wrongConsequence.toUpperCase().replace('-', ' ')],
-//         ['Reversibility', undoability.toUpperCase()],
-//         ['Momentum / Sunk-Cost Pressure', momentum.toUpperCase()]
-//     ];
-
-
-//     // Header
-//     const headerY = doc.y;
-
-
-//     doc
-//         .rect(tableX, headerY, checkWidth, rowHeight)
-//         .fill('#E6E6E6');
-
-
-//     doc
-//         .rect(
-//             tableX + checkWidth,
-//             headerY,
-//             answerWidth,
-//             rowHeight
-//         )
-//         .fill('#E6E6E6');
-
-
-//     doc
-//         .fillColor('#000000')
-//         .font('Helvetica-Bold')
-//         .fontSize(11)
-//         .text(
-//             'Check',
-//             tableX + 10,
-//             headerY + 10,
-//             {
-//                 width: checkWidth - 20
-//             }
-//         )
-//         .text(
-//             'Selected answer',
-//             tableX + checkWidth + 10,
-//             headerY + 10,
-//             {
-//                 width: answerWidth - 20
-//             }
-//         );
-
-
-//     // Rows
-//     rows.forEach((row, index) => {
-
-//         const rowY = headerY + rowHeight + (index * rowHeight);
-
-
-//         doc
-//             .fillColor('#FFFFFF')
-//             .rect(tableX, rowY, checkWidth, rowHeight)
-//             .stroke('#CCCCCC');
-
-
-//         doc
-//             .rect(
-//                 tableX + checkWidth,
-//                 rowY,
-//                 answerWidth,
-//                 rowHeight
-//             )
-//             .stroke('#CCCCCC');
-
-
-//         doc
-//             .fillColor('#000000')
-//             .font('Helvetica')
-//             .fontSize(11)
-//             .text(
-//                 row[0],
-//                 tableX + 10,
-//                 rowY + 10,
-//                 {
-//                     width: checkWidth - 20
-//                 }
-//             )
-//             .text(
-//                 row[1] || '',
-//                 tableX + checkWidth + 10,
-//                 rowY + 10,
-//                 {
-//                     width: answerWidth - 20
-//                 }
-//             );
-
-//     });
-
-
-//     // Reset text formatting
-//     doc
-//         .fillColor('#000000')
-//         .font('Helvetica')
-//         .fontSize(12);
-
-
-//     doc.moveDown();
-//     doc.moveDown();
-
-
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(16)
-//         .text('Decision basis', 50, doc.y);
-
-
-//     doc
-//         .font('Helvetica')
-//         .fontSize(12)
-//         .text(
-//             decisionRightNow,
-//             50,
-//             doc.y
-//         );
-
-//     if(conditions) {
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(16)
-//         .text('Decision Tension Conditions', 50, doc.y);
-
-
-//     doc
-//         .font('Helvetica')
-//         .fontSize(12)
-//         .text(
-//             conditions,
-//             50,
-//             doc.y
-//         );
-//     }
-    
-
-// }
-
-
-// function createPDFProofRequired(doc, formData, recordId) {
-
-//     const proof = formData.get('proof'); 
-//     const whoObtain = formData.get('whoObtain'); 
-//     const watWhenObtain = formData.get('whenObtain'); 
-
-
-//     doc.addPage(); 
-//     doc.y = 100;
-
-
-//     // Section title
-//     doc
-//         .font('Helvetica-Bold')
-//         .fontSize(24)
-//         .text('Proof required', 50, doc.y);
-
-
-//     doc.moveDown(0.75);
-
-
-//     // Table settings
-//     const tableX = 50;
-//     const tableWidth = 512;
-
-//     const proofWidth = 255;
-//     const whoWidth = 130;
-//     const byWidth = 75;
-//     const statusWidth = tableWidth - proofWidth - whoWidth - byWidth;
-
-//     const headerHeight = 32;
-
-
-//     const rows = [
-//         [
-//             proof,
-//             whoObtain,
-//             watWhenObtain,
-//             'Open'
-//         ],
-//     ];
-
-
-//     // Set body text formatting
-//     doc
-//         .font('Helvetica')
-//         .fontSize(10);
-
-
-//     // Row height is based only on Proof or action needed
-//     // Minimum height = 5 lines
-//     const rowLineHeight = 12;
-//     const minimumRowHeight = rowLineHeight * 5;
-
-
-//     const rowHeights = rows.map(row => {
-
-//         const proofHeight = doc.heightOfString(row[0] || '', {
-//             width: proofWidth - 20,
-//             lineGap: 0
-//         });
-
-
-//         return Math.max(
-//             minimumRowHeight,
-//             proofHeight
-//         ) + 8;
-
-//     });
-
-
-//     // Header
-//     const headerY = doc.y;
-
-
-//     doc
-//         .fillColor('#E6E6E6')
-//         .rect(
-//             tableX,
-//             headerY,
-//             proofWidth,
-//             headerHeight
-//         )
-//         .fill();
-
-
-//     doc
-//         .rect(
-//             tableX + proofWidth,
-//             headerY,
-//             whoWidth,
-//             headerHeight
-//         )
-//         .fill();
-
-
-//     doc
-//         .rect(
-//             tableX + proofWidth + whoWidth,
-//             headerY,
-//             byWidth,
-//             headerHeight
-//         )
-//         .fill();
-
-
-//     doc
-//         .rect(
-//             tableX + proofWidth + whoWidth + byWidth,
-//             headerY,
-//             statusWidth,
-//             headerHeight
-//         )
-//         .fill();
-
-
-//     // Header text
-//     doc
-//         .fillColor('#000000')
-//         .font('Helvetica-Bold')
-//         .fontSize(10)
-//         .text(
-//             'Proof or action needed',
-//             tableX + 10,
-//             headerY + 10,
-//             {
-//                 width: proofWidth - 20
-//             }
-//         )
-//         .text(
-//             'Who will obtain it',
-//             tableX + proofWidth + 10,
-//             headerY + 10,
-//             {
-//                 width: whoWidth - 20
-//             }
-//         )
-//         .text(
-//             'By when',
-//             tableX + proofWidth + whoWidth + 10,
-//             headerY + 10,
-//             {
-//                 width: byWidth - 20
-//             }
-//         )
-//         .text(
-//             'Status',
-//             tableX + proofWidth + whoWidth + byWidth + 10,
-//             headerY + 10,
-//             {
-//                 width: statusWidth - 20
-//             }
-//         );
-
-
-//     // Rows
-//     let currentY = headerY + headerHeight;
-
-
-//     rows.forEach((row, index) => {
-
-//         const rowHeight = rowHeights[index];
-
-//         const x1 = tableX;
-//         const x2 = tableX + proofWidth;
-//         const x3 = x2 + whoWidth;
-//         const x4 = x3 + byWidth;
-
-
-//         // Cell borders
-//         doc
-//             .fillColor('#FFFFFF')
-//             .rect(
-//                 x1,
-//                 currentY,
-//                 proofWidth,
-//                 rowHeight
-//             )
-//             .stroke('#CCCCCC');
-
-
-//         doc
-//             .rect(
-//                 x2,
-//                 currentY,
-//                 whoWidth,
-//                 rowHeight
-//             )
-//             .stroke('#CCCCCC');
-
-
-//         doc
-//             .rect(
-//                 x3,
-//                 currentY,
-//                 byWidth,
-//                 rowHeight
-//             )
-//             .stroke('#CCCCCC');
-
-
-//         doc
-//             .rect(
-//                 x4,
-//                 currentY,
-//                 statusWidth,
-//                 rowHeight
-//             )
-//             .stroke('#CCCCCC');
-
-
-//         // Cell text
-//         doc
-//             .fillColor('#000000')
-//             .font('Helvetica')
-//             .fontSize(10)
-//             .text(
-//                 row[0] || '',
-//                 x1 + 10,
-//                 currentY + 6,
-//                 {
-//                     width: proofWidth - 20,
-//                     lineGap: 0
-//                 }
-//             )
-//             .text(
-//                 row[1] || '',
-//                 x2 + 10,
-//                 currentY + 6,
-//                 {
-//                     width: whoWidth - 20,
-//                     lineGap: 0
-//                 }
-//             )
-//             .text(
-//                 row[2] || '',
-//                 x3 + 10,
-//                 currentY + 6,
-//                 {
-//                     width: byWidth - 20,
-//                     lineGap: 0
-//                 }
-//             )
-//             .text(
-//                 row[3] || '',
-//                 x4 + 10,
-//                 currentY + 6,
-//                 {
-//                     width: statusWidth - 20,
-//                     lineGap: 0
-//                 }
-//             );
-
-
-//         currentY += rowHeight;
-
-//     });
-
-
-//     // Move below table
-//     doc.y = currentY;
-
-
-//     doc.moveDown(1.5);
-
-
-//     // Disclaimer
-//     doc
-//         .font('Helvetica')
-//         .fontSize(10)
-//         .fillColor('#555555')
-//         .text(
-//             'This record documents the decision owner’s selected posture and stated basis for one live decision. It does not authorize capital commitment or release, replace required professional review, or provide legal, tax, accounting, or investment advice.',
-//             50,
-//             doc.y,
-//             {
-//                 width: 512,
-//                 align: 'left',
-//                 lineGap: 0
-//             }
-//         );
-
-
-//     // Reset formatting
-//     doc
-//         .fillColor('#000000')
-//         .font('Helvetica')
-//         .fontSize(12);
-
-// }

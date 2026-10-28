@@ -14,9 +14,6 @@
     ====================================================== -->
 
     <div class="form-section active-section" id="decision-closure-context-section">
-      <button id="test-pdf-button" type="submit">
-        Test PDF Generation
-      </button>
 
       <h2>Stage 1 Close the decision - Decision Context</h2>
 
@@ -471,7 +468,7 @@
                     placeholder="Name and role of accepting authority">
                 </label>
 
-                <label>
+                <label class="acceptance-date">
                   <span class="field-label">Acceptance date and time</span>
                   <input type="datetime-local" name="acceptedAt[]" data-field="acceptedAt">
                 </label>
@@ -508,540 +505,504 @@
         </div>
 
       </div>
+    </div>
 
 
-      <!-- =====================================================
+    <!-- =====================================================
          Consequence ownership accepts
     ====================================================== -->
 
-      <div class="form-section" id="decision-closure-consequence-section">
+    <div class="form-section" id="decision-closure-consequence-section">
 
-        <h2>Stage 2 Conditions and consequence - Consequence ownership accepts</h2>
+      <h2>Stage 2 Conditions and consequence - Consequence ownership accepts</h2>
 
-        <div class="form-fields">
+      <div class="form-fields">
 
-          <div class="form-field">
+        <div class="form-field">
 
-            <label for="dc-consequenceStatement">
-              <span class="field-label" id="dc-consequence-question">
-                What consequence is ownership knowingly accepting by authorizing this decision?
-              </span>
-              <p class="field-description">
-                Consider capital at risk, performance, timing, financing,
-                execution, reduced alternatives, exit, accepted exceptions, possible
-                additional capital and accountability.
-              </p>
+          <label for="dc-consequenceStatement">
+            <span class="field-label" id="dc-consequence-question">
+              What consequence is ownership knowingly accepting by authorizing this decision?
+            </span>
+            <p class="field-description">
+              Consider capital at risk, performance, timing, financing,
+              execution, reduced alternatives, exit, accepted exceptions, possible
+              additional capital and accountability.
+            </p>
 
-              <textarea id="dc-consequenceStatement" name="consequenceStatement" maxlength="2000"
-                placeholder="State the material consequence in your own words."></textarea>
-            </label>
+            <textarea id="dc-consequenceStatement" name="consequenceStatement" maxlength="2000"
+              placeholder="State the material consequence in your own words."></textarea>
+          </label>
 
 
-
-          </div>
-
-        </div>
-
-        <div class="section-navigation">
-
-          <button type="button" class="section-prev app-button">
-            Back
-          </button>
-
-          <button type="button" class="section-next app-button">
-            Next
-          </button>
 
         </div>
 
       </div>
 
-      <!-- SCREEN 6: RECOVERY AND ASSUMPTIONS -->
-      <section class="form-section" id="decision-closure-recovery-section">
+      <div class="section-navigation">
 
-        <h2>Recovery and Assumptions</h2>
+        <button type="button" class="section-prev app-button">
+          Back
+        </button>
 
+        <button type="button" class="section-next app-button">
+          Next
+        </button>
 
-        <div class="form-field">
-          <label for="dc-recovery">
-            <span class="field-label">
-              Recovery: If the decision does not work as expected, how will exposure be contained or recovered?
-            </span>
-            <p class="field-description">
-              If recovery is not applicable, explain why. Do not leave this field blank.
-            </p>
+      </div>
 
-            <textarea id="dc-recovery" name="recoveryPlan"
-              placeholder="Describe how exposure could be contained, reduced, exited, or recovered."></textarea>
+    </div>
 
-            <label class="checkbox-field">
-              <input type="checkbox" id="dc-recovery-not-applicable" name="recoveryNotApplicable" value="yes">
-              Recovery is not applicable
-            </label>
-          </label>
+    <!-- SCREEN 6: RECOVERY AND ASSUMPTIONS -->
+    <section class="form-section" id="decision-closure-recovery-section">
 
-          <div id="dc-recovery-reason-field" class="form-field" hidden>
-            <label for="dc-recovery-not-applicable-reason">
-              <span class="field-label">Why is recovery not applicable?</span>
-
-              <textarea id="dc-recovery-not-applicable-reason" name="recoveryNotApplicableReason"
-                placeholder="Briefly explain why recovery planning does not apply."></textarea>
-            </label>
-          </div>
-        </div>
+      <h2>Recovery and Assumptions</h2>
 
 
-        <!-- ASSUMPTIONS -->
-        <div class="form-field" id="assumption-container">
-
-          <h3 style="margin-bottom: 0">Key Assumptions</h3>
-
+      <div class="form-field">
+        <label for="dc-recovery">
+          <span class="field-label">
+            Recovery: If the decision does not work as expected, how will exposure be contained or recovered?
+          </span>
           <p class="field-description">
-            State the material facts or expectations on which this decision depends.
-            Record each assumption separately.
+            If recovery is not applicable, explain why. Do not leave this field blank.
           </p>
 
-          <div class="form-field" style="padding-bottom: 25px">
-            <p class="field-description" style="margin-bottom: 0">
-              Select only if there are no key assumptions to record.
-            </p>
-            <label class="checkbox-field">
-              <input type="checkbox" id="dc-no-assumptions" name="noAssumptionsIdentified" value="yes">
-              None identified
-            </label>
+          <textarea id="dc-recovery" name="recoveryPlan"
+            placeholder="Describe how exposure could be contained, reduced, exited, or recovered."></textarea>
+
+          <label class="checkbox-field">
+            <input type="checkbox" id="dc-recovery-not-applicable" name="recoveryNotApplicable" value="yes">
+            Recovery is not applicable
+          </label>
+        </label>
+
+        <!-- <div id="dc-recovery-reason-field" class="form-field" hidden>
+          <label for="dc-recovery-not-applicable-reason">
+            <span class="field-label">Why is recovery not applicable?</span>
+
+            <textarea id="dc-recovery-not-applicable-reason" name="recoveryNotApplicableReason"
+              placeholder="Briefly explain why recovery planning does not apply."></textarea>
+          </label>
+        </div> -->
+      </div>
 
 
-          </div>
+      <!-- ASSUMPTIONS -->
+      <div class="form-field" id="assumption-container">
 
-          <div class="assumption-entry form-field">
-            <label>
-              <span class="field-label">
-                Assumption 1
-                <button type="button" class="basic-app-button remove-assumption" hidden>
-                  Remove assumption
-                </button>
-              </span>
+        <h3 style="margin-bottom: 0">Key Assumptions</h3>
 
-              <textarea name="keyAssumptions[]"
-                placeholder="Describe a material fact or expectation this decision depends on."></textarea>
-            </label>
-          </div>
+        <p class="field-description">
+          State the material facts or expectations on which this decision depends.
+          Record each assumption separately.
+        </p>
 
-
-          <button type="button" class="app-button" id="dc-add-assumption">
-            Add another assumption
-          </button>
-
+        <div class="form-field" style="padding-bottom: 25px">
+          <p class="field-description" style="margin-bottom: 0">
+            Select only if there are no key assumptions to record.
+          </p>
+          <label class="checkbox-field">
+            <input type="checkbox" id="dc-no-assumptions" name="noAssumptionsIdentified" value="yes">
+            None identified
+          </label>
 
 
         </div>
 
-        <div class="section-navigation">
-          <button type="button" class="app-button secondary-button" data-go-to="decision-closure-consequence-section">
-            Back
-          </button>
+        <div class="assumption-entry form-field">
+          <label>
+            <span class="field-label">
+              Assumption 1
+              <button type="button" class="basic-app-button remove-assumption" hidden>
+                Remove assumption
+              </button>
+            </span>
 
-          <button type="button" class="app-button" data-go-to="decision-closure-accountability-section">
-            Next
-          </button>
+            <textarea name="keyAssumptions[]"
+              placeholder="Describe a material fact or expectation this decision depends on."></textarea>
+          </label>
         </div>
 
-      </section>
+
+        <button type="button" class="app-button" id="dc-add-assumption">
+          Add another assumption
+        </button>
 
 
-      <!-- =====================================================
+
+      </div>
+
+      <div class="section-navigation">
+        <button type="button" class="app-button secondary-button" data-go-to="decision-closure-consequence-section">
+          Back
+        </button>
+
+        <button type="button" class="app-button" data-go-to="decision-closure-accountability-section">
+          Next
+        </button>
+      </div>
+
+    </section>
+
+
+    <!-- =====================================================
              REVIEW AND CLOSE
         ====================================================== -->
 
-      <div class="form-section" id="decision-closure-accountability-section">
+    <div class="form-section" id="decision-closure-accountability-section">
 
-        <h2>Stage 3 Review and close - Decision Basis and Accountability</h2>
+      <h2>Stage 3 Review and close - Decision Basis and Accountability</h2>
 
-        <div class="form-fields">
+      <div class="form-fields">
 
-          <!-- Read-only decision summary -->
-          <div class="form-field">
-            <span class="field-label">Selected action</span>
-            <p id="dc-final-action">Not selected</p>
-          </div>
-
-          <!-- Additional acknowledgement for Advance / Modify -->
-          <div class="form-field" id="dc-consequence-acceptance-field">
-
-            <span class="field-label">Consequence acknowledgement</span>
-
-            <p id="dc-consequence-acceptance-display">
-              <!-- Consequence statement populated by JavaScript -->
-            </p>
-
-            <label>
-              <input type="checkbox" id="dc-ack-consequence-accepted" name="ackConsequenceAccepted" value="yes">
-              I confirm that the approval authority identified above has
-              accepted the stated consequence as part of this decision.
-            </label>
-          </div>
-
-          <div class="form-field">
-            <span class="field-label">Stated consequence</span>
-            <p id="dc-final-consequence">
-              No consequence statement provided.
-            </p>
-          </div>
-
-          <div class="form-field">
-            <span class="field-label">Approval authority</span>
-            <p id="dc-final-approval-authority">Not specified</p>
-          </div>
-
-          <!-- Decision basis -->
-          <div class="form-field">
-            <label for="dc-decisionBasis">
-              <span class="field-label">
-                Why is this decision defensible now?
-              </span>
-              <textarea id="dc-decisionBasis" name="decisionBasis" maxlength="2000"
-                placeholder="Explain why this decision is defensible at this point in time."></textarea>
-            </label>
-          </div>
-
-          <!-- Confirming person -->
-          <div class="form-field">
-            <label for="dc-confirmingPerson">
-              <span class="field-label">Confirming person — name / role</span>
-              <input type="text" id="dc-confirmingPerson" name="confirmingPerson" maxlength="200"
-                placeholder="Name and role of the person confirming this record">
-            </label>
-          </div>
-
-          <div class="form-field">
-            <label for="dc-confirmationDate">
-              <span class="field-label">Confirmation date</span>
-              <input type="date" id="dc-confirmationDate" name="confirmationDate">
-            </label>
-          </div>
-
-          <!-- General acknowledgements -->
-          <div class="form-field">
-            <span class="field-label">Record acknowledgements</span>
-
-            <div class="dc-acknowledgements">
-
-              <label>
-                <input type="checkbox" id="dc-ack-decision-basis" name="ackDecisionBasis" value="yes">
-                I confirm this record reflects the decision basis.
-              </label>
-
-              <label>
-                <input type="checkbox" id="dc-ack-final-closure" name="ackFinalClosure" value="yes">
-                I confirm that this record closes this decision inside
-                Decision Closure. The selected posture, decision basis,
-                stated consequence, and approval authority become final
-                when this record is closed. Any later reconsideration
-                takes place outside this completed test.
-              </label>
-
-            </div>
-          </div>
-
-
-
-          <div class="form-field">
-            <p class="field-help">
-              These acknowledgements record the statements made by the user.
-              They do not independently authenticate the approval authority,
-              establish that authority's identity, or constitute a verified
-              approval or electronic signature.
-            </p>
-          </div>
-
+        <!-- Read-only decision summary -->
+        <div class="form-field">
+          <span class="field-label">Selected action</span>
+          <p id="dc-final-action">Not selected</p>
         </div>
 
-        <div class="section-navigation">
+        <!-- Additional acknowledgement for Advance / Modify -->
+        <div class="form-field" id="dc-consequence-acceptance-field">
 
-          <button type="button" class="section-prev app-button">
-            Back
-          </button>
+          <span class="field-label">Consequence acknowledgement</span>
 
-          <button type="button" class="section-next app-button">
-            Close Decision
-          </button>
+          <p id="dc-consequence-acceptance-display">
+            <!-- Consequence statement populated by JavaScript -->
+          </p>
 
+          <label>
+            <input type="checkbox" id="dc-ack-consequence-accepted" name="ackConsequenceAccepted" value="yes">
+            I confirm that the approval authority identified above has
+            accepted the stated consequence as part of this decision.
+          </label>
+        </div>
+
+        <div class="form-field">
+          <span class="field-label">Stated consequence</span>
+          <p id="dc-final-consequence">
+            No consequence statement provided.
+          </p>
+        </div>
+
+        <div class="form-field">
+          <span class="field-label">Approval authority</span>
+          <p id="dc-final-approval-authority">Not specified</p>
+        </div>
+
+        <!-- Decision basis -->
+        <div class="form-field">
+          <label for="dc-decisionBasis">
+            <span class="field-label">
+              Why is this decision defensible now?
+            </span>
+            <textarea id="dc-decisionBasis" name="decisionBasis" maxlength="2000"
+              placeholder="Explain why this decision is defensible at this point in time."></textarea>
+          </label>
+        </div>
+
+        <!-- Confirming person -->
+        <div class="form-field">
+          <label for="dc-confirmingPerson">
+            <span class="field-label">Confirming person — name / role</span>
+            <input type="text" id="dc-confirmingPerson" name="confirmingPerson" maxlength="200"
+              placeholder="Name and role of the person confirming this record">
+          </label>
+        </div>
+
+        <div class="form-field">
+          <label for="dc-confirmationDate">
+            <span class="field-label">Confirmation date</span>
+            <input type="date" id="dc-confirmationDate" name="confirmationDate">
+          </label>
+        </div>
+
+        <!-- General acknowledgements -->
+        <div class="form-field">
+          <span class="field-label">Record acknowledgements</span>
+
+          <div class="dc-acknowledgements">
+
+            <label>
+              <input type="checkbox" id="dc-ack-decision-basis" name="ackDecisionBasis" value="yes">
+              I confirm this record reflects the decision basis.
+            </label>
+
+            <label>
+              <input type="checkbox" id="dc-ack-final-closure" name="ackFinalClosure" value="yes">
+              I confirm that this record closes this decision inside
+              Decision Closure. The selected posture, decision basis,
+              stated consequence, and approval authority become final
+              when this record is closed. Any later reconsideration
+              takes place outside this completed test.
+            </label>
+
+          </div>
+        </div>
+
+
+
+        <div class="form-field">
+          <p class="field-help">
+            These acknowledgements record the statements made by the user.
+            They do not independently authenticate the approval authority,
+            establish that authority's identity, or constitute a verified
+            approval or electronic signature.
+          </p>
         </div>
 
       </div>
 
+      <div class="section-navigation">
 
-      <!-- =====================================================
+        <button type="button" class="section-prev app-button">
+          Back
+        </button>
+
+        <button type="button" class="section-next app-button">
+          Close Decision
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
          REVIEW
     ====================================================== -->
 
-      <!-- =====================================================
+    <!-- =====================================================
        REVIEW AND CLOSE
   ====================================================== -->
 
-      <div class="form-section" id="review-section">
+    <div class="form-section" id="review-section">
 
-        <h2>Review and Close the Record</h2>
+      <h2>Review and Close the Record</h2>
 
-        <div class="form-fields">
+      <div class="form-fields">
 
-          <!-- 1. Decision details and action -->
-          <section class="review-group">
-            <h3>Decision Details and Action</h3>
-            <div id="record-decision-details">
-              <div class="review-field">
-                <strong>Decision / transaction name:</strong>
-                <span id="record-deal-reference"></span>
-                <button type="button" class="basic-app-button"
-                  data-go-to="decision-closure-context-section">Edit</button>
-              </div>
-
-              <div class="review-field">
-                <strong>Property / identifier:</strong>
-                <span id="record-property-identifier"></span>
-                <button type="button" class="basic-app-button"
-                  data-go-to="decision-closure-context-section">Edit</button>
-              </div>
-
-              <div class="review-field">
-                <strong>Capital event:</strong>
-                <span id="record-capital-event"></span>
-                <button type="button" class="basic-app-button"
-                  data-go-to="decision-closure-context-section">Edit</button>
-              </div>
-
-              <div class="review-field">
-                <strong>Decision date:</strong>
-                <span id="record-decision-date"></span>
-                <button type="button" class="basic-app-button"
-                  data-go-to="decision-closure-context-section">Edit</button>
-              </div>
-
-              <div class="review-field">
-                <strong>Expected funding / commitment date:</strong>
-                <span id="record-funding-date"></span>
-                <button type="button" class="basic-app-button"
-                  data-go-to="decision-closure-context-section">Edit</button>
-              </div>
-              <div class="review-field">
-                <strong>Decision owner:</strong>
-                <span id="record-decision-owner"></span>
-                <button type="button" class="basic-app-button"
-                  data-go-to="decision-closure-context-section">Edit</button>
-              </div>
-              <div class="review-field">
-                <strong>Approval authority:</strong>
-                <span id="record-approval-authority"></span>
-                <button type="button" class="basic-app-button"
-                  data-go-to="decision-closure-context-section">Edit</button>
-              </div>
-              <div class="review-field">
-                <strong>Proposed action:</strong>
-                <span id="record-proposed-action"></span>
-                <button type="button" class="basic-app-button"
-                  data-go-to="decision-closure-action-section">Edit</button>
-              </div>
-            </div>
-          </section>
-
-          <!-- 2. Evidence and Risks -->
-          <section class="review-group">
-
-            <div class="review-title-wrapper">
-              <h3>Material Evidence</h3>
-              <button type="button" class="edit-record-control" data-target="decision-closure-evidence-section">
-                Edit
-              </button>
+        <!-- 1. Decision details and action -->
+        <section class="review-group">
+          <h3>Decision Details and Action</h3>
+          <div id="record-decision-details">
+            <div class="review-field">
+              <strong>Decision / transaction name:</strong>
+              <span id="record-deal-reference"></span>
+              <button type="button" class="basic-app-button" data-go-to="decision-closure-context-section">Edit</button>
             </div>
 
             <div class="review-field">
-              <strong>Material evidence:</strong>
-              <div id="record-material-evidence"></div>
-
+              <strong>Property / identifier:</strong>
+              <span id="record-property-identifier"></span>
+              <button type="button" class="basic-app-button" data-go-to="decision-closure-context-section">Edit</button>
             </div>
 
-
-
-            <div class="review-title-wrapper">
-              <h3>Risks</h3>
-              <button type="button" class="edit-record-control" data-target="decision-closure-evidence-section">
-                Edit
-              </button>
+            <div class="review-field">
+              <strong>Capital event:</strong>
+              <span id="record-capital-event"></span>
+              <button type="button" class="basic-app-button" data-go-to="decision-closure-context-section">Edit</button>
             </div>
 
-
-            <div id="record-accepted-risks"></div>
-
-
-          </section>
-
-          <!-- 4. Conditions -->
-          <section class="review-group">
-            <div class="review-title-wrapper">
-              <h3>Conditions</h3>
-              <button type="button" class="edit-record-control" data-target="decision-closure-conditions-section">
-                Edit
-              </button>
+            <div class="review-field">
+              <strong>Decision date:</strong>
+              <span id="record-decision-date"></span>
+              <button type="button" class="basic-app-button" data-go-to="decision-closure-context-section">Edit</button>
             </div>
 
-            <div id="record-conditions">
-              <p id="record-no-conditions"></p>
-              <div id="record-condition-entries"></div>
+            <div class="review-field">
+              <strong>Expected funding / commitment date:</strong>
+              <span id="record-funding-date"></span>
+              <button type="button" class="basic-app-button" data-go-to="decision-closure-context-section">Edit</button>
             </div>
-          </section>
-
-          <!-- 5. Prominent consequence -->
-          <section class="review-group dc-review-consequence">
-            <div class="review-title-wrapper">
-              <h3>Consequence Ownership</h3>
-              <button type="button" class="edit-record-control" data-target="decision-closure-consequence-section">
-                Edit
-              </button>
+            <div class="review-field">
+              <strong>Decision owner:</strong>
+              <span id="record-decision-owner"></span>
+              <button type="button" class="basic-app-button" data-go-to="decision-closure-context-section">Edit</button>
             </div>
-            <div id="record-consequence-question"></div>
-            <p id="record-consequence"></p>
-          </section>
-
-
-          <!-- 6. Recovery -->
-          <section class="review-group">
-            <div class="review-title-wrapper">
-
-              <h3>Recovery</h3>
-              <button type="button" class="edit-record-control" data-target="decision-closure-recovery-section">
-                Edit
-              </button>
-
-            </div>
-
-            <div id="record-recovery"></div>
-
-
-          </section>
-
-          <!-- 7. Assumptions -->
-          <section class="review-group">
-            <div class="review-title-wrapper">
-              <h3>Assumptions</h3>
-              <button type="button" class="edit-record-control" data-target="decision-closure-recovery-section">
-                Edit
-              </button>
-            </div>
-
-            <div id="record-assumptions"></div>
-
-
-          </section>
-
-          <!-- 8. Decision basis -->
-          <section class="review-group">
-            <div class="review-title-wrapper">
-
-              <h3>Why This Decision Is Defensible Now</h3>
-              <button type="button" class="edit-record-control" data-target="decision-closure-accountability-section">
-                Edit
-              </button>
-
-            </div>
-
-            <div id="record-decision-basis"></div>
-
-
-          </section>
-
-          <!-- 9. Accountability and acknowledgements -->
-          <section class="review-group">
-            <h3>Accountability and Acknowledgements</h3>
-
-            <!-- Approval Authority -->
             <div class="review-field">
               <strong>Approval authority:</strong>
-              <span id="record-accountability-approval-authority"></span>
-              <button type="button" class="edit-record-control" data-target="decision-closure-context-section">
-                Edit
-              </button>
+              <span id="record-approval-authority"></span>
+              <button type="button" class="basic-app-button" data-go-to="decision-closure-context-section">Edit</button>
             </div>
-
-            <!-- Confirming Person -->
             <div class="review-field">
-              <strong>Confirming person:</strong>
-              <span id="record-confirming-person"></span>
-              <button type="button" class="edit-record-control" data-target="decision-closure-accountability-section">
-                Edit
-              </button>
+              <strong>Proposed action:</strong>
+              <span id="record-proposed-action"></span>
+              <button type="button" class="basic-app-button" data-go-to="decision-closure-action-section">Edit</button>
             </div>
-          </section>
-
-          <!-- Closure warning -->
-          <div class="form-field" id="dc-closure-warning">
-            <p>
-              Closing preserves this record. The decision, basis, consequence
-              and approval authority cannot be changed inside this case.
-              Review your answers before continuing.
-            </p>
           </div>
+        </section>
 
-          <!-- Validation feedback -->
-          <div class="form-field" id="dc-closure-errors" role="alert">
-            <p>Complete the highlighted entries before closing this decision.</p>
-            <ul id="dc-closure-error-list"></ul>
-          </div>
+        <!-- 2. Evidence and Risks -->
+        <section class="review-group">
 
-          <!-- Close and generate -->
-          <div class="form-field" id="dc-close-controls">
-            <button id="dc-close-and-generate-btn" type="button" class="app-button">
-              Close Decision and Generate Record
+          <div class="review-title-wrapper">
+            <h3>Material Evidence</h3>
+            <button type="button" class="edit-record-control" data-target="decision-closure-evidence-section">
+              Edit
             </button>
           </div>
 
-          <!-- Display after successful closure -->
-          <div class="form-field" id="dc-closed-record-panel">
-
-            <h3>Decision Closed</h3>
-
-            <p><strong>Record ID:</strong> <span id="dc-closed-record-id"></span></p>
-            <p><strong>Closed at:</strong> <span id="dc-closed-record-timestamp"></span></p>
-
-            <button type="button" id="dc-download-record-btn" class="app-button">
-              Download Decision Closure Record
-            </button>
-
-            <button type="button" id="dc-view-pdf-btn" class="app-button">
-              View PDF
-            </button>
-
-            <button type="button" id="dc-conditions-register-btn" class="app-button">
-              Conditions Register
-            </button>
-
-
-            <p id="dc-closed-record-message"></p>
+          <div class="review-field">
+            <strong>Material evidence:</strong>
+            <div id="record-material-evidence"></div>
 
           </div>
 
+
+
+          <div class="review-title-wrapper">
+            <h3>Risks</h3>
+            <button type="button" class="edit-record-control" data-target="decision-closure-evidence-section">
+              Edit
+            </button>
+          </div>
+
+
+          <div id="record-accepted-risks"></div>
+
+
+        </section>
+
+        <!-- 4. Conditions -->
+        <section class="review-group">
+          <div class="review-title-wrapper">
+            <h3>Conditions</h3>
+            <button type="button" class="edit-record-control" data-target="decision-closure-conditions-section">
+              Edit
+            </button>
+          </div>
+
+          <div id="record-conditions">
+            <p id="record-no-conditions"></p>
+            <div id="record-condition-entries"></div>
+          </div>
+        </section>
+
+        <!-- 5. Prominent consequence -->
+        <section class="review-group dc-review-consequence">
+          <div class="review-title-wrapper">
+            <h3>Consequence Ownership</h3>
+            <button type="button" class="edit-record-control" data-target="decision-closure-consequence-section">
+              Edit
+            </button>
+          </div>
+          <div id="record-consequence-question"></div>
+          <p id="record-consequence"></p>
+        </section>
+
+
+        <!-- 6. Recovery -->
+        <section class="review-group">
+          <div class="review-title-wrapper">
+
+            <h3>Recovery</h3>
+            <button type="button" class="edit-record-control" data-target="decision-closure-recovery-section">
+              Edit
+            </button>
+
+          </div>
+
+          <div id="record-recovery"></div>
+
+
+        </section>
+
+        <!-- 7. Assumptions -->
+        <section class="review-group">
+          <div class="review-title-wrapper">
+            <h3>Assumptions</h3>
+            <button type="button" class="edit-record-control" data-target="decision-closure-recovery-section">
+              Edit
+            </button>
+          </div>
+
+          <div id="record-assumptions"></div>
+
+
+        </section>
+
+        <!-- 8. Decision basis -->
+        <section class="review-group">
+          <div class="review-title-wrapper">
+
+            <h3>Why This Decision Is Defensible Now</h3>
+            <button type="button" class="edit-record-control" data-target="decision-closure-accountability-section">
+              Edit
+            </button>
+
+          </div>
+
+          <div id="record-decision-basis"></div>
+
+
+        </section>
+
+        <!-- 9. Accountability and acknowledgements -->
+        <section class="review-group">
+          <h3>Accountability and Acknowledgements</h3>
+
+          <!-- Approval Authority -->
+          <div class="review-field">
+            <strong>Approval authority:</strong>
+            <span id="record-accountability-approval-authority"></span>
+            <button type="button" class="edit-record-control" data-target="decision-closure-context-section">
+              Edit
+            </button>
+          </div>
+
+          <!-- Confirming Person -->
+          <div class="review-field">
+            <strong>Confirming person:</strong>
+            <span id="record-confirming-person"></span>
+            <button type="button" class="edit-record-control" data-target="decision-closure-accountability-section">
+              Edit
+            </button>
+          </div>
+        </section>
+
+        <!-- Closure warning -->
+        <div class="form-field" id="dc-closure-warning">
+          <p>
+            Closing preserves this record. The decision, basis, consequence
+            and approval authority cannot be changed inside this case.
+            Review your answers before continuing.
+          </p>
         </div>
 
+        <!-- Close and generate -->
+        <div class="form-field" id="dc-close-controls">
+          <button id="dc-close-and-generate-btn" type="submit" class="app-button">
+            Close Decision and Generate Record
+          </button>
+        </div>
       </div>
+    </div>
   </form>
 
-  <!-- 
+
   <div class="form-section" id="success-section">
 
     <div class="form-fields">
 
-      <h2>Decision Record Complete</h2>
+      <h3>Decision Record Complete : Decision Closed</h3>
 
       <p>
-        Your Walk Away Decision Record has been generated.
+        Your Decision Closure Record has been generated.
       </p>
+
+      <p><strong>Record ID:</strong> <span id="dc-closed-record-id"></span></p>
+      <p><strong>Closed at:</strong> <span id="dc-closed-record-timestamp"></span></p>
+
 
       <div class="section-navigation">
 
-        <a id="dk-view-pdf-btn" class="app-button" style="display:none;">
+        <a id="dk-view-pdf-btn" class="app-button">
           View PDF
         </a>
 
-        <a id="dk-download-btn" class="app-button" style="display:none;">
+        <a id="dk-download-btn" class="app-button">
           Download PDF
         </a>
 
@@ -1049,7 +1010,7 @@
 
     </div>
 
-  </div> -->
+  </div>
 
 
   <script src="pdf-script.js"></script>

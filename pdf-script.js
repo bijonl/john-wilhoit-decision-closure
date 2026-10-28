@@ -1,51 +1,112 @@
+// Generate a unique record identifier using the current timestamp
+// and a short random uppercase suffix.
+const recordId = `DC-${Date.now()}-${Math.random()
+    .toString(36)
+    .substring(2, 8)
+    .toUpperCase()}`;
+
 function generatePDF(formData, recordId, form) {
 
+//       // =====================================================
+//     // CREATE PDF
+//     // =====================================================
+
     const doc = new PDFDocument({
-        size: 'LETTER',
-        margins: {
-            top: 100,
-            bottom: 75,
-            left: 50,
-            right: 50
-        }
+        font: 'Helvetica'
     });
+
+
+//     // =====================================================
+//     // HEADER / FOOTER
+//     // =====================================================
+
+    // Add header/footer to every NEW page
+    doc.on('pageAdded', function () {
+
+        addHeader(doc);
+        // addFooter(doc);
+
+    });
+
+    // Add header/footer to first page
+    addHeader(doc);
+    // addFooter(doc);
+
+    // Start content below header
+    doc.y = 100;
+
+
+//     // =====================================================
+//     // COLLECT PDF DATA
+//     // =====================================================
 
     const chunks = [];
 
-    doc.on('data', chunk => chunks.push(chunk));
 
-    doc.on('end', () => {
+    doc.on('data', function (chunk) {
+
+        chunks.push(chunk);
+
+    });
+
+
+//     // =====================================================
+//     // PDF FINISHED
+//     // =====================================================
+
+    doc.on('end', function () {
+
+        console.log('PDF generated!');
+        console.log('Chunks:', chunks.length);
+
+
         const blob = new Blob(chunks, {
             type: 'application/pdf'
         });
 
-        window.open(URL.createObjectURL(blob), '_blank');
+        const url = URL.createObjectURL(blob);
+
+        console.log(url); 
+
+
+        // View PDF button
+        const viewBtn = document.getElementById('dk-view-pdf-btn');
+
+        viewBtn.href = url;
+        viewBtn.target = '_blank';
+        viewBtn.style.display = 'inline-block';
+
+
+        // Download PDF button
+        const downloadBtn = document.getElementById('dk-download-btn');
+
+        downloadBtn.href = url;
+        downloadBtn.download = 'walk-away-results.pdf';
+        downloadBtn.style.display = 'inline-block';
+
+         // Show success screen
+        const successSection = document.getElementById('success-section');
+
+        if (successSection) {
+            showSection(successSection);
+        }
+
     });
 
-    // Header and footer
-    addHeader(doc);
-    // addFooter(doc, 1);
 
-    // Start content below the header
-    doc.x = 50;
-    doc.y = 100;
+//     // =====================================================
+//     // CREATE PDF SECTIONS
+//     // =====================================================
 
-
-    // Decision closure content
     createPDFDecisionClosure(doc, formData);
-    
-    createPDFAcceptedConsequence(doc, formData)
-
+    createPDFAcceptedConsequence(doc, formData);
     createPDFConditionsTable(doc, formData, form);
-
-    createPDFDecisionBasis(doc, formData);
-
+    createPDFDecisionBasis(doc);
 
 
     doc.end();
+
 }
-
-
 
 function createPDFDecisionClosure(doc, formData = {}) {
 
@@ -1004,19 +1065,33 @@ function createPDFDecisionBasis(doc) {
 }
 
 // Button click
-document.getElementById('test-pdf-button').addEventListener('click', function () {
-    generatePDF();
-});
+// document.getElementById('test-pdf-button').addEventListener('click', function () {
+//     generatePDF();
+// });
 
 document.getElementById('dc-form').addEventListener('submit', function (event) {
     event.preventDefault();
 
+    console.log('SUBMIT'); 
 
+    // Submission timestamp
+    const closedAt = new Date();
+
+    document.getElementById('dc-closed-record-timestamp').textContent =
+        closedAt.toLocaleString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            timeZoneName: 'short'
+    });
+    
     const form = event.target;
     const formData = new FormData(form);
 
 
 
-    generatePDF(formData, 'DC-EXAMPLE-001', form);
+    generatePDF(formData, recordId, form);
 
 });

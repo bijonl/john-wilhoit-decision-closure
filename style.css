@@ -10,14 +10,14 @@ h1 {
 
 /* Form sections */
 
-/* .form-section {
+.form-section {
   display: none;
   margin-bottom: 42px;
 }
 
 .form-section.active-section {
   display: block;
-} */
+}
 
 .form-section h2 {
   color: #104E75;
@@ -259,4 +259,12 @@ h1 {
     display: block; 
     text-align: left;
   }
+}
+
+#dc-recovery {
+  margin-bottom: 15px; 
+}
+
+#dc-recovery-reason-field, .acceptance-date span {
+  margin-top: 25px; 
 }
