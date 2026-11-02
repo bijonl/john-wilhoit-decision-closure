@@ -5,60 +5,63 @@ const recordId = `DC-${Date.now()}-${Math.random()
     .substring(2, 8)
     .toUpperCase()}`;
 
-function generatePDF(formData, recordId, form) {
+function generatePDF(formData, recordId, form, closeDate) {
 
-//       // =====================================================
-//     // CREATE PDF
-//     // =====================================================
+    // =====================================================
+    // CREATE PDF
+    // =====================================================
 
     const doc = new PDFDocument({
-        font: 'Helvetica'
+        font: 'Helvetica',
+        margins: {
+            top: 105,
+            bottom: 85,
+            left: 50,
+            right: 50
+        }
     });
 
 
-//     // =====================================================
-//     // HEADER / FOOTER
-//     // =====================================================
+    // =====================================================
+    // HEADER / FOOTER
+    // =====================================================
 
-    // Add header/footer to every NEW page
+    let pageNumber = 1;
+
+    // First page
+    addHeader(doc);
+    // addFooter(doc, pageNumber);
+
+    // Every subsequent page
     doc.on('pageAdded', function () {
 
+        pageNumber++;
+
         addHeader(doc);
-        // addFooter(doc);
+        // addFooter(doc, pageNumber);
 
     });
 
-    // Add header/footer to first page
-    addHeader(doc);
-    // addFooter(doc);
 
-    // Start content below header
-    doc.y = 100;
-
-
-//     // =====================================================
-//     // COLLECT PDF DATA
-//     // =====================================================
+    // =====================================================
+    // COLLECT PDF DATA
+    // =====================================================
 
     const chunks = [];
 
-
     doc.on('data', function (chunk) {
-
         chunks.push(chunk);
-
     });
 
 
-//     // =====================================================
-//     // PDF FINISHED
-//     // =====================================================
+    // =====================================================
+    // PDF FINISHED
+    // =====================================================
 
     doc.on('end', function () {
 
         console.log('PDF generated!');
         console.log('Chunks:', chunks.length);
-
 
         const blob = new Blob(chunks, {
             type: 'application/pdf'
@@ -66,25 +69,20 @@ function generatePDF(formData, recordId, form) {
 
         const url = URL.createObjectURL(blob);
 
-        console.log(url); 
+        console.log(url);
 
-
-        // View PDF button
         const viewBtn = document.getElementById('dk-view-pdf-btn');
 
         viewBtn.href = url;
         viewBtn.target = '_blank';
         viewBtn.style.display = 'inline-block';
 
-
-        // Download PDF button
         const downloadBtn = document.getElementById('dk-download-btn');
 
         downloadBtn.href = url;
-        downloadBtn.download = 'walk-away-results.pdf';
+        downloadBtn.download = `decision-closure-${recordId}.pdf`;
         downloadBtn.style.display = 'inline-block';
 
-         // Show success screen
         const successSection = document.getElementById('success-section');
 
         if (successSection) {
@@ -94,21 +92,22 @@ function generatePDF(formData, recordId, form) {
     });
 
 
-//     // =====================================================
-//     // CREATE PDF SECTIONS
-//     // =====================================================
+    // =====================================================
+    // CREATE PDF SECTIONS
+    // =====================================================
 
-    createPDFDecisionClosure(doc, formData);
+    createPDFDecisionClosure(doc, formData, closeDate, recordId);
     createPDFAcceptedConsequence(doc, formData);
     createPDFConditionsTable(doc, formData, form);
-    createPDFDecisionBasis(doc);
-
+    createPDFDecisionBasis(doc, formData, closeDate, recordId);
+    createPDFDisclaimerPage(doc);
 
     doc.end();
 
 }
 
-function createPDFDecisionClosure(doc, formData = {}) {
+
+function createPDFDecisionClosure(doc, formData = {}, closeDate) {
 
     // =====================================================
     // FORM DATA
@@ -122,34 +121,6 @@ function createPDFDecisionClosure(doc, formData = {}) {
     const decisionOwner = formData.get('decisionOwner') || 'Not provided';
     const approvalAuthority = formData.get('approvalAuthority') || 'Not provided';
 
-    // =====================================================
-    // TITLE
-    // =====================================================
-
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(20)
-        .fillColor('#222222')
-        .text('Decision Closure Record');
-
-    doc.moveDown(0.4);
-
-    doc
-        .font('Helvetica-Oblique')
-        .fontSize(9)
-        .fillColor('#666666')
-        .text('Stage 1');
-
-    doc.moveDown(1.5);
-
-
-    // =====================================================
-    // DECISION STATUS
-    // =====================================================
-
-    // Keep this hardcoded for now.
-    // We can connect it to the final decision posture later.
-
     const proposedAction = formData.get('proposedAction') || 'Not selected';
 
     const actionLabels = {
@@ -159,14 +130,6 @@ function createPDFDecisionClosure(doc, formData = {}) {
         decline: 'DECLINE'
     };
 
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(14)
-        .fillColor('#222222')
-        .text(`CLOSED DECISION: ${actionLabels[proposedAction] || proposedAction.toUpperCase()}`);
-
-    doc.moveDown(1);
-
 
     // =====================================================
     // FORMAT HELPERS
@@ -174,11 +137,10 @@ function createPDFDecisionClosure(doc, formData = {}) {
 
     function formatDate(value) {
 
-        if (!value) {
+        if (!value || value === 'Not provided') {
             return 'Not provided';
         }
 
-        // HTML date inputs return YYYY-MM-DD.
         const parts = value.split('-');
 
         if (parts.length !== 3) {
@@ -214,7 +176,7 @@ function createPDFDecisionClosure(doc, formData = {}) {
 
 
     // =====================================================
-    // TABLE DATA
+    // PAGE / TYPOGRAPHY SETTINGS
     // =====================================================
 
     const tableX = 50;
@@ -225,30 +187,84 @@ function createPDFDecisionClosure(doc, formData = {}) {
 
     const headerHeight = 32;
 
-   const rows = [
-    ['Transaction', dealReference],
-    ['Property / identifier', propertyIdentifier],
-    ['Capital event', getCapitalEventLabel(capitalEvent)],
-    ['Decision date', formatDate(decisionDate)],
-    ['Expected funding date', formatDate(fundingDate)],
-    ['Decision owner', decisionOwner],
-    ['Approval authority', approvalAuthority],
-    [
-        'Closure record',
-        'DC-EXAMPLE-001 | Closed September 17, 2026 at 3:30 PM UTC'
-    ]
-];
-
-
-    // =====================================================
-    // FONT AND ROW SETTINGS
-    // =====================================================
-
     const headerFontSize = 14;
     const bodyFontSize = 12;
 
     const rowLineHeight = 12;
     const minimumRowHeight = rowLineHeight * 2;
+
+    const cellPadding = 10;
+    const rowPadding = 6;
+
+
+    // =====================================================
+    // TITLE
+    // =====================================================
+
+    // Reserve space for the title and decision status.
+    ensurePDFSpace(doc, 115);
+
+    doc
+        .font('Helvetica-Bold')
+        .fontSize(20)
+        .fillColor('#222222')
+        .text('Decision Closure Record', 50, doc.y, {
+            width: tableWidth
+        });
+
+    doc.moveDown(0.4);
+
+    doc
+        .font('Helvetica-Oblique')
+        .fontSize(9)
+        .fillColor('#666666')
+        .text('Stage 1', 50, doc.y, {
+            width: tableWidth
+        });
+
+    doc.moveDown(1.5);
+
+
+    // =====================================================
+    // DECISION STATUS
+    // =====================================================
+
+    const actionLabel =
+        actionLabels[proposedAction] || proposedAction.toUpperCase();
+
+    doc
+        .font('Helvetica-Bold')
+        .fontSize(14)
+        .fillColor('#222222')
+        .text(`CLOSED DECISION: ${actionLabel}`, 50, doc.y, {
+            width: tableWidth
+        });
+
+    doc.moveDown(1);
+
+
+    // =====================================================
+    // TABLE DATA
+    // =====================================================
+
+    const rows = [
+        ['Transaction', dealReference],
+        ['Property / identifier', propertyIdentifier],
+        ['Capital event', getCapitalEventLabel(capitalEvent)],
+        ['Decision date', formatDate(decisionDate)],
+        ['Expected funding date', formatDate(fundingDate)],
+        ['Decision owner', decisionOwner],
+        ['Approval authority', approvalAuthority],
+        [
+            'Closure record',
+            `${recordId} | Closed ${closeDate}`
+        ]
+    ];
+
+
+    // =====================================================
+    // CALCULATE ROW HEIGHTS
+    // =====================================================
 
     doc
         .font('Helvetica')
@@ -257,12 +273,12 @@ function createPDFDecisionClosure(doc, formData = {}) {
     const rowHeights = rows.map(row => {
 
         const labelHeight = doc.heightOfString(row[0] || '', {
-            width: detailWidth - 20,
+            width: detailWidth - (cellPadding * 2),
             lineGap: 0
         });
 
         const valueHeight = doc.heightOfString(row[1] || '', {
-            width: valueWidth - 20,
+            width: valueWidth - (cellPadding * 2),
             lineGap: 0
         });
 
@@ -270,77 +286,114 @@ function createPDFDecisionClosure(doc, formData = {}) {
             minimumRowHeight,
             labelHeight,
             valueHeight
-        ) + 8;
+        ) + (rowPadding * 2);
 
     });
 
 
     // =====================================================
-    // TABLE HEADER
+    // TABLE HEADER FUNCTION
     // =====================================================
 
-    const headerY = doc.y;
+    function drawTableHeader() {
 
-    doc
-        .fillColor('#E6E6E6')
-        .rect(tableX, headerY, detailWidth, headerHeight)
-        .fill();
+        ensurePDFSpace(doc, headerHeight + rowHeights[0]);
 
-    doc
-        .rect(
-            tableX + detailWidth,
-            headerY,
-            valueWidth,
-            headerHeight
-        )
-        .fill();
+        const headerY = doc.y;
 
-    doc
-        .strokeColor('#104E75')
-        .lineWidth(1)
-        .rect(tableX, headerY, detailWidth, headerHeight)
-        .stroke();
+        // Cell backgrounds
+        doc
+            .fillColor('#E6E6E6')
+            .rect(tableX, headerY, detailWidth, headerHeight)
+            .fill();
 
-    doc
-        .rect(
-            tableX + detailWidth,
-            headerY,
-            valueWidth,
-            headerHeight
-        )
-        .stroke();
+        doc
+            .rect(
+                tableX + detailWidth,
+                headerY,
+                valueWidth,
+                headerHeight
+            )
+            .fill();
 
-    doc
-        .fillColor('#000000')
-        .font('Helvetica-Bold')
-        .fontSize(headerFontSize)
-        .text(
-            'Decision Details',
-            tableX + 10,
-            headerY + 10,
-            {
-                width: detailWidth - 20
-            }
-        )
-        .text(
-            'Recorded value',
-            tableX + detailWidth + 10,
-            headerY + 10,
-            {
-                width: valueWidth - 20
-            }
-        );
+        // Cell borders
+        doc
+            .strokeColor('#104E75')
+            .lineWidth(1)
+            .rect(tableX, headerY, detailWidth, headerHeight)
+            .stroke();
+
+        doc
+            .rect(
+                tableX + detailWidth,
+                headerY,
+                valueWidth,
+                headerHeight
+            )
+            .stroke();
+
+        // Header text
+        doc
+            .fillColor('#000000')
+            .font('Helvetica-Bold')
+            .fontSize(headerFontSize)
+            .text(
+                'Decision Details',
+                tableX + cellPadding,
+                headerY + 10,
+                {
+                    width: detailWidth - (cellPadding * 2)
+                }
+            )
+            .text(
+                'Recorded value',
+                tableX + detailWidth + cellPadding,
+                headerY + 10,
+                {
+                    width: valueWidth - (cellPadding * 2)
+                }
+            );
+
+        doc.y = headerY + headerHeight;
+
+        doc
+            .font('Helvetica')
+            .fontSize(bodyFontSize)
+            .fillColor('#000000');
+
+    }
+
+
+    // =====================================================
+    // DRAW TABLE HEADER
+    // =====================================================
+
+    drawTableHeader();
 
 
     // =====================================================
     // TABLE ROWS
     // =====================================================
 
-    let currentY = headerY + headerHeight;
-
     rows.forEach((row, index) => {
 
         const rowHeight = rowHeights[index];
+
+        // Check whether the row fits.
+        // If not, start a new page and repeat the table header.
+
+        const bottomLimit =
+            doc.page.height - doc.page.margins.bottom;
+
+        if (doc.y + rowHeight > bottomLimit) {
+
+            doc.addPage();
+
+            drawTableHeader();
+
+        }
+
+        const currentY = doc.y;
 
         const x1 = tableX;
         const x2 = tableX + detailWidth;
@@ -366,31 +419,36 @@ function createPDFDecisionClosure(doc, formData = {}) {
             .rect(x2, currentY, valueWidth, rowHeight)
             .stroke();
 
-        // Cell text
+        // Left cell text
         doc
             .fillColor('#000000')
             .font('Helvetica')
             .fontSize(bodyFontSize)
             .text(
                 row[0],
-                x1 + 10,
-                currentY + 6,
+                x1 + cellPadding,
+                currentY + rowPadding,
                 {
-                    width: detailWidth - 20,
-                    lineGap: 0
-                }
-            )
-            .text(
-                row[1],
-                x2 + 10,
-                currentY + 6,
-                {
-                    width: valueWidth - 20,
+                    width: detailWidth - (cellPadding * 2),
                     lineGap: 0
                 }
             );
 
-        currentY += rowHeight;
+        // Right cell text
+        doc
+            .font('Helvetica')
+            .fontSize(bodyFontSize)
+            .text(
+                row[1],
+                x2 + cellPadding,
+                currentY + rowPadding,
+                {
+                    width: valueWidth - (cellPadding * 2),
+                    lineGap: 0
+                }
+            );
+
+        doc.y = currentY + rowHeight;
 
     });
 
@@ -399,7 +457,8 @@ function createPDFDecisionClosure(doc, formData = {}) {
     // CLEANUP
     // =====================================================
 
-    doc.y = currentY;
+    doc.y += 12;
+    doc.x = 50;
 
     doc
         .fillColor('#000000')
@@ -407,70 +466,70 @@ function createPDFDecisionClosure(doc, formData = {}) {
         .font('Helvetica')
         .fontSize(12);
 
-    doc.moveDown(1);
-
 }
 
 
+
+
 function addHeader(doc) {
+
     doc.save();
 
-    // Logo
-    doc
-        .rect(50, 30, 35, 35)
-        .fill('#1470af');
-
-    doc
-        .fillColor('#FFFFFF')
-        .font('Helvetica-Bold')
-        .fontSize(22)
-        .text('W', 50, 35, {
-            width: 35,
-            height: 25,
-            align: 'center',
-            lineBreak: false
-        });
+    const pageWidth = doc.page.width;
+    const contentWidth = pageWidth - 100;
 
     // Header title
     doc
         .fillColor('#000000')
         .font('Helvetica-Bold')
         .fontSize(18)
-        .text('Deal Killers', 100, 30, {
-            width: 412,
-            height: 22,
+        .text('Decision Closure', 50, 30, {
+            width: contentWidth,
             align: 'center',
             lineBreak: false
         });
-
-    // Header line
-    doc
-        .moveTo(100, 55)
-        .lineTo(512, 55)
-        .lineWidth(1)
-        .strokeColor('#1470af')
-        .stroke();
 
     // Header subtitle
     doc
         .font('Helvetica-Oblique')
         .fontSize(9)
         .fillColor('#555555')
-        .text('an analysis tool from John', 100, 60, {
-            width: 412,
-            height: 12,
+        .text('an analysis tool from John', 50, 60, {
+            width: contentWidth,
             align: 'center',
             lineBreak: false
         });
 
+    // Full-width header divider
+    doc
+        .moveTo(50, 85)
+        .lineTo(pageWidth - 50, 85)
+        .lineWidth(1)
+        .strokeColor('#1470af')
+        .stroke();
+
     doc.restore();
+
+    // Reset content position and typography
+    doc.y = 105;
+    doc.x = 50;
+
+    doc
+        .font('Helvetica')
+        .fontSize(12)
+        .fillColor('#000000');
+
 }
+
 
 
 function addFooter(doc, pageNumber = 1) {
 
-    const pageWidth = 612;
-    const pageHeight = 792;
+    const pageWidth = doc.page.width;
+    const pageHeight = doc.page.height;
+
+    // Preserve the current content position
+    const currentY = doc.y;
 
     doc.save();
 
@@ -488,7 +547,7 @@ function addFooter(doc, pageNumber = 1) {
         .fontSize(8)
         .fillColor('#777777')
         .text(
-            'Deal Killers | Professional Decision-Support Tool',
+            'Decision Closure | Professional Decision-Support Tool',
             50,
             pageHeight - 43,
             {
@@ -504,7 +563,7 @@ function addFooter(doc, pageNumber = 1) {
         .fillColor('#777777')
         .text(
             `Page ${pageNumber}`,
-            450,
+            pageWidth - 162,
             pageHeight - 43,
             {
                 width: 112,
@@ -514,6 +573,11 @@ function addFooter(doc, pageNumber = 1) {
         );
 
     doc.restore();
+
+    // Restore content position
+    doc.y = currentY;
+    doc.x = 50;
+
 }
 
 
@@ -588,41 +652,37 @@ function createPDFAcceptedConsequence(doc, formData) {
 
     const leftMargin = 50;
     const contentWidth = 512;
+
     const headingFontSize = 14;
     const bodyFontSize = 12;
+
     const sectionSpacing = 16;
+
+
+    // =====================================================
+    // INITIAL SPACING
+    // =====================================================
+
+    doc.x = leftMargin;
+    doc.y += 8;
 
 
     // =====================================================
     // CREATE SECTIONS
     // =====================================================
 
-    sections.forEach(function (section) {
+    sections.forEach(section => {
 
-        // Section heading
-        doc
-            .font('Helvetica-Bold')
-            .fontSize(headingFontSize)
-            .fillColor('#000000')
-            .text(section.heading, leftMargin, doc.y, {
-                width: contentWidth
-            });
+        writePDFSection(doc, section.heading, section.body, {
+            x: leftMargin,
+            width: contentWidth,
+            headingFontSize,
+            bodyFontSize,
+            spacing: sectionSpacing,
+            lineGap: 2,
+            minimumBodySpace: 30
+        });
 
-        doc.moveDown(0.4);
-
-        // Section body
-        doc
-            .font('Helvetica')
-            .fontSize(bodyFontSize)
-            .fillColor('#000000')
-            .text(section.body, leftMargin, doc.y, {
-                width: contentWidth,
-                lineGap: 2,
-                paragraphGap: 0
-            });
-
-        // Space before next section
-        doc.y += sectionSpacing;
     });
 
 
@@ -635,20 +695,113 @@ function createPDFAcceptedConsequence(doc, formData) {
         .fontSize(12)
         .fillColor('#000000');
 
+    doc.x = leftMargin;
+
+}
+
+
+// =====================================================
+// PAGE SPACE MANAGEMENT
+// =====================================================
+
+function ensurePDFSpace(doc, requiredHeight = 50) {
+
+    const bottomLimit =
+        doc.page.height - doc.page.margins.bottom;
+
+    if (doc.y + requiredHeight > bottomLimit) {
+
+        doc.addPage();
+
+        // Header/footer are automatically added
+        // through the pageAdded event.
+
+    }
+
+}
+
+
+// =====================================================
+// PDF TEXT SECTION
+// =====================================================
+
+function writePDFSection(doc, heading, body, options = {}) {
+
+    const leftMargin = 50;
+    const contentWidth = 512;
+
+    const headingFontSize = options.headingFontSize || 14;
+    const bodyFontSize = options.bodyFontSize || 12;
+    const spacing = options.spacing ?? 16;
+
+    // Measure heading
+    doc.font('Helvetica-Bold')
+        .fontSize(headingFontSize);
+
+    const headingHeight = doc.heightOfString(heading, {
+        width: contentWidth
+    });
+
+    // Measure body
+    doc.font('Helvetica')
+        .fontSize(bodyFontSize);
+
+    const bodyHeight = doc.heightOfString(body, {
+        width: contentWidth,
+        lineGap: 2
+    });
+
+    const availableHeight =
+        doc.page.height -
+        doc.page.margins.top -
+        doc.page.margins.bottom;
+
+    const totalHeight =
+        headingHeight + 8 + bodyHeight + spacing;
+
+    // If the entire section fits on a page,
+    // keep it together whenever possible.
+    // Otherwise reserve room for the heading and
+    // the beginning of the body.
+    ensurePDFSpace(
+        doc,
+        Math.min(totalHeight, Math.min(100, availableHeight))
+    );
+
+    // Heading
+    doc.font('Helvetica-Bold')
+        .fontSize(headingFontSize)
+        .fillColor('#000000')
+        .text(heading, leftMargin, doc.y, {
+            width: contentWidth
+        });
+
+    doc.moveDown(0.4);
+
+    // Body
+    doc.font('Helvetica')
+        .fontSize(bodyFontSize)
+        .fillColor('#000000')
+        .text(body, leftMargin, doc.y, {
+            width: contentWidth,
+            lineGap: 2
+        });
+
+    doc.y += spacing;
+
 }
 
 
 
 function createPDFConditionsTable(doc, formData, form) {
+
+    // =====================================================
+    // FORM DATA
+    // =====================================================
+
     const conditionCards = Array.from(
         form.querySelectorAll('[data-condition-card]')
     );
-
-    const tableX = 50;
-    const tableWidth = 512;
-    const labelWidth = 155;
-    const detailWidth = tableWidth - labelWidth;
-    const padding = 9;
 
     const timingLabels = {
         'pre-commitment': 'Pre-commitment',
@@ -665,7 +818,29 @@ function createPDFConditionsTable(doc, formData, form) {
         changed: 'Changed'
     };
 
+
+    // =====================================================
+    // LAYOUT SETTINGS
+    // =====================================================
+
+    const tableX = 50;
+    const tableWidth = 512;
+
+    const labelWidth = 155;
+    const detailWidth = tableWidth - labelWidth;
+
+    const padding = 9;
+    const cardSpacing = 8;
+
+    const fontSize = 10;
+
+
+    // =====================================================
+    // FIELD HELPERS
+    // =====================================================
+
     const getFieldValue = (card, fieldName) => {
+
         const field = card.querySelector(
             `[data-field="${fieldName}"]`
         );
@@ -673,6 +848,7 @@ function createPDFConditionsTable(doc, formData, form) {
         if (!field) return '';
 
         if (field.type === 'radio') {
+
             const selected = card.querySelector(
                 `[data-field="${fieldName}"]:checked`
             );
@@ -683,7 +859,9 @@ function createPDFConditionsTable(doc, formData, form) {
         return field.value.trim();
     };
 
+
     const formatDate = (value) => {
+
         if (!value) return 'Not provided';
 
         const parts = value.split('-');
@@ -703,94 +881,151 @@ function createPDFConditionsTable(doc, formData, form) {
         });
     };
 
+
+    // =====================================================
+    // CONDITION DATA
+    // =====================================================
+
     const conditions = conditionCards.map((card, index) => ({
+
         id: `C${index + 1}`,
+
         timing: getFieldValue(card, 'timing'),
+
         status: getFieldValue(card, 'status') || 'open',
+
         condition: getFieldValue(card, 'condition'),
+
         owner: getFieldValue(card, 'owner'),
+
         dueDate: getFieldValue(card, 'dueDate'),
+
         waiverScope: getFieldValue(card, 'waiverScope'),
+
         evidence: getFieldValue(card, 'evidence')
+
     }));
 
+
+    // =====================================================
+    // SUMMARY DATA
+    // =====================================================
+
     const countStatus = (status) =>
-        conditions.filter(condition => condition.status === status).length;
+        conditions.filter(
+            condition => condition.status === status
+        ).length;
 
     const acceptedExceptions = conditions.filter(
         condition => condition.timing === 'accepted-exception'
     ).length;
 
-    // Section heading
+    const summaryText = [
+        `Total conditions: ${conditions.length}`,
+        `Open: ${countStatus('open')}`,
+        `Satisfied: ${countStatus('satisfied')}`,
+        `Waived: ${countStatus('waived')}`,
+        `Failed: ${countStatus('failed')}`,
+        `Changed: ${countStatus('changed')}`,
+        `Accepted exceptions: ${acceptedExceptions}`
+    ].join('\n');
+
+
+    // =====================================================
+    // SECTION HEADING
+    // =====================================================
+
+    ensurePDFSpace(doc, 85);
+
     doc.moveDown(1);
 
-    doc.font('Helvetica-Bold')
+    doc
+        .font('Helvetica-Bold')
         .fontSize(16)
         .fillColor('#222222')
-        .text('Conditions Register', 50, doc.y, {
+        .text('Conditions Register', tableX, doc.y, {
             width: tableWidth
         });
 
     doc.moveDown(0.5);
 
-    doc.font('Helvetica')
+    doc
+        .font('Helvetica')
         .fontSize(10)
         .fillColor('#555555')
         .text(
             'Closed requirements and their assigned responsibility, evidence, and status.',
-            50,
-            doc.y,
-            { width: tableWidth }
-        );
-
-    doc.moveDown(1);
-
-    // Summary
-    doc.font('Helvetica-Bold')
-        .fontSize(11)
-        .fillColor('#222222')
-        .text('Condition Summary', 50, doc.y, {
-            width: tableWidth
-        });
-
-    doc.moveDown(0.35);
-
-    doc.font('Helvetica')
-        .fontSize(10)
-        .text(
-            [
-                `Total conditions: ${conditions.length}`,
-                `Open: ${countStatus('open')}`,
-                `Satisfied: ${countStatus('satisfied')}`,
-                `Waived: ${countStatus('waived')}`,
-                `Failed: ${countStatus('failed')}`,
-                `Changed: ${countStatus('changed')}`,
-                `Accepted exceptions: ${acceptedExceptions}`
-            ].join('\n'),
-            50,
+            tableX,
             doc.y,
             {
-                width: tableWidth,
-                lineGap: 3
+                width: tableWidth
             }
         );
 
     doc.moveDown(1);
 
+
+    // =====================================================
+    // CONDITION SUMMARY
+    // =====================================================
+
+    writePDFSection(
+        doc,
+        'Condition Summary',
+        summaryText,
+        {
+            x: tableX,
+            width: tableWidth,
+            headingFontSize: 11,
+            bodyFontSize: 10,
+            spacing: 12,
+            lineGap: 3,
+            minimumBodySpace: 75,
+            headingSpacing: 0.35
+        }
+    );
+
+
+    // =====================================================
+    // NO CONDITIONS
+    // =====================================================
+
     if (conditions.length === 0) {
-        doc.font('Helvetica-Oblique')
+
+        ensurePDFSpace(doc, 30);
+
+        doc
+            .font('Helvetica-Oblique')
             .fontSize(10)
             .fillColor('#555555')
-            .text('No conditions were recorded.', 50, doc.y, {
-                width: tableWidth
-            });
+            .text(
+                'No conditions were recorded.',
+                tableX,
+                doc.y,
+                {
+                    width: tableWidth
+                }
+            );
 
-        doc.fillColor('#000000');
+        doc.y += 12;
+
+        doc
+            .font('Helvetica')
+            .fontSize(12)
+            .fillColor('#000000');
+
+        doc.x = tableX;
+
         return;
     }
 
-    // Draw each condition
-    conditions.forEach((condition) => {
+
+    // =====================================================
+    // DRAW CONDITION CARDS
+    // =====================================================
+
+    conditions.forEach(condition => {
+
         const timingLabel =
             timingLabels[condition.timing] || 'Not specified';
 
@@ -811,138 +1046,222 @@ function createPDFConditionsTable(doc, formData, form) {
             `Waiver scope: ${condition.waiverScope || 'None specified'}`
         ].join('\n\n');
 
+
+        // =================================================
+        // TEXT MEASUREMENT
+        // =================================================
+
         const leftOptions = {
-            width: labelWidth - padding * 2,
+            width: labelWidth - (padding * 2),
             lineGap: 3
         };
 
         const rightOptions = {
-            width: detailWidth - padding * 2,
+            width: detailWidth - (padding * 2),
             lineGap: 2
         };
 
-        const leftHeight = doc
+        doc
             .font('Helvetica-Bold')
-            .fontSize(10)
-            .heightOfString(leftText, leftOptions);
+            .fontSize(fontSize);
 
-        const rightHeight = doc
+        const leftHeight = doc.heightOfString(
+            leftText,
+            leftOptions
+        );
+
+        doc
             .font('Helvetica')
-            .fontSize(10)
-            .heightOfString(rightText, rightOptions);
+            .fontSize(fontSize);
+
+        const rightHeight = doc.heightOfString(
+            rightText,
+            rightOptions
+        );
 
         const rowHeight =
-            Math.max(leftHeight, rightHeight) + padding * 2;
+            Math.max(leftHeight, rightHeight) + (padding * 2);
 
-        // Start a new page if needed
-        const pageBottom =
-            doc.page.height - doc.page.margins.bottom;
 
-        if (doc.y + rowHeight > pageBottom) {
-            doc.addPage();
-            doc.y = 100;
-        }
+        // =================================================
+        // PAGE BREAK
+        // =================================================
+
+        // Keep each condition card together.
+        // ensurePDFSpace uses the page header's starting position
+        // when a new page is needed.
+
+        ensurePDFSpace(doc, rowHeight + cardSpacing);
+
+
+        // =================================================
+        // CARD POSITION
+        // =================================================
 
         const rowY = doc.y;
 
-        // Backgrounds
-        doc.rect(tableX, rowY, labelWidth, rowHeight)
-            .fill('#E6E6E6');
+        const leftX = tableX;
+        const rightX = tableX + labelWidth;
 
-        doc.rect(
-            tableX + labelWidth,
-            rowY,
-            detailWidth,
-            rowHeight
-        ).fill('#FFFFFF');
 
-        // Borders
-        doc.rect(tableX, rowY, labelWidth, rowHeight)
+        // =================================================
+        // CELL BACKGROUNDS
+        // =================================================
+
+        doc
+            .fillColor('#E6E6E6')
+            .rect(
+                leftX,
+                rowY,
+                labelWidth,
+                rowHeight
+            )
+            .fill();
+
+        doc
+            .fillColor('#FFFFFF')
+            .rect(
+                rightX,
+                rowY,
+                detailWidth,
+                rowHeight
+            )
+            .fill();
+
+
+        // =================================================
+        // CELL BORDERS
+        // =================================================
+
+        doc
             .lineWidth(0.8)
             .strokeColor('#104E75')
+            .rect(
+                leftX,
+                rowY,
+                labelWidth,
+                rowHeight
+            )
             .stroke();
 
-        doc.rect(
-            tableX + labelWidth,
-            rowY,
-            detailWidth,
-            rowHeight
-        )
-            .lineWidth(0.8)
-            .strokeColor('#104E75')
+        doc
+            .rect(
+                rightX,
+                rowY,
+                detailWidth,
+                rowHeight
+            )
             .stroke();
 
-        // Left cell
-        doc.font('Helvetica-Bold')
-            .fontSize(10)
+
+        // =================================================
+        // LEFT CELL
+        // =================================================
+
+        doc
+            .font('Helvetica-Bold')
+            .fontSize(fontSize)
             .fillColor('#222222')
             .text(
                 leftText,
-                tableX + padding,
+                leftX + padding,
                 rowY + padding,
                 leftOptions
             );
 
-        // Right cell
-        doc.font('Helvetica')
-            .fontSize(10)
+
+        // =================================================
+        // RIGHT CELL
+        // =================================================
+
+        doc
+            .font('Helvetica')
+            .fontSize(fontSize)
             .fillColor('#222222')
             .text(
                 rightText,
-                tableX + labelWidth + padding,
+                rightX + padding,
                 rowY + padding,
                 rightOptions
             );
 
-        doc.y = rowY + rowHeight + 8;
+
+        // =================================================
+        // ADVANCE DOCUMENT POSITION
+        // =================================================
+
+        doc.y = rowY + rowHeight + cardSpacing;
+        doc.x = tableX;
+
     });
 
-    doc.fillColor('#000000');
+
+    // =====================================================
+    // RESET FORMATTING
+    // =====================================================
+
+    doc
+        .font('Helvetica')
+        .fontSize(12)
+        .fillColor('#000000')
+        .strokeColor('#000000');
+
+    doc.x = tableX;
+
 }
 
 
 
-function createPDFDecisionBasis(doc) {
+
+
+function createPDFDecisionBasis(doc, formData, closeDate) {
+
+    // =====================================================
+    // FORM DATA
+    // =====================================================
+
+    const decisionOwner =
+        formData.get('decisionOwner') || 'Not provided';
+
+    const approvalAuthority =
+        formData.get('approvalAuthority') || 'Not provided';
+
+    const decisionBasis =
+        formData.get('decisionBasis') || 'Not provided';
+
+
+    // =====================================================
+    // SECTION DATA
+    // =====================================================
 
     const sections = [
         {
             heading: 'Decision basis',
-            body: 'Advance within the approved budget because collections are supported, the roof scope has a fixed contract and the financing commitment funds the stated sources and uses. The reserves cover the modeled leasing shortfall. Capital must remain on hold until the roof escrow and required insurance are documented. Additional equity or a higher roof requirement cannot be released under this closed decision.'
+            body: decisionBasis
         },
         {
             heading: 'Accountability',
-            body: 'Recorded by Morgan Ellis, Acquisitions Director, on September 17, 2026. Approval authority: Cedar Grove Investment Committee. Committee approval reference: September 17, 2026 acquisition approval minutes.'
+            body: `Recorded by ${decisionOwner}, on ${closeDate}. Approval authority: ${approvalAuthority}.`
         }
     ];
 
-    const leftMargin = 50;
-    const contentWidth = 512;
 
     // =====================================================
     // DECISION BASIS + ACCOUNTABILITY
     // =====================================================
 
-    sections.forEach(function (section) {
+    sections.forEach(section => {
 
-        doc
-            .font('Helvetica-Bold')
-            .fontSize(14)
-            .fillColor('#000000')
-            .text(section.heading, leftMargin, doc.y, {
-                width: contentWidth
-            });
+        writePDFSection(doc, section.heading, section.body, {
+            x: 50,
+            width: 512,
+            headingFontSize: 14,
+            bodyFontSize: 12,
+            spacing: 16,
+            lineGap: 2,
+            minimumBodySpace: 30
+        });
 
-        doc.moveDown(0.4);
-
-        doc
-            .font('Helvetica')
-            .fontSize(12)
-            .text(section.body, leftMargin, doc.y, {
-                width: contentWidth,
-                lineGap: 2
-            });
-
-        doc.y += 16;
     });
 
 
@@ -950,14 +1269,18 @@ function createPDFDecisionBasis(doc) {
     // RECORDED ACKNOWLEDGEMENTS
     // =====================================================
 
+    ensurePDFSpace(doc, 55);
+
     doc
         .font('Helvetica-Bold')
         .fontSize(14)
-        .text('Recorded acknowledgements', leftMargin, doc.y, {
-            width: contentWidth
+        .fillColor('#000000')
+        .text('Recorded acknowledgements', 50, doc.y, {
+            width: 512
         });
 
     doc.moveDown(0.5);
+
 
     const acknowledgements = [
         'Confirmed: I confirm this record reflects the decision basis.',
@@ -967,19 +1290,41 @@ function createPDFDecisionBasis(doc) {
         'Confirmed: I confirm that this record closes this decision inside Decision Closure. The selected posture, decision basis, stated consequence, and approval authority become final when this record is closed. Any later reconsideration takes place outside this completed test.'
     ];
 
-    acknowledgements.forEach(function (acknowledgement) {
+
+    acknowledgements.forEach(acknowledgement => {
+
+        // Measure the acknowledgement so we can avoid
+        // starting it at the very bottom of a page.
+
+        doc
+            .font('Helvetica')
+            .fontSize(12);
+
+        const acknowledgementHeight = doc.heightOfString(
+            acknowledgement,
+            {
+                width: 512,
+                lineGap: 2
+            }
+        );
+
+        ensurePDFSpace(
+            doc,
+            Math.min(acknowledgementHeight + 12, 80)
+        );
 
         doc
             .font('Helvetica')
             .fontSize(12)
             .fillColor('#000000')
-            .text(acknowledgement, leftMargin, doc.y, {
-                width: contentWidth,
+            .text(acknowledgement, 50, doc.y, {
+                width: 512,
                 lineGap: 2
             });
 
-        // Clear separation between acknowledgements
+        // Separation between acknowledgements.
         doc.y += 12;
+
     });
 
 
@@ -987,70 +1332,58 @@ function createPDFDecisionBasis(doc) {
     // RECORD ID + CLOSURE TIMESTAMP
     // =====================================================
 
-    doc.y += 4;
-
-    doc
-        .font('Helvetica-Bold')
-        .fontSize(12)
-        .text('Record ID and closure timestamp', leftMargin, doc.y, {
-            width: contentWidth
-        });
-
-    doc.moveDown(0.3);
-
-    doc
-        .font('Helvetica')
-        .fontSize(12)
-        .text(
-            'Record ID: DC-EXAMPLE-001.',
-            leftMargin,
-            doc.y,
-            { width: contentWidth }
-        );
-
-    doc.moveDown(0.2);
-
-    doc
-        .text(
-            'Closed September 17, 2026 at 3:30 PM UTC.',
-            leftMargin,
-            doc.y,
-            { width: contentWidth }
-        );
-
-    doc.moveDown(0.2);
-
-    doc
-        .text(
-            'This is the fixed Stage 1 snapshot. Subsequent verification does not change the two Open statuses shown here.',
-            leftMargin,
-            doc.y,
-            {
-                width: contentWidth,
-                lineGap: 2
-            }
-        );
+    writePDFSection(
+        doc,
+        'Record ID and closure timestamp',
+        [
+            `Record ID: ${recordId}.`,
+            `Closed ${closeDate}`,
+            'This is the fixed Stage 1 snapshot. Subsequent verification does not change the two Open statuses shown here.'
+        ].join('\n\n'),
+        {
+            x: 50,
+            width: 512,
+            headingFontSize: 12,
+            bodyFontSize: 12,
+            spacing: 12,
+            lineGap: 2,
+            minimumBodySpace: 35,
+            headingSpacing: 0.3
+        }
+    );
 
 
     // =====================================================
     // DISCLAIMER
     // =====================================================
 
-    doc.y += 12;
+    const disclaimer =
+        'This record documents the decision and authority statements entered by the user. It does not independently authenticate authority, replace required underwriting or professional review, or execute a funds transfer. It does not provide legal, tax, accounting or investment advice.';
+
+    doc
+        .font('Helvetica')
+        .fontSize(9);
+
+    const disclaimerHeight = doc.heightOfString(disclaimer, {
+        width: 512,
+        lineGap: 2
+    });
+
+    ensurePDFSpace(
+        doc,
+        Math.min(disclaimerHeight + 12, 60)
+    );
 
     doc
         .font('Helvetica')
         .fontSize(9)
         .fillColor('#555555')
-        .text(
-            'This record documents the decision and authority statements entered by the user. It does not independently authenticate authority, replace required underwriting or professional review, or execute a funds transfer. It does not provide legal, tax, accounting or investment advice.',
-            leftMargin,
-            doc.y,
-            {
-                width: contentWidth,
-                lineGap: 2
-            }
-        );
+        .text(disclaimer, 50, doc.y, {
+            width: 512,
+            lineGap: 2
+        });
+
+    doc.y += 12;
 
 
     // =====================================================
@@ -1058,16 +1391,155 @@ function createPDFDecisionBasis(doc) {
     // =====================================================
 
     doc
-        .fillColor('#000000')
         .font('Helvetica')
-        .fontSize(12);
+        .fontSize(12)
+        .fillColor('#000000')
+        .strokeColor('#000000');
+
+    doc.x = 50;
 
 }
 
-// Button click
-// document.getElementById('test-pdf-button').addEventListener('click', function () {
-//     generatePDF();
-// });
+
+
+
+function createPDFDisclaimerPage(doc) {
+
+    // =====================================================
+    // NEW PAGE
+    // =====================================================
+
+    doc.addPage();
+
+    // The pageAdded event handles the standard header/footer.
+    // Content begins at the position established by addHeader().
+
+
+    // =====================================================
+    // TITLE
+    // =====================================================
+
+    ensurePDFSpace(doc, 85);
+
+    doc
+        .font('Helvetica-Bold')
+        .fontSize(18)
+        .fillColor('#222222')
+        .text('Important Notice', 50, doc.y, {
+            width: 512
+        });
+
+    doc.moveDown(0.3);
+
+    doc
+        .font('Helvetica')
+        .fontSize(11)
+        .fillColor('#666666')
+        .text('Decision Record and Reliance', 50, doc.y, {
+            width: 512
+        });
+
+    doc.moveDown(0.7);
+
+
+    // =====================================================
+    // DIVIDER
+    // =====================================================
+
+    const dividerY = doc.y;
+
+    doc
+        .moveTo(50, dividerY)
+        .lineTo(doc.page.width - 50, dividerY)
+        .lineWidth(1)
+        .strokeColor('#CCCCCC')
+        .stroke();
+
+    doc.y = dividerY + 25;
+
+
+    // =====================================================
+    // DISCLAIMER BODY
+    // =====================================================
+
+    const paragraphs = [
+
+        'Decision Closure is a decision-documentation and accountability tool provided by Real Estate Tradecraft. This report records the information, judgments, assumptions, accepted consequences, conditions, and approval representations entered by the user. It does not independently verify the accuracy or completeness of that information, authenticate approval authority, or establish that any stated condition has been satisfied.',
+
+        'A recorded decision to ADVANCE, STOP, or otherwise close a decision reflects the user\'s documented decision posture. It does not independently authorize financing, capital expenditure, funds transfer, waiver of conditions, or transaction execution. Open conditions remain subject to their stated requirements, responsible parties, and applicable approval processes.',
+
+        'The user and the appropriate decision-making authorities remain responsible for due diligence, underwriting, verification, professional review, compliance, and implementation.',
+
+        'This report does not constitute legal, tax, accounting, investment, or lending advice. Real Estate Tradecraft makes no representation or guarantee regarding transaction approval, funding, financial performance, or investment outcomes.'
+
+    ];
+
+
+    // =====================================================
+    // RENDER PARAGRAPHS
+    // =====================================================
+
+    paragraphs.forEach(paragraph => {
+
+        // Measure paragraph before rendering.
+
+        doc
+            .font('Helvetica')
+            .fontSize(10);
+
+        const paragraphHeight = doc.heightOfString(paragraph, {
+            width: 512,
+            lineGap: 4
+        });
+
+
+        // Reserve enough room to begin the paragraph.
+        // Long paragraphs can continue naturally across pages.
+
+        ensurePDFSpace(
+            doc,
+            Math.min(paragraphHeight + 18, 100)
+        );
+
+
+        // Render paragraph.
+
+        doc
+            .font('Helvetica')
+            .fontSize(10)
+            .fillColor('#333333')
+            .text(paragraph, 50, doc.y, {
+                width: 512,
+                lineGap: 4,
+                align: 'left'
+            });
+
+
+        // Separation between paragraphs.
+
+        doc.y += 18;
+        doc.x = 50;
+
+    });
+
+
+    // =====================================================
+    // RESET FORMATTING
+    // =====================================================
+
+    doc
+        .font('Helvetica')
+        .fontSize(12)
+        .fillColor('#000000')
+        .strokeColor('#000000');
+
+    doc.x = 50;
+
+}
+
+ 
+
+
 
 document.getElementById('dc-form').addEventListener('submit', function (event) {
     event.preventDefault();
@@ -1092,6 +1564,6 @@ document.getElementById('dc-form').addEventListener('submit', function (event) {
 
 
 
-    generatePDF(formData, recordId, form);
+    generatePDF(formData, recordId, form, closedAt);
 
 });
